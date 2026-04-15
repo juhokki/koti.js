@@ -1,0 +1,115 @@
+substitutions:
+  name: sonoff-rf-bridge
+  friendly_name: Sonoff RF Bridge
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  comment: Sonoff RF BridgeR2 with ESPHome
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+  baud_rate: 0
+  
+http_request:
+  verify_ssl: false
+  useragent: esphome/sonoff-rf-bridge
+  timeout: 15s
+
+api:
+  encryption:
+    key: !secret sonoff_rf_bridge_encryption_key
+  services:
+    - service: send_rf_code
+      variables:
+        sync: int
+        low: int
+        high: int
+        code: int
+      then:
+        - rf_bridge.send_code:
+            sync: !lambda 'return sync;'
+            low: !lambda 'return low;'
+            high: !lambda 'return high;'
+            code: !lambda 'return code;'
+    - service: learn
+      then:
+        - rf_bridge.learn
+
+rf_bridge:
+  on_code_received:
+    then:
+      - http_request.post:
+          url: !secret api_url
+          headers:
+            Content-Type: application/json
+            Authorization: !secret api_authorization
+          body:  !lambda |-
+            return ((std::string)
+            "["+
+            "{\"deviceId\": \"sonoff-rf-bridge\", \"measurementId\": \"sync\", \"value\": " + format_hex(data.sync) + "},"+
+            "{\"deviceId\": \"sonoff-rf-bridge\", \"measurementId\": \"low\", \"value\": " + format_hex(data.low) + "},"+
+            "{\"deviceId\": \"sonoff-rf-bridge\", \"measurementId\": \"high\", \"value\": " + format_hex(data.high) + "},"+
+            "{\"deviceId\": \"sonoff-rf-bridge\", \"measurementId\": \"code\", \"value\": " + format_hex(data.code) + "},"+
+            "]"
+            ).c_str();
+
+ota:
+  - platform: esphome
+    password: !secret sonoff_rf_bridge_ota_pwd
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: !secret domain
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${friendly_name} ESP"
+    password: !secret sonoff_rf_bridge_ap_pwd
+
+button:
+  # Restart the ESP
+  - platform: restart
+    name: "Restart"
+
+uart:
+  tx_pin: 1
+  rx_pin: 3
+  baud_rate: 19200
+
+captive_portal:
+
+# Sensors for ESP version and WIFI information
+text_sensor:
+  # ESPHome version
+  - platform: version
+    hide_timestamp: true
+    name: "ESPHome Version"
+  # IP address and connected SSID
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+      icon: mdi:wifi
+    ssid:
+      name: "Connected SSID"
+      icon: mdi:wifi-strength-2
+
+sensor:
+  # WiFi signal
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 120s
+  - platform: uptime
+    name: "${friendly_name} Uptime"
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+light:
+  - platform: status_led
+    name: "Switch state"
+    pin: GPIO13

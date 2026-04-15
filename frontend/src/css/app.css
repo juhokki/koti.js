@@ -1,0 +1,95 @@
+#app {
+	overflow: auto;
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	font-weight: var(--font-weight);
+	color: var(--font-color);
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: var(--spacing);
+}
+
+.header {
+	margin: 0;
+	padding: var(--spacing);
+	overflow: auto;
+	border-bottom: 2px dashed var(--box-background-color);
+}
+
+.header h2 {
+	display: flex;
+}
+
+.header h2 .left {
+	flex: 1;
+	float: none;
+	text-align: left;
+}
+
+.header h2 .right {
+	flex: 1;
+	float: none;
+	text-align: right;
+}
+
+.header svg {
+	width: 1.2em;
+	height: 1.2em;
+}
+
+.content {
+	margin: var(--spacing) 0;
+}
+
+.centered {
+	text-align: center !important;
+}
+
+.middle {
+	vertical-align: middle;
+}
+
+.clickable {
+	color: var(--highlight-color);
+	cursor: pointer;
+}
+
+.danger {
+	background-color: var(--danger-color) !important;
+}
+
+h3.danger {
+	color: var(--danger-color);
+	background-color: inherit !important;
+}
+
+.MuiSvgIcon-root.danger,
+.MuiIcon-root.danger {
+	color: var(--danger-color);
+	background-color: inherit !important;
+}
+
+.full-width {
+	max-width: 100% !important;
+}
+
+.online {
+}
+
+.offline .MuiSvgIcon-root,
+.offline .MuiIcon-root {
+	color: var(--danger-color) !important;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.underline {
+	border-bottom: 2px dashed var(--background-color);
+}
+
+.MuiSvgIcon-root,
+.MuiIcon-root {
+	font-size: var(--icon-size) !important;
+}

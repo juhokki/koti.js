@@ -1,0 +1,10 @@
+.message {
+	padding: var(--spacing);
+	margin: var(--spacing) 0;
+	border-radius: var(--border-radius);
+	text-align: center;
+}
+
+.message.error {
+	background-color: var(--danger-color);
+}

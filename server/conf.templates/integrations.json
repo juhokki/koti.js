@@ -1,0 +1,52 @@
+[
+	{
+		"name": "RestApiIntegration",
+		"enabled": true
+	},
+	{
+		"name": "OpenWeatherIntegration",
+		"enabled": true,
+		"deviceId": "openweather",
+		"updateInterval": 900000,
+		"apiKey": "...",
+		"location": "..."
+	},
+	{
+		"name": "ShellyIntegration",
+		"enabled": true
+	},
+	{
+		"name": "ToshibaAcIntegration",
+		"enabled": true,
+		"username": "...",
+		"password": "...",
+		"deviceId": "...",
+		"sasToken": "...",
+		"energyConsumptionUpdateInterval": 600000,
+		"stateUpdateInterval": 1800000
+	},
+	{
+		"name": "VaasanSahkoIntegration",
+		"enabled": true,
+		"deviceId": "sahko",
+		"measurementId": "kwh",
+		"schedule": "0 8 * * *",
+		"username": "...",
+		"password": "..."
+	},
+	{
+		"name": "MatterIntegration",
+		"enabled": true,
+		"storageLocation": "conf/.matter",
+		"controllerId": "...",
+		"pairing": {}
+	},
+	{
+		"name": "WizIntegration",
+		"enabled": true,
+		"address": "...",
+		"interface": null,
+		"discoverInterval": 60000,
+		"heartbeatInterval": 30000
+	}
+]

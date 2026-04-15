@@ -1,0 +1,42 @@
+{
+	"AssetService": {
+		"assetsFile": "./conf/assets.json",
+		"devicesFile": "./conf/devices.json"
+	},
+	"DataService": {
+		"database": {
+			"type": "timescale",
+			"settings": {
+				"host": "localhost",
+				"port": 5432,
+				"database": "koti",
+				"user": "koti",
+				"password": "..."
+			}
+		}
+	},
+	"ShoppingListService": {
+		"file": "./conf/shoppinglist.json"
+	},
+	"UserService": {
+		"file": "./conf/users.json",
+		"secret": "...",
+		"tokenExpiration": "3650d"
+	},
+	"AlarmService": {},
+	"ActionService": {},
+	"IntegrationService": {
+		"file": "./conf/integrations.json"
+	},
+	"SystemService": {},
+	"PushApiService": {
+		"subject": "domain",
+		"publicKey": "...",
+		"privateKey": "..."
+	},
+	"SchedulerService": {},
+	"HttpService": {
+		"port": 3000,
+		"frontend": "frontend/dist"
+	}
+}

@@ -1,0 +1,19 @@
+.left {
+	float: left;
+}
+.right {
+	float: right;
+}
+
+.margin-top {
+	margin-top: var(--spacing);
+}
+.margin-bottom {
+	margin-bottom: var(--spacing);
+}
+.margin-left {
+	margin-left: var(--spacing);
+}
+.margin-right {
+	margin-right: var(--spacing);
+}

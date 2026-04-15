@@ -1,0 +1,11 @@
+{
+	"url": "base url",
+	"api": {
+		"username": "username",
+		"password": "password"
+	},
+	"writeBuffer": {
+		"enabled": true,
+		"interval": 60000
+	}
+}

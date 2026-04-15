@@ -1,0 +1,15 @@
+{
+	"name": "Koti",
+	"short_name": "Koti",
+	"start_url": "./",
+	"display": "standalone",
+	"theme_color": "#1e1e2f",
+	"background_color": "#1e1e2f",
+	"icons": [
+		{
+			"src": "favicon.ico",
+			"sizes": "64x64",
+			"type": "image/x-icon"
+		}
+	]
+}

@@ -1,0 +1,49 @@
+.grid {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: flex-start;
+	justify-content: center;
+	margin-top: var(--spacing);
+}
+
+.grid .grid-item {
+	padding: var(--spacing);
+	background: var(--box-background-color);
+	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.1);
+	border-radius: var(--border-radius);
+	display: block;
+	margin: var(--spacing);
+	flex: 1 1 100%;
+	max-width: 350px;
+}
+
+.grid table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.grid th,
+.grid td {
+	padding: var(--spacing);
+}
+
+.grid th {
+	font-weight: normal;
+	text-align: left;
+}
+
+.grid th div {
+	display: flex;
+	align-items: center;
+}
+
+.grid th .MuiSvgIcon-root,
+.grid th .MuiIcon-root {
+	width: 60px;
+	flex-shrink: 0;
+}
+
+.grid table.table-2-col th,
+.grid table.table-2-col td {
+	width: 50%;
+}

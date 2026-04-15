@@ -1,0 +1,59 @@
+h1 {
+	font-size: 150%;
+	line-height: 200%;
+	margin: 0;
+	font-weight: normal;
+}
+
+h2 {
+	margin: 0;
+	font-size: 120%;
+	line-height: 200%;
+	font-weight: normal;
+}
+
+h2.right {
+	max-width: calc(100% - 40px);
+	overflow: hidden;
+	direction: rtl;
+	text-overflow: ellipsis;
+}
+
+h3 {
+	margin: 0;
+	font-size: 120%;
+	line-height: 200%;
+	font-weight: normal;
+}
+
+h3 span {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+h1,
+h2,
+h3 {
+	white-space: nowrap;
+}
+
+h1 .MuiSvgIcon-root,
+h1 .MuiIcon-root,
+h2 .MuiSvgIcon-root,
+h2 .MuiIcon-root,
+h3 .MuiSvgIcon-root,
+h3 .MuiIcon-root {
+	margin-right: 0.5em;
+}
+
+h1 .MuiSvgIcon-root,
+h1 .MuiIcon-root,
+h1 span,
+h2 .MuiSvgIcon-root,
+h2 .MuiIcon-root,
+h2 span,
+h3 .MuiSvgIcon-root,
+h3 .MuiIcon-root,
+h3 span {
+	vertical-align: middle;
+}

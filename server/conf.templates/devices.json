@@ -1,0 +1,17 @@
+[
+	{
+		"id": "device id",
+		"name": "device name",
+		"type": "device type (integration)",
+		"icon": "device icon",
+		"measurements": [
+			{
+				"id": "measurement id",
+				"name": "measurement name",
+				"type": "measurement type (enum MeasurementType)",
+				"unit": "measurement unit",
+				"icon": "measurement icon"
+			}
+		]
+	}
+]

@@ -1,0 +1,7 @@
+.content > table {
+	width: 100%;
+}
+
+.content > table th {
+	text-align: left;
+}

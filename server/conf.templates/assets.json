@@ -1,0 +1,8 @@
+[
+	{
+		"id": "asset id",
+		"name": "asset name",
+		"icon": "asset icon",
+		"devices": ["asset device id"]
+	}
+]
