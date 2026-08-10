@@ -50,7 +50,8 @@ export enum DeviceOnlineStatus {
 export enum MeasurementType {
 	Number = "number",
 	String = "string",
-	Boolean = "boolean"
+	Boolean = "boolean",
+	Counter = "counter"
 }
 
 export interface ActionConfig {

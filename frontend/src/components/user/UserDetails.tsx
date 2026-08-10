@@ -57,7 +57,7 @@ export default function User() {
 				setWebPushEnabled(false);
 			}
 		} catch (e) {
-			console.log(e);
+			console.log("Failed to toggle web push.", e);
 		} finally {
 			setLoading(false);
 		}

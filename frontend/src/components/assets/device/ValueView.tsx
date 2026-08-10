@@ -123,10 +123,8 @@ export default function ValueView(props: ValueViewProps) {
 				/>
 			);
 		}
-
-		return <span>Puuttuva arvon toteutus!</span>;
 	} else {
-		if (type === MeasurementType.Number) {
+		if (type === MeasurementType.Number || type === MeasurementType.Counter) {
 			return (
 				<span>
 					{value.value} {measurement.unit}
@@ -134,8 +132,10 @@ export default function ValueView(props: ValueViewProps) {
 			);
 		} else if (type === MeasurementType.Boolean) {
 			return <span>{value.value ? "Päällä" : "Pois"}</span>;
+		} else {
+			return <span>{value.value}</span>;
 		}
-
-		return <span>Puuttuva arvon toteutus!</span>;
 	}
+
+	return <span>Puuttuva arvon toteutus!</span>;
 }
