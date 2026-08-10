@@ -23,7 +23,7 @@ Description=Ruuvi sensor
 After=network.target
 
 [Service]
-WorkingDirectory=/home/koti/koti/ruuvi-sensor
+WorkingDirectory=/home/koti/koti.js/ruuvi-sensor
 ExecStart=npm run start
 Restart=on-failure
 User=koti

@@ -71,7 +71,7 @@ export default class PushApiService extends ServiceBase {
 
 	async sendToSubscribedUsers(title: string, body: string) {
 		console.log(
-			`Sending push notification to %i users with title %s and body %s.`,
+			`Sending push notification to %i users with title "%s" and body "%s".`,
 			this.subscriptions.length,
 			title,
 			body

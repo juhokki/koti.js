@@ -25,7 +25,7 @@ Description=Koti Server
 After=postgresql.service
 
 [Service]
-WorkingDirectory=/home/koti/koti/server
+WorkingDirectory=/home/koti/koti.js/server
 ExecStart=node index.js
 Restart=on-failure
 User=koti
