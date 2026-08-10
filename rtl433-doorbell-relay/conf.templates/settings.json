@@ -1,0 +1,14 @@
+{
+  "apiUrl": "https://.../api/values",
+  "username": "koti-user",
+  "password": "replace-me",
+  "deviceId": "ovikello",
+  "measurementId": "ring",
+  "eventValue": 1,
+  "requiredCodes": ["{9}998"],
+  "RTL433_FREQUENCY": "433.92M",
+  "RTL433_DECODER": "name=Doorbell,modulation=OOK_PWM,short=387,long=782,reset=9000",
+  "cooldownSeconds": 2.5,
+  "requestTimeoutSeconds": 10,
+  "restartDelaySeconds": 5
+}
