@@ -1,10 +1,10 @@
-# Koti
+# Koti.js
 
-Koti is a home automation platform for monitoring sensors, controlling devices, and building practical automations around real household data.
+Koti.js is a home automation platform for monitoring sensors, controlling devices, and building practical automations around real household data.
 
 It combines a TypeScript backend, a React frontend, and multiple hardware bridges so Bluetooth, RF, and network-connected devices can be used through one interface.
 
-## What Koti Includes
+## What Koti.js Includes
 
 | Component | Purpose | Link | 
 | --- | --- | --- | 
