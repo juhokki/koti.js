@@ -6,13 +6,13 @@ It combines a TypeScript backend, a React frontend, and multiple hardware bridge
 
 ## What Koti Includes
 
-| Component | Purpose |
+| Component | Purpose | Link
 | --- | --- |
-| `server` | Backend API, integrations, scheduling, and data handling |
-| `frontend` | Web UI for device state, controls, and monitoring |
-| `ruuvi-sensor` | Bridge for RuuviTag Bluetooth sensor data |
-| `rtl433-doorbell-relay` | Python relay that listens with `rtl_433` and posts doorbell events to the API |
-| `sonoff-rf-bridge-r2` | RF bridge setup for Sonoff RF Bridge R2 + ESPHome |
+| `server` | Backend API, integrations, scheduling, and data handling | [server/README.md](server/README.md) |
+| `frontend` | Web UI for device state, controls, and monitoring | [frontend/README.md](frontend/README.md) |
+| `ruuvi-sensor` | Bridge for RuuviTag Bluetooth sensor data | [ruuvi-sensor/README.md](ruuvi-sensor/README.md) |
+| `rtl433-doorbell-relay` | Python relay that listens with `rtl_433` and posts doorbell events to the API | [rtl433-doorbell-relay/README.md](rtl433-doorbell-relay/README.md) | 
+| `sonoff-rf-bridge-r2` | RF bridge setup for Sonoff RF Bridge R2 + ESPHome | [sonoff-rf-bridge-r2/README.md](sonoff-rf-bridge-r2/README.md) |
 
 ## Quick Start
 
@@ -66,33 +66,3 @@ Common scripts in `server/` and `frontend/`:
 - The project is intentionally modular: data producers (sensor/relay clients) can run independently and post events to the same API.
 - Configuration templates are used across modules to keep deployment repeatable.
 - Systemd service examples are documented in module READMEs for always-on device and server workloads.
-
-## Server
-
-Koti backend API and automation services.
-
-See: [server/README.md](server/README.md)
-
-## Frontend
-
-Koti web interface.
-
-See: [frontend/README.md](frontend/README.md)
-
-## Ruuvi-sensor
-
-Application to run on a Bluetooth capable device (e.g. Raspberry PI) that captures messages from Ruuvi tags and forwards them to the Koti server.
-
-See: [ruuvi-sensor/README.md](ruuvi-sensor/README.md)
-
-## RTL433-doorbell-relay
-
-Python relay that listens for 433 MHz doorbell events with `rtl_433` and posts matching triggers to Koti API.
-
-See: [rtl433-doorbell-relay/README.md](rtl433-doorbell-relay/README.md)
-
-## Sonoff-rf-bridge-r2
-
-RF to Koti bridge.
-
-See: [sonoff-rf-bridge-r2/README.md](sonoff-rf-bridge-r2/README.md)
