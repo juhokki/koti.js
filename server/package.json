@@ -25,7 +25,6 @@
 		"@thream/socketio-jwt": "^3.1.4",
 		"check-disk-space": "^3.4.0",
 		"compression": "^1.7.5",
-		"dayjs": "^1.11.13",
 		"express": "^5.0.1",
 		"jsonwebtoken": "^9.0.2",
 		"node-cron": "^3.0.3",
@@ -34,9 +33,7 @@
 		"pg-format": "^1.0.4",
 		"shellies": "^1.7.0",
 		"socket.io": "^4.8.1",
-		"web-push": "^3.6.7",
-		"wikari": "^0.2.1",
-		"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+		"web-push": "^3.6.7"
 	},
 	"optionalDependencies": {
 		"@matter/nodejs-ble": "~0.11.9",
