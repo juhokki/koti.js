@@ -17,7 +17,7 @@ if (!qrCodeArg) {
 }
 
 const config = readConfigFile<IntegrationConfig[]>(
-	"../conf/development/integrations.json"
+	"../conf/integrations.json"
 );
 const integrationConfig = config.find((c) => c.name === MatterIntegration.name);
 

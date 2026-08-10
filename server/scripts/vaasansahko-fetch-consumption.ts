@@ -7,7 +7,7 @@ import { readConfigFile } from "../src/util/FileUtil.js";
 
 try {
 	const config = readConfigFile<IntegrationConfig[]>(
-		"../conf/production/integrations.json"
+		"../conf/integrations.json"
 	);
 	const integrationConfig = config.find(
 		(c) => c.name === VaasanSahkoIntegration.name

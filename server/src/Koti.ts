@@ -21,12 +21,13 @@ export default class Koti {
 	services: ServiceLocator;
 
 	constructor(configDir: string) {
-		this.services = this.buildServices(configDir);
-	}
-
-	buildServices(configDir: string): ServiceLocator {
 		const configPath = path.join(configDir, SERVICES_CONFIG_FILE_NAME);
 		const config = readConfigFile<ServicesConfig>(configPath);
+
+		this.services = this.buildServices(config);
+	}
+
+	buildServices(config: ServicesConfig): ServiceLocator {
 		const services = new ServiceLocator();
 
 		services.set(

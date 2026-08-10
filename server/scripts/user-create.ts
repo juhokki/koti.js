@@ -10,7 +10,7 @@ if (!username || !password) {
 }
 
 const config = readConfigFile<ServicesConfig>(
-	"../conf/production/services.json"
+	"../conf/services.json"
 );
 const userServiceConfig = config.UserService;
 const salt = userServiceConfig.secret;
