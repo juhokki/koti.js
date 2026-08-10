@@ -2,6 +2,10 @@
 
 Server for Koti.
 
+See also:
+
+- [Project overview](../README.md)
+
 # Scripts
 
 | Script | Description |

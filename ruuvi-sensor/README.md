@@ -1,5 +1,9 @@
 # Ruuvi sensor
 
+See also:
+
+- [Project overview](../README.md)
+
 ## Configuration
 
 - Copy from conf.templates to conf.

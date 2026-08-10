@@ -2,6 +2,10 @@
 
 This script listens for a custom doorbell signal with `rtl_433` and posts one event per ring to Koti.js.
 
+See also:
+
+- [Project overview](../README.md)
+
 ## Configuration
 
 Copy `conf.templates/settings.json` to `conf/settings.json` and fill in values.

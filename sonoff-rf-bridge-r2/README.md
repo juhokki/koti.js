@@ -2,6 +2,10 @@
 
 Sends RF 433Mhz messages to Koti using Sonoff RF Bridge R2 device flashed with ESPHome.
 
+See also:
+
+- [Project overview](../README.md)
+
 ## Guide
 ```
 https://www.irrgang.dev/how-to-flash-the-sonoff-rf-bridger2-with-esphome/
