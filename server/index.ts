@@ -1,7 +1,8 @@
 import path from "path";
 import Koti from "./src/Koti.js";
 
-const koti = new Koti(path.resolve("conf"));
+const configDir = path.resolve("conf");
+const koti = new Koti(configDir);
 
 function onInterrupt() {
 	koti.stop()

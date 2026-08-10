@@ -6,6 +6,7 @@ import type ServiceLocator from "../ServiceLocator.js";
 import type Database from "./database/Database.js";
 import ValueCache from "./ValueCache.js";
 import type Value from "../../model/Value.js";
+import MeasurementType from "../../enums/MeasurementType.js";
 
 export default class DataService extends ServiceBase {
 	options: DataServiceSettings;
@@ -59,25 +60,35 @@ export default class DataService extends ServiceBase {
 	}
 
 	async write(values: Value[]): Promise<void> {
-		const measuredValues = values.filter((value) => {
+		const newValues: Value[] = [];
+
+		values.forEach((value) => {
+			let measurement;
+
 			try {
-				this.services
+				measurement = this.services
 					.getAssetService()
 					.getMeasurement(value.deviceId, value.measurementId);
-				return true;
 			} catch (error) {
-				return false;
+				// Measurement not configured, value can be ignored...
+				return;
 			}
-		});
-		const newValues = measuredValues.filter((value) => {
+
 			const currentValue = this.latestValueCache.get(
 				value.deviceId,
 				value.measurementId
 			);
-			const valueHasChanged =
-				!currentValue || currentValue.value !== value.value;
 
-			return valueHasChanged;
+			if (measurement.type === MeasurementType.Counter) {
+				if (currentValue) {
+					// Increment counter type by new value.
+					value.value = (currentValue.value as number) + (value.value as number);
+				}
+			}
+
+			if (!currentValue || currentValue.value !== value.value) {
+				newValues.push(value);
+			}
 		});
 
 		if (newValues.length === 0) {

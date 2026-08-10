@@ -14,6 +14,8 @@ import HttpService from "./service/http/HttpService.js";
 import type ServicesConfig from "./service/ServicesConfig.js";
 import { readConfigFile } from "./util/FileUtil.js";
 
+const SERVICES_CONFIG_FILE_NAME = "services.json";
+
 export default class Koti {
 	running = false;
 	services: ServiceLocator;
@@ -23,7 +25,7 @@ export default class Koti {
 	}
 
 	buildServices(configDir: string): ServiceLocator {
-		const configPath = path.join(configDir, "services.json");
+		const configPath = path.join(configDir, SERVICES_CONFIG_FILE_NAME);
 		const config = readConfigFile<ServicesConfig>(configPath);
 		const services = new ServiceLocator();
 

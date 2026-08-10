@@ -10,7 +10,13 @@
 				"name": "measurement name",
 				"type": "measurement type (enum MeasurementType)",
 				"unit": "measurement unit",
-				"icon": "measurement icon"
+				"icon": "measurement icon",
+				"controllable": false,
+				"min": null,
+				"max": null,
+				"actions": [],
+				"alarms": [],
+				"schedules": []
 			}
 		]
 	}

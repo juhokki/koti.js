@@ -56,8 +56,9 @@ export default class PushApiService extends ServiceBase {
 
 		if (newAlarms.length) {
 			for (const alarm of newAlarms) {
-				const payload = JSON.stringify(alarm);
-				await this.sendToSubscribedUsers(payload);
+				const title = `${alarm.assetName}/${alarm.measurementName}`;
+				const body = alarm.name;
+				await this.sendToSubscribedUsers(title, body);
 			}
 
 			this.alarmsLastSent = Math.max(
@@ -68,13 +69,17 @@ export default class PushApiService extends ServiceBase {
 		}
 	}
 
-	async sendToSubscribedUsers(payload: string) {
+	async sendToSubscribedUsers(title: string, body: string) {
 		console.log(
-			`Sending push notification to ${this.subscriptions.length.toString()} users with payload ${payload}.`
+			`Sending push notification to %i users with title %s and body %s.`,
+			this.subscriptions.length,
+			title,
+			body
 		);
 
 		for (const subscription of this.subscriptions) {
 			try {
+				const payload = JSON.stringify({ title, body });
 				await webpush.sendNotification(subscription, payload);
 			} catch (e) {
 				console.log("Failed to send web-push.", e);

@@ -7,14 +7,14 @@ self.addEventListener("install", () => {
 });
 
 self.addEventListener("push", (event) => {
-	const alarm = event.data.json();
-	const title = `${alarm.assetName}/${alarm.measurementName}`;
-	const body = alarm.name;
+	const json = event.data.json();
+	const title = json.title;
+	const body = json.body;
 
 	self.registration.showNotification(title, { body });
 });
 
 self.addEventListener("notificationclick", function (event) {
 	event.notification.close();
-	event.waitUntil(clients.openWindow("/alarms/"));
+	event.waitUntil(clients.openWindow("/"));
 });

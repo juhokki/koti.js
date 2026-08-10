@@ -20,4 +20,10 @@ export default class ScriptContext {
 			.getDataService()
 			.control(new Value(deviceId, measurementId, value));
 	}
+
+	sendPushNotification(title: string, message: string) {
+		return this.services
+			.getPushApiService()
+			.sendToSubscribedUsers(title, message);
+	}
 }
