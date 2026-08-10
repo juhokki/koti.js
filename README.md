@@ -6,8 +6,8 @@ It combines a TypeScript backend, a React frontend, and multiple hardware bridge
 
 ## What Koti Includes
 
-| Component | Purpose | Link
-| --- | --- |
+| Component | Purpose | Link | 
+| --- | --- | --- | 
 | `server` | Backend API, integrations, scheduling, and data handling | [server/README.md](server/README.md) |
 | `frontend` | Web UI for device state, controls, and monitoring | [frontend/README.md](frontend/README.md) |
 | `ruuvi-sensor` | Bridge for RuuviTag Bluetooth sensor data | [ruuvi-sensor/README.md](ruuvi-sensor/README.md) |
