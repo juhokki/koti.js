@@ -15,8 +15,6 @@ import ShellyIntegration from "./shelly/ShellyIntegration.js";
 import type ShellyIntegrationConfig from "./shelly/ShellyIntegrationConfig.js";
 import ToshibaAcIntegration from "./toshiba/ToshibaAcIntegration.js";
 import type ToshibaAcIntegrationConfig from "./toshiba/ToshibaAcIntegrationConfig.js";
-import VaasanSahkoIntegration from "./vaasansahko/VaasanSahkoIntegration.js";
-import type VaasanSahkoIntegrationConfig from "./vaasansahko/VaasanSahkoIntegrationConfig.js";
 import WizIntegration from "./wiz/WizIntegration.js";
 import type WizIntegrationConfig from "./wiz/WizIntegrationSettings.js";
 
@@ -87,15 +85,6 @@ export default class IntegrationService extends ServiceBase {
 						new ToshibaAcIntegration(
 							this.services,
 							config as ToshibaAcIntegrationConfig
-						)
-					);
-					break;
-				case VaasanSahkoIntegration.name:
-					integrations.set(
-						VaasanSahkoIntegration.name,
-						new VaasanSahkoIntegration(
-							this.services,
-							config as VaasanSahkoIntegrationConfig
 						)
 					);
 					break;
