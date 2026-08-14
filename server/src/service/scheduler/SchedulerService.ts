@@ -4,6 +4,7 @@ import Value from "../../model/Value.js";
 import type ServiceLocator from "../ServiceLocator.js";
 import type SchedulerServiceSettings from "./SchedulerServiceSettings.js";
 import type ScheduleConfig from "../asset/ScheduleConfig.js";
+import logger from "../../util/logger.js";
 
 export default class SchedulerService extends ServiceBase {
 	options: SchedulerServiceSettings;
@@ -43,9 +44,9 @@ export default class SchedulerService extends ServiceBase {
 							measurement.id,
 							schedule
 						).catch((e: unknown) => {
-							console.log(
-								`Failed to execute action ${schedule.name}.`,
-								e
+							logger.error(
+								e,
+								`Failed to execute action ${schedule.name}.`
 							);
 						});
 					})
@@ -61,7 +62,7 @@ export default class SchedulerService extends ServiceBase {
 		measurementId: string,
 		schedule: ScheduleConfig
 	) {
-		console.log(`Executing schedule "${schedule.name}".`);
+		logger.info(`Executing schedule "${schedule.name}".`);
 
 		await this.services
 			.getDataService()

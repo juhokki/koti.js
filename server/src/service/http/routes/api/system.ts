@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import type ServiceLocator from "../../../ServiceLocator.js";
 import { HTTP_INTERNAL_SERVER_ERROR } from "../../../../constants/Http.js";
+import logger from "../../../../util/logger.js";
 
 export default function (services: ServiceLocator) {
 	const router = Router();
@@ -11,7 +12,7 @@ export default function (services: ServiceLocator) {
 			const disk = await systemService.getDisk();
 			res.send({ disk });
 		} catch (e) {
-			console.log("Failed to get system info.", e);
+			logger.error(e, "Failed to get system info.");
 			res.sendStatus(HTTP_INTERNAL_SERVER_ERROR);
 		}
 	});

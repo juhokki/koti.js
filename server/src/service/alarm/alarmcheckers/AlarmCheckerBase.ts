@@ -5,6 +5,7 @@ import type Measurement from "../../../model/Measurement.js";
 import type Value from "../../../model/Value.js";
 import type ServiceLocator from "../../ServiceLocator.js";
 import type AlarmCheckerOptions from "./AlarmCheckerOptions.js";
+import logger from "../../../util/logger.js";
 
 export default class AlarmCheckerBase {
 	services: ServiceLocator;
@@ -102,7 +103,7 @@ export default class AlarmCheckerBase {
 				this.getType()
 			);
 
-			console.log("Triggering alarm.", alarm);
+			logger.info(alarm, "Triggering alarm.");
 
 			this.alarms.set(key, alarm);
 			this.onChange(this.getAlarms());
@@ -115,7 +116,7 @@ export default class AlarmCheckerBase {
 
 	clear(key: string) {
 		if (this.alarms.has(key)) {
-			console.log("Deleting alarm.", this.alarms.get(key));
+			logger.info(this.alarms.get(key), "Deleting alarm.");
 
 			this.alarms.delete(key);
 			this.onChange(this.getAlarms());

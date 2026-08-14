@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import type ServiceLocator from "../../../ServiceLocator.js";
 import { HTTP_UNAUTHORIZED } from "../../../../constants/Http.js";
 import type { PostLoginRequest } from "../../requests/PostLoginRequest.js";
+import logger from "../../../../util/logger.js";
 
 export default function (services: ServiceLocator) {
 	const router = Router();
@@ -15,7 +16,7 @@ export default function (services: ServiceLocator) {
 			);
 			res.send(token);
 		} catch (error) {
-			console.log("Failed to authenticate user", error);
+			logger.error(error, "Failed to authenticate user");
 			res.status(HTTP_UNAUTHORIZED);
 		}
 	});

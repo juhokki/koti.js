@@ -3,6 +3,7 @@ import IntegrationBase from "../IntegrationBase.js";
 import Value from "../../../model/Value.js";
 import type OpenWeatherIntegrationSettings from "./OpenWeatherIntegrationConfig.js";
 import type ServiceLocator from "../../ServiceLocator.js";
+import logger from "../../../util/logger.js";
 
 export interface OpenWeatherMainResponse {
 	temp: number;
@@ -31,7 +32,7 @@ export default class OpenWeatherIntegration extends IntegrationBase {
 	override async start() {
 		this.interval = setInterval(() => {
 			this.update().catch((e: unknown) => {
-				console.log("Failed to fetch weather data.", e);
+				logger.error(e, "Failed to fetch weather data.");
 			});
 		}, this.options.updateInterval);
 

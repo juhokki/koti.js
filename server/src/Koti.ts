@@ -1,4 +1,5 @@
 import path from "path";
+import logger from "./util/logger.js";
 import ServiceLocator from "./service/ServiceLocator.js";
 import AssetService from "./service/asset/AssetService.js";
 import ShoppingListService from "./service/shoppinglist/ShoppingListService.js";
@@ -79,64 +80,58 @@ export default class Koti {
 	}
 
 	async start(): Promise<void> {
-		console.log("Koti starting...");
+		logger.info("Koti starting...");
 
 		this.running = true;
 
 		try {
 			await this.startServices();
-			console.log("Koti started and ready.");
+			logger.info("Koti started and ready.");
 		} catch (e) {
-			console.log("Failed to start Koti.", e);
+			logger.error(e, "Failed to start Koti.");
 			throw e;
 		}
 	}
 
 	async startServices(): Promise<void> {
-		console.log("Starting services...");
+		logger.info("Starting services...");
 
 		for (const service of this.services.values()) {
 			try {
-				console.log(`Starting service ${service.constructor.name}.`);
+				logger.info(`Starting service ${service.constructor.name}.`);
 				await service.start();
 			} catch (e) {
-				console.log(
-					`Failed to start service ${service.constructor.name}.`,
-					e
-				);
+				logger.error(e, `Failed to start service ${service.constructor.name}.`);
 				throw e;
 			}
 		}
 
-		console.log("All services started.");
+		logger.info("All services started.");
 	}
 
 	async stop(): Promise<void> {
 		if (this.running) {
-			console.log("Stopping Koti...");
+			logger.info("Stopping Koti...");
 
 			this.running = false;
 			await this.stopServices();
 
-			console.log("Koti stopped.");
+			logger.info("Koti stopped.");
 		}
 	}
 
 	async stopServices(): Promise<void> {
-		console.log("Stopping services...");
+		logger.info("Stopping services...");
 
 		for (const service of this.services.values()) {
 			try {
-				console.log(`Stopping service ${service.constructor.name}.`);
+				logger.info(`Stopping service ${service.constructor.name}.`);
 				await service.stop();
 			} catch (e) {
-				console.log(
-					`Failed to stop service ${service.constructor.name}.`,
-					e
-				);
+				logger.error(e, `Failed to stop service ${service.constructor.name}.`);
 			}
 		}
 
-		console.log("All services stopped.");
+		logger.info("All services stopped.");
 	}
 }

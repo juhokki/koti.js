@@ -10,6 +10,7 @@ import type ServiceLocator from "../../ServiceLocator.js";
 import ShellyButton2Handler from "./devices/ShellyButton2Handler.js";
 import ShellyPlugSHandler from "./devices/ShellyPlugSHandler.js";
 import type ShellyDeviceHandler from "./devices/ShellyDeviceHandler.js";
+import logger from "../../../util/logger.js";
 
 export const ShellyDeviceTypeButton2 = "SHBTN-2";
 export const ShellyDeviceTypePlugS = "SHPLG-S";
@@ -45,13 +46,13 @@ export default class ShellyIntegration extends IntegrationBase {
 		try {
 			this.services.getAssetService().getDevice(shellyDevice.id);
 		} catch (error) {
-			console.log(
+			logger.warn(
 				`Discovered Shelly device with id ${shellyDevice.id} is not configured. Ignoring.`
 			);
 			return;
 		}
 
-		console.log(
+		logger.info(
 			`Discovered Shelly device with id ${shellyDevice.id} and type ${shellyDevice.type}.`
 		);
 

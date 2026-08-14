@@ -7,6 +7,7 @@ import type Database from "./database/Database.js";
 import ValueCache from "./ValueCache.js";
 import type Value from "../../model/Value.js";
 import MeasurementType from "../../enums/MeasurementType.js";
+import logger from "../../util/logger.js";
 
 export default class DataService extends ServiceBase {
 	options: DataServiceSettings;
@@ -112,7 +113,7 @@ export default class DataService extends ServiceBase {
 		try {
 			await this.database.write(newValues);
 		} catch (e) {
-			console.log("Failed to write values.", e);
+			logger.error(e, "Failed to write values.");
 		}
 	}
 

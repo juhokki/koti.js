@@ -142,11 +142,8 @@ test("Starts and stops http server", async () => {
 
 	service
 		.stop()
-		.then(() => {
-			/* Do nothing */
-		})
 		.catch((e: unknown) => {
-			console.log("Failed");
+			/* Ignore */
 		});
 
 	await new Promise<void>((resolve) => {

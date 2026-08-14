@@ -6,6 +6,7 @@ import type ShoppingListServiceSettings from "./ShoppingListServiceSettings.js";
 import ShoppingListItem from "../../model/ShoppingListItem.js";
 import type ShoppingListConfig from "./ShoppingListConfig.js";
 import { readConfigFile, writeConfigFile } from "../../util/FileUtil.js";
+import logger from "../../util/logger.js";
 
 export default class ShoppingListService extends ServiceBase {
 	options: ShoppingListServiceSettings;
@@ -87,9 +88,9 @@ export default class ShoppingListService extends ServiceBase {
 			writeConfigFile(this.options.file, data);
 			this.hasUpdates = false;
 
-			console.log("Wrote shopping list to file.");
+			logger.info("Wrote shopping list to file.");
 		} catch (e) {
-			console.log("Failed to synchronize shoppinglist", e);
+			logger.error(e, "Failed to synchronize shoppinglist");
 		}
 	}
 }

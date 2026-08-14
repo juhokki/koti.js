@@ -1,4 +1,5 @@
 import path from "path";
+import logger from "./src/util/logger.js";
 import Koti from "./src/Koti.js";
 
 const configDir = path.resolve("conf");
@@ -10,7 +11,7 @@ function onInterrupt() {
 			process.exit(0);
 		})
 		.catch((e: unknown) => {
-			console.log("A problem occurred while stopping Koti.", e);
+			logger.error(e, "A problem occurred while stopping Koti.");
 			process.exit(1);
 		});
 }
@@ -23,6 +24,7 @@ process.on("SIGTERM", () => {
 	onInterrupt();
 });
 
-koti.start().catch(() => {
+koti.start().catch((e: unknown) => {
+	logger.error(e, "A problem occurred while starting Koti.");
 	process.exit(1);
 });

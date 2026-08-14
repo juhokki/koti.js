@@ -8,6 +8,7 @@ import type ServiceLocator from "../ServiceLocator.js";
 import type UserPayload from "./UserPayload.js";
 import type UserConfig from "./UserConfig.js";
 import { readConfigFile, writeConfigFile } from "../../util/FileUtil.js";
+import logger from "../../util/logger.js";
 
 export default class UserService extends ServiceBase {
 	options: UserServiceSettings;
@@ -190,7 +191,7 @@ export default class UserService extends ServiceBase {
 			user.subscriptions.splice(user.subscriptions.indexOf(userSub), 1);
 			this.saveUserChanges();
 		} else {
-			console.log("Unable to find user subscription.");
+			logger.warn("Unable to find user subscription.");
 		}
 	}
 
@@ -199,9 +200,9 @@ export default class UserService extends ServiceBase {
 			const userData = JSON.stringify(this.getUsers(), null, "\t");
 			writeConfigFile(this.options.file, userData);
 
-			console.log("Wrote to users file.");
+			logger.info("Wrote to users file.");
 		} catch (e) {
-			console.log("Failed to save users file.", e);
+			logger.error(e, "Failed to save users file.");
 		}
 	}
 }

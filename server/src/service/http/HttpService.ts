@@ -9,6 +9,7 @@ import type ServiceLocator from "../ServiceLocator.js";
 import type HttpServiceSettings from "./HttpServiceSettings.js";
 import type UserPayload from "../user/UserPayload.js";
 import type ShoppingList from "../../model/ShoppingList.js";
+import logger from "../../util/logger.js";
 
 export default class HttpService extends ServiceBase {
 	options: HttpServiceSettings;
@@ -28,7 +29,7 @@ export default class HttpService extends ServiceBase {
 	override async start() {
 		await new Promise<void>((resolve, reject) => {
 			this.httpServer.listen(this.options.port, () => {
-				console.log(
+				logger.info(
 					`HTTP server started. Listening at port ${this.options.port.toString()}.`
 				);
 				resolve();
@@ -38,11 +39,11 @@ export default class HttpService extends ServiceBase {
 
 	override async stop() {
 		await this.sockets.close();
-		console.log("Socket server closed.");
+		logger.info("Socket server closed.");
 
 		await new Promise<void>((resolve) => {
 			this.httpServer.close(() => {
-				console.log("HTTP server closed.");
+				logger.info("HTTP server closed.");
 				resolve();
 			});
 		});

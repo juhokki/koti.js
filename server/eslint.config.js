@@ -29,7 +29,8 @@ export default tseslint.config(
 					args: "none",
 					caughtErrors: "none"
 				}
-			]
+			],
+			"no-console": "error"
 		}
 	},
 	{
@@ -39,7 +40,8 @@ export default tseslint.config(
 			"coverage/",
 			"package-lock.json",
 			"eslint.config.js",
-			".prettierrc.js"
+			".prettierrc.js",
+			"scripts/"
 		]
 	}
 );

@@ -4,6 +4,7 @@ import Value from "../../../../model/Value.js";
 import type InfluxDatabaseSettings from "./InfluxDatabaseSettings.js";
 import type InfluxValueRow from "./InfluxValueRow.js";
 import type ValueType from "../../../../types/ValueType.js";
+import logger from "../../../../util/logger.js";
 
 export const TABLE_VALUES = "valuedata";
 
@@ -97,7 +98,7 @@ export default class InfluxDatabase implements Database {
 				retentionPolicy: "rp_inf"
 			});
 		} catch (error) {
-			console.log("Failed to write points.", error);
+			logger.error(error, "Failed to write points.");
 		}
 	}
 

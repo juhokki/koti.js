@@ -4,6 +4,7 @@ import * as Messages from "../../constants/Messages.js";
 import type PushApiServiceSettings from "./PushApiServiceSettings.js";
 import type ServiceLocator from "../ServiceLocator.js";
 import type Alarm from "../../model/Alarm.js";
+import logger from "../../util/logger.js";
 
 export default class PushApiService extends ServiceBase {
 	options: PushApiServiceSettings;
@@ -39,10 +40,7 @@ export default class PushApiService extends ServiceBase {
 			.getAlarmService()
 			.on(Messages.ALARMS, (alarms: Alarm[]) => {
 				this.onAlarmsChanged(alarms).catch((e: unknown) => {
-					console.log(
-						`Failed to send handle alarms changed event.`,
-						e
-					);
+					logger.error(e, "Failed to handle alarms changed event.");
 				});
 			});
 
@@ -70,11 +68,8 @@ export default class PushApiService extends ServiceBase {
 	}
 
 	async sendToSubscribedUsers(title: string, body: string) {
-		console.log(
-			`Sending push notification to %i users with title "%s" and body "%s".`,
-			this.subscriptions.length,
-			title,
-			body
+		logger.info(
+			`Sending push notification to ${String(this.subscriptions.length)} users with title "${title}" and body "${body}".`
 		);
 
 		for (const subscription of this.subscriptions) {
@@ -82,7 +77,7 @@ export default class PushApiService extends ServiceBase {
 				const payload = JSON.stringify({ title, body });
 				await webpush.sendNotification(subscription, payload);
 			} catch (e) {
-				console.log("Failed to send web-push.", e);
+				logger.error(e, "Failed to send web-push.");
 			}
 		}
 	}
@@ -99,7 +94,7 @@ export default class PushApiService extends ServiceBase {
 		if (index !== -1) {
 			this.subscriptions.splice(index, 1);
 		} else {
-			console.log("Unable to find Push API subscription.");
+			logger.warn("Unable to find Push API subscription.");
 		}
 	}
 }

@@ -3,6 +3,7 @@ import Value from "../../../../model/Value.js";
 import type ServiceLocator from "../../../ServiceLocator.js";
 import UnconfiguredMeasurementError from "../UnconfiguredMeasurementError.js";
 import type ShellyDeviceHandler from "./ShellyDeviceHandler.js";
+import logger from "../../../../util/logger.js";
 
 export const INPUT_EVENT_COUNTER_0 = "inputEventCounter0";
 export const BATTERY = "battery";
@@ -30,7 +31,7 @@ export default class ShellyButton2Handler implements ShellyDeviceHandler {
 				return;
 			}
 
-			console.log("Failed to write values.", e);
+			logger.error(e, "Failed to write values.");
 		});
 	}
 

@@ -2,6 +2,7 @@ import type { NextFunction, Response } from "express";
 import type ServiceLocator from "../../ServiceLocator.js";
 import { HTTP_UNAUTHORIZED } from "../../../constants/Http.js";
 import type { AuthenticatedRequest } from "../requests/AuthenticatedRequest.js";
+import logger from "../../../util/logger.js";
 
 export const AUTH_SCHEME_BASIC = "Basic";
 export const AUTH_SCHEME_BEARER = "Bearer";
@@ -47,7 +48,7 @@ export default function createAuthMiddleware(services: ServiceLocator) {
 				req.user = userService.verifyBasic(username, password);
 				next();
 			} catch (error) {
-				console.log("Basic authentication failed", error);
+				logger.error(error, "Basic authentication failed");
 				res.sendStatus(HTTP_UNAUTHORIZED);
 			}
 		} else if (scheme === AUTH_SCHEME_BEARER) {
@@ -62,7 +63,7 @@ export default function createAuthMiddleware(services: ServiceLocator) {
 				req.user = user;
 				next();
 			} catch (e) {
-				console.log("Bearer authentication failed", e);
+				logger.error(e, "Bearer authentication failed");
 				res.sendStatus(HTTP_UNAUTHORIZED);
 			}
 		} else {

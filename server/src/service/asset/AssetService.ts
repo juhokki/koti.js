@@ -10,6 +10,7 @@ import type DeviceConfig from "./DeviceConfig.js";
 import type AssetConfig from "./AssetConfig.js";
 import type DeviceType from "../../enums/DeviceType.js";
 import { readConfigFile } from "../../util/FileUtil.js";
+import logger from "../../util/logger.js";
 
 export default class AssetService extends ServiceBase {
 	options: AssetServiceSettings;
@@ -165,7 +166,7 @@ export default class AssetService extends ServiceBase {
 		const measurement = this.getMeasurement(deviceId, measurementId);
 
 		if (measurement.getDisabled() !== status) {
-			console.log(
+			logger.info(
 				`Setting measurement "${deviceId}/${measurementId}" disabled state to "${status ? "true" : "false"}".`
 			);
 			measurement.setDisabled(status);
@@ -177,7 +178,7 @@ export default class AssetService extends ServiceBase {
 		const device = this.getDevice(deviceId);
 
 		if (device.getOnlineStatus() !== status) {
-			console.log(
+			logger.info(
 				`Setting device "${deviceId}" online state to "${status}".`
 			);
 			device.setOnlineStatus(status);

@@ -15,6 +15,7 @@ import ShellyIntegration from "./shelly/ShellyIntegration.js";
 import type ShellyIntegrationConfig from "./shelly/ShellyIntegrationConfig.js";
 import ToshibaAcIntegration from "./toshiba/ToshibaAcIntegration.js";
 import type ToshibaAcIntegrationConfig from "./toshiba/ToshibaAcIntegrationConfig.js";
+import logger from "../../util/logger.js";
 
 export default class IntegrationService extends ServiceBase {
 	options: IntegrationServiceSettings;
@@ -29,7 +30,7 @@ export default class IntegrationService extends ServiceBase {
 
 	override async start() {
 		for (const integration of this.integrations.values()) {
-			console.log(
+			logger.info(
 				`Starting integration ${integration.constructor.name}.`
 			);
 			await integration.start();
@@ -38,7 +39,7 @@ export default class IntegrationService extends ServiceBase {
 
 	override async stop() {
 		for (const integration of this.integrations.values()) {
-			console.log(
+			logger.info(
 				`Stopping integration ${integration.constructor.name}.`
 			);
 			await integration.stop();

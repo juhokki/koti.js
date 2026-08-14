@@ -13,6 +13,7 @@ import Value from "../../../model/Value.js";
 import type ServiceLocator from "../../ServiceLocator.js";
 import IntegrationBase from "../IntegrationBase.js";
 import type MatterIntegrationSettings from "./MatterIntegrationConfig.js";
+import logger from "../../../util/logger.js";
 
 export const MEASUREMENT_POWER = "power";
 export const MEASUREMENT_BRIGHTNESS = "brightness";
@@ -96,13 +97,13 @@ export default class MatterIntegration extends IntegrationBase {
 		try {
 			this.services.getAssetService().getDevice(deviceIdString);
 		} catch (e) {
-			console.log(
+			logger.warn(
 				`Discovered Matter device with id ${deviceIdString} is not configured. Ignoring.`
 			);
 			return;
 		}
 
-		console.log(`Discovered Matter device with id ${deviceIdString}.`);
+		logger.info(`Discovered Matter device with id ${deviceIdString}.`);
 
 		this.matterDevices.push(matterDevice);
 
@@ -143,7 +144,7 @@ export default class MatterIntegration extends IntegrationBase {
 						)
 					])
 					.catch((e: unknown) => {
-						console.log("Failed to write value", e);
+						logger.error(e, "Failed to write value");
 					});
 
 				this.services
@@ -183,7 +184,7 @@ export default class MatterIntegration extends IntegrationBase {
 								)
 							])
 							.catch((e: unknown) => {
-								console.log("Failed to write value", e);
+								logger.error(e, "Failed to write value");
 							});
 					}
 				});

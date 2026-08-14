@@ -8,6 +8,7 @@ import {
 import type { PostValuesRequest } from "../../requests/PostValuesRequest.js";
 import type { GetValueRangeRequest } from "../../requests/GetValueRangeRequest.js";
 import type { PutValueRequest } from "../../requests/PutValueRequest.js";
+import logger from "../../../../util/logger.js";
 
 export default function (services: ServiceLocator) {
 	const router = Router();
@@ -23,7 +24,7 @@ export default function (services: ServiceLocator) {
 			await integration.write(values);
 			res.sendStatus(HTTP_OK);
 		} catch (e) {
-			console.log("Failed to write values.", e);
+			logger.error(e, "Failed to write values.");
 			res.status(HTTP_INTERNAL_SERVER_ERROR).send(
 				"Failed to write values."
 			);
@@ -37,7 +38,7 @@ export default function (services: ServiceLocator) {
 			await dataService.control(value);
 			res.sendStatus(HTTP_OK);
 		} catch (e) {
-			console.log("Failed to control value.", e);
+			logger.error(e, "Failed to control value.");
 			res.status(HTTP_INTERNAL_SERVER_ERROR).send(
 				"Failed to control value."
 			);
@@ -59,7 +60,7 @@ export default function (services: ServiceLocator) {
 				);
 				res.send(data);
 			} catch (e) {
-				console.log("Failed to read values.", e);
+				logger.error(e, "Failed to read values.");
 				res.status(HTTP_INTERNAL_SERVER_ERROR).send(
 					"Failed to read values."
 				);

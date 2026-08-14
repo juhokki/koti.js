@@ -8,6 +8,7 @@ import type { PutWebPushSubscriptionRequest } from "../../requests/PutWebPushSub
 import type { PostWebPushSubscriptionRequest } from "../../requests/PostWebPushSubscriptionRequest.js";
 import type { DeleteWebPushSubscriptionRequest } from "../../requests/DeleteWebPushSubscriptionRequest.js";
 import type { AuthenticatedRequest } from "../../requests/AuthenticatedRequest.js";
+import logger from "../../../../util/logger.js";
 
 export function getUser(
 	req: AuthenticatedRequest<
@@ -41,7 +42,7 @@ export default function (services: ServiceLocator) {
 				);
 				res.send({ status: isSubcribed });
 			} catch (e) {
-				console.log("Failed to get subscription.", e);
+				logger.error(e, "Failed to get subscription.");
 				res.sendStatus(HTTP_INTERNAL_SERVER_ERROR);
 			}
 		}
@@ -56,7 +57,7 @@ export default function (services: ServiceLocator) {
 				userService.addUserSubscription(user.username, subscription);
 				res.sendStatus(HTTP_OK);
 			} catch (e) {
-				console.log("Failed to add subscription.", e);
+				logger.error(e, "Failed to add subscription.");
 				res.sendStatus(HTTP_INTERNAL_SERVER_ERROR);
 			}
 		}
@@ -71,7 +72,7 @@ export default function (services: ServiceLocator) {
 				userService.deleteUserSubscription(user.username, subscription);
 				res.sendStatus(HTTP_OK);
 			} catch (e) {
-				console.log("Failed to delete subscription.", e);
+				logger.error(e, "Failed to delete subscription.");
 				res.sendStatus(HTTP_INTERNAL_SERVER_ERROR);
 			}
 		}

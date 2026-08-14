@@ -2,6 +2,7 @@ import type ActionConfig from "../../asset/ActionConfig.js";
 import type ServiceLocator from "../../ServiceLocator.js";
 import type ScriptContext from "../ScriptContext.js";
 import type ActionHandler from "./ActionHandler.js";
+import logger from "../../../util/logger.js";
 
 export default class OnChangeActionHandler implements ActionHandler {
 	services: ServiceLocator;
@@ -31,10 +32,10 @@ export default class OnChangeActionHandler implements ActionHandler {
 
 	execute(context: ScriptContext) {
 		try {
-			console.log(`Executing action "${this.name}".`);
+			logger.info(`Executing action "${this.name}".`);
 			this.script.call(context);
 		} catch (error) {
-			console.log(`Failed to execute action "${this.name}".`, error);
+			logger.error(error, `Failed to execute action "${this.name}".`);
 		}
 	}
 }

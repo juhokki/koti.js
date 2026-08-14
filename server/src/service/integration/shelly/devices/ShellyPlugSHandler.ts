@@ -4,6 +4,7 @@ import Value from "../../../../model/Value.js";
 import type ServiceLocator from "../../../ServiceLocator.js";
 import UnconfiguredMeasurementError from "../UnconfiguredMeasurementError.js";
 import type ShellyDeviceHandler from "./ShellyDeviceHandler.js";
+import logger from "../../../../util/logger.js";
 
 export const RELAY_0 = "relay0";
 export const POWER_0 = "power0";
@@ -28,7 +29,7 @@ export default class ShellyPlugSHandler implements ShellyDeviceHandler {
 				return;
 			}
 
-			console.log("Failed to write values.", e);
+			logger.error(e, "Failed to write values.");
 		});
 	}
 
