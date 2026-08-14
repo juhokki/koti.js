@@ -1,5 +1,5 @@
 import { expect, test, vi } from "vitest";
-import ActionTrigger from "../../src/enums/ActionTrigger.js";
+import ActionTrigger from "../../src/constants/ActionTrigger.ts";
 import ActionConfig from "../../src/service/asset/ActionConfig.js";
 import Device from "../../src/model/Device.js";
 import Measurement from "../../src/model/Measurement.js";
@@ -9,8 +9,8 @@ import ActionService from "../../src/service/action/ActionService.js";
 import type ServiceBase from "../../src/service/ServiceBase.js";
 import type AssetService from "../../src/service/asset/AssetService.js";
 import type ActionServiceSettings from "../../src/service/action/ActionServiceSettings.js";
-import MeasurementType from "../../src/enums/MeasurementType.js";
-import DeviceType from "../../src/enums/DeviceType.js";
+import MeasurementType from "../../src/constants/MeasurementType.ts";
+import DeviceType from "../../src/constants/DeviceType.ts";
 import type DataService from "../../src/service/data/DataService.js";
 
 const mockGetDevices = vi.fn();

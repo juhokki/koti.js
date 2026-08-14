@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
-import IntegrationBase from "../IntegrationBase.js";
-import Value from "../../../model/Value.js";
-import type ToshibaAcIntegrationSettings from "./ToshibaAcIntegrationConfig.js";
-import type ServiceLocator from "../../ServiceLocator.js";
+import IntegrationBase from "../IntegrationBase.ts";
+import Value from "../../../model/Value.ts";
+import type ToshibaAcIntegrationSettings from "./ToshibaAcIntegrationConfig.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
 
 export interface DeviceState {
 	ac_status: number;

@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
-import type ServiceLocator from "../../../ServiceLocator.js";
-import { HTTP_INTERNAL_SERVER_ERROR } from "../../../../constants/Http.js";
-import logger from "../../../../util/logger.js";
+import type ServiceLocator from "../../../ServiceLocator.ts";
+import { HTTP_INTERNAL_SERVER_ERROR } from "../../../../constants/Http.ts";
+import logger from "../../../../util/logger.ts";
 
 export default function (services: ServiceLocator) {
 	const router = Router();

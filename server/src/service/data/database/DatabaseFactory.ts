@@ -1,8 +1,8 @@
-import type DatabaseSettings from "./DatabaseSettings.js";
-import InfluxDatabase from "./influx/InfluxDatabase.js";
-import type InfluxDatabaseSettings from "./influx/InfluxDatabaseSettings.js";
-import TimescaleDatabase from "./timescale/TimescaleDatabase.js";
-import type TimescaleDatabaseSettings from "./timescale/TimescaleDatabaseSettings.js";
+import type DatabaseSettings from "./DatabaseSettings.ts";
+import InfluxDatabase from "./influx/InfluxDatabase.ts";
+import type InfluxDatabaseSettings from "./influx/InfluxDatabaseSettings.ts";
+import TimescaleDatabase from "./timescale/TimescaleDatabase.ts";
+import type TimescaleDatabaseSettings from "./timescale/TimescaleDatabaseSettings.ts";
 
 export default class DatabaseFactory {
 	options: DatabaseSettings;

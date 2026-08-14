@@ -1,6 +1,6 @@
 import { expect, test, vi } from "vitest";
-import DeviceType from "../../src/enums/DeviceType.js";
-import MeasurementType from "../../src/enums/MeasurementType.js";
+import DeviceType from "../../src/constants/DeviceType.ts";
+import MeasurementType from "../../src/constants/MeasurementType.ts";
 import Device from "../../src/model/Device.js";
 import Measurement from "../../src/model/Measurement.js";
 import Value from "../../src/model/Value.js";

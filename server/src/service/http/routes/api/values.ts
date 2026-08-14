@@ -1,14 +1,14 @@
 import { Router, type Response } from "express";
-import type ServiceLocator from "../../../ServiceLocator.js";
-import RestApiIntegration from "../../../integration/rest/RestApiIntegration.js";
+import type ServiceLocator from "../../../ServiceLocator.ts";
+import RestApiIntegration from "../../../integration/rest/RestApiIntegration.ts";
 import {
 	HTTP_INTERNAL_SERVER_ERROR,
 	HTTP_OK
-} from "../../../../constants/Http.js";
-import type { PostValuesRequest } from "../../requests/PostValuesRequest.js";
-import type { GetValueRangeRequest } from "../../requests/GetValueRangeRequest.js";
-import type { PutValueRequest } from "../../requests/PutValueRequest.js";
-import logger from "../../../../util/logger.js";
+} from "../../../../constants/Http.ts";
+import type { PostValuesRequest } from "../../requests/PostValuesRequest.ts";
+import type { GetValueRangeRequest } from "../../requests/GetValueRangeRequest.ts";
+import type { PutValueRequest } from "../../requests/PutValueRequest.ts";
+import logger from "../../../../util/logger.ts";
 
 export default function (services: ServiceLocator) {
 	const router = Router();

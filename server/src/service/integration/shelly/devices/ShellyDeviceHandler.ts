@@ -1,4 +1,4 @@
-import type Value from "../../../../model/Value.js";
+import type Value from "../../../../model/Value.ts";
 
 export default interface ShellyDeviceHandler {
 	onDeviceValueChanged(prop: string, value: number): void;

@@ -1,16 +1,16 @@
-import ServiceBase from "../ServiceBase.js";
-import Asset from "../../model/Asset.js";
-import Device from "../../model/Device.js";
-import Measurement from "../../model/Measurement.js";
-import DeviceOnlineStatus from "../../enums/DeviceOnlineStatus.js";
-import * as Messages from "../../constants/Messages.js";
-import type ServiceLocator from "../ServiceLocator.js";
-import type AssetServiceSettings from "./AssetServiceSettings.js";
-import type DeviceConfig from "./DeviceConfig.js";
-import type AssetConfig from "./AssetConfig.js";
-import type DeviceType from "../../enums/DeviceType.js";
-import { readConfigFile } from "../../util/FileUtil.js";
-import logger from "../../util/logger.js";
+import ServiceBase from "../ServiceBase.ts";
+import Asset from "../../model/Asset.ts";
+import Device from "../../model/Device.ts";
+import Measurement from "../../model/Measurement.ts";
+import DeviceOnlineStatus from "../../constants/DeviceOnlineStatus.ts";
+import * as Messages from "../../constants/Messages.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
+import type AssetServiceSettings from "./AssetServiceSettings.ts";
+import type DeviceConfig from "./DeviceConfig.ts";
+import type AssetConfig from "./AssetConfig.ts";
+import type DeviceType from "../../constants/DeviceType.ts";
+import { readConfigFile } from "../../util/FileUtil.ts";
+import logger from "../../util/logger.ts";
 
 export default class AssetService extends ServiceBase {
 	options: AssetServiceSettings;

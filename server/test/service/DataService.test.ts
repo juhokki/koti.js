@@ -7,7 +7,7 @@ import type AssetService from "../../src/service/asset/AssetService.js";
 import type ServiceBase from "../../src/service/ServiceBase.js";
 import type DataServiceSettings from "../../src/service/data/DataServiceSettings.js";
 import type TimescaleDatabaseSettings from "../../src/service/data/database/timescale/TimescaleDatabaseSettings.js";
-import MeasurementType from "../../src/enums/MeasurementType.js";
+import MeasurementType from "../../src/constants/MeasurementType.ts";
 import type IntegrationService from "../../src/service/integration/IntegrationService.js";
 
 const mockReadLatestValues = vi.hoisted(() => vi.fn());

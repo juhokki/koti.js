@@ -1,6 +1,6 @@
-import type DeviceOnlineStatus from "../../enums/DeviceOnlineStatus.js";
-import type DeviceType from "../../enums/DeviceType.js";
-import type MeasurementConfig from "./MeasurementConfig.js";
+import type DeviceOnlineStatus from "../../constants/DeviceOnlineStatus.ts";
+import type DeviceType from "../../constants/DeviceType.ts";
+import type MeasurementConfig from "./MeasurementConfig.ts";
 
 export default interface DeviceConfig {
 	id: string;

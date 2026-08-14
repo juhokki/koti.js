@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import ServiceLocator from "./ServiceLocator.js";
+import ServiceLocator from "./ServiceLocator.ts";
 
 export default class ServiceBase extends EventEmitter {
 	services: ServiceLocator;

@@ -3,11 +3,11 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
-import getLoginRouter from "./login/index.js";
-import getApiRouter from "./api/index.js";
-import getAuthMiddleware from "../middleware/auth.js";
-import type ServiceLocator from "../../ServiceLocator.js";
-import type HttpServiceSettings from "../HttpServiceSettings.js";
+import getLoginRouter from "./login/index.ts";
+import getApiRouter from "./api/index.ts";
+import getAuthMiddleware from "../middleware/auth.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import type HttpServiceSettings from "../HttpServiceSettings.ts";
 
 export default function (
 	services: ServiceLocator,

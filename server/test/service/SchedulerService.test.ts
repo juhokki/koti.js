@@ -7,7 +7,7 @@ import type ServiceBase from "../../src/service/ServiceBase.js";
 import type DataService from "../../src/service/data/DataService.js";
 import type AssetService from "../../src/service/asset/AssetService.js";
 import type SchedulerServiceSettings from "../../src/service/scheduler/SchedulerServiceSettings.js";
-import MeasurementType from "../../src/enums/MeasurementType.js";
+import MeasurementType from "../../src/constants/MeasurementType.ts";
 
 const now = Date.now();
 vi.useFakeTimers();

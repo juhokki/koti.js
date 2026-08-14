@@ -1,14 +1,14 @@
 import jwt from "jsonwebtoken";
 import { type PushSubscription } from "web-push";
 import crypto from "crypto";
-import ServiceBase from "../ServiceBase.js";
-import User from "../../model/User.js";
-import type UserServiceSettings from "./UserServiceSettings.js";
-import type ServiceLocator from "../ServiceLocator.js";
-import type UserPayload from "./UserPayload.js";
-import type UserConfig from "./UserConfig.js";
-import { readConfigFile, writeConfigFile } from "../../util/FileUtil.js";
-import logger from "../../util/logger.js";
+import ServiceBase from "../ServiceBase.ts";
+import User from "../../model/User.ts";
+import type UserServiceSettings from "./UserServiceSettings.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
+import type UserPayload from "./UserPayload.ts";
+import type UserConfig from "./UserConfig.ts";
+import { readConfigFile, writeConfigFile } from "../../util/FileUtil.ts";
+import logger from "../../util/logger.ts";
 
 export default class UserService extends ServiceBase {
 	options: UserServiceSettings;

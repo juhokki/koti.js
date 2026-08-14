@@ -7,13 +7,13 @@ import {
 	type CommissioningControllerOptions
 } from "@project-chip/matter.js";
 import { NodeStates } from "@project-chip/matter.js/device";
-import DeviceOnlineStatus from "../../../enums/DeviceOnlineStatus.js";
-import DeviceType from "../../../enums/DeviceType.js";
-import Value from "../../../model/Value.js";
-import type ServiceLocator from "../../ServiceLocator.js";
-import IntegrationBase from "../IntegrationBase.js";
-import type MatterIntegrationSettings from "./MatterIntegrationConfig.js";
-import logger from "../../../util/logger.js";
+import DeviceOnlineStatus from "../../../constants/DeviceOnlineStatus.ts";
+import DeviceType from "../../../constants/DeviceType.ts";
+import Value from "../../../model/Value.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import IntegrationBase from "../IntegrationBase.ts";
+import type MatterIntegrationSettings from "./MatterIntegrationConfig.ts";
+import logger from "../../../util/logger.ts";
 
 export const MEASUREMENT_POWER = "power";
 export const MEASUREMENT_BRIGHTNESS = "brightness";

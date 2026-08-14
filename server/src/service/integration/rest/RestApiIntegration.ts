@@ -1,7 +1,7 @@
-import type Value from "../../../model/Value.js";
-import type ServiceLocator from "../../ServiceLocator.js";
-import IntegrationBase from "../IntegrationBase.js";
-import type RestApiIntegrationSettings from "./RestApiIntegrationConfig.js";
+import type Value from "../../../model/Value.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import IntegrationBase from "../IntegrationBase.ts";
+import type RestApiIntegrationSettings from "./RestApiIntegrationConfig.ts";
 
 export default class RestApiIntegration extends IntegrationBase {
 	options: RestApiIntegrationSettings;

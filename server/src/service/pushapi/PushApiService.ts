@@ -1,10 +1,10 @@
 import webpush, { type PushSubscription } from "web-push";
-import ServiceBase from "../ServiceBase.js";
-import * as Messages from "../../constants/Messages.js";
-import type PushApiServiceSettings from "./PushApiServiceSettings.js";
-import type ServiceLocator from "../ServiceLocator.js";
-import type Alarm from "../../model/Alarm.js";
-import logger from "../../util/logger.js";
+import ServiceBase from "../ServiceBase.ts";
+import * as Messages from "../../constants/Messages.ts";
+import type PushApiServiceSettings from "./PushApiServiceSettings.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
+import type Alarm from "../../model/Alarm.ts";
+import logger from "../../util/logger.ts";
 
 export default class PushApiService extends ServiceBase {
 	options: PushApiServiceSettings;

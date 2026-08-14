@@ -11,7 +11,6 @@ See also:
 | Script | Description |
 | ------ | ----------- |
 | npm run start | Starts the Koti server |
-| npm run build | Builds a dist folder |
 | npm run test | Runs units tests |
 | npm run test:coverage | Reports test coverage |
 | npm run lint | Finds problems in code according to rules in eslint.config.js |
@@ -30,7 +29,7 @@ After=postgresql.service
 
 [Service]
 WorkingDirectory=/home/koti/koti.js/server
-ExecStart=node index.js
+ExecStart=npm run start
 Restart=on-failure
 User=koti
 

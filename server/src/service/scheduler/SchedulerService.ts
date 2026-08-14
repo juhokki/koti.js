@@ -1,10 +1,10 @@
 import cron, { type ScheduledTask } from "node-cron";
-import ServiceBase from "../ServiceBase.js";
-import Value from "../../model/Value.js";
-import type ServiceLocator from "../ServiceLocator.js";
-import type SchedulerServiceSettings from "./SchedulerServiceSettings.js";
-import type ScheduleConfig from "../asset/ScheduleConfig.js";
-import logger from "../../util/logger.js";
+import ServiceBase from "../ServiceBase.ts";
+import Value from "../../model/Value.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
+import type SchedulerServiceSettings from "./SchedulerServiceSettings.ts";
+import type ScheduleConfig from "../asset/ScheduleConfig.ts";
+import logger from "../../util/logger.ts";
 
 export default class SchedulerService extends ServiceBase {
 	options: SchedulerServiceSettings;

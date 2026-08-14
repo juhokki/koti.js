@@ -1,4 +1,4 @@
-import type IntegrationConfig from "../IntegrationConfig.js";
+import type IntegrationConfig from "../IntegrationConfig.ts";
 
 // eslint-disable-next-line
 export default interface RestApiIntegrationSettings extends IntegrationConfig {}

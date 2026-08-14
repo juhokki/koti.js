@@ -1,5 +1,5 @@
-import type Value from "../../../model/Value.js";
-import type { AuthenticatedRequest } from "./AuthenticatedRequest.js";
+import type Value from "../../../model/Value.ts";
+import type { AuthenticatedRequest } from "./AuthenticatedRequest.ts";
 
 export type PutValueRequestBody = Value;
 

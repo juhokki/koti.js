@@ -1,4 +1,4 @@
-import type ShoppingListItemConfig from "./ShoppingListItemConfig.js";
+import type ShoppingListItemConfig from "./ShoppingListItemConfig.ts";
 
 export default interface ShoppingListConfig {
 	update: string;

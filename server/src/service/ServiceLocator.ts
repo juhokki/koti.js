@@ -1,12 +1,12 @@
-import type AlarmService from "./alarm/AlarmService.js";
-import type AssetService from "./asset/AssetService.js";
-import type DataService from "./data/DataService.js";
-import type IntegrationService from "./integration/IntegrationService.js";
-import type PushApiService from "./pushapi/PushApiService.js";
-import type ServiceBase from "./ServiceBase.js";
-import type ShoppingListService from "./shoppinglist/ShoppingListService.js";
-import type SystemService from "./system/SystemService.js";
-import type UserService from "./user/UserService.js";
+import type AlarmService from "./alarm/AlarmService.ts";
+import type AssetService from "./asset/AssetService.ts";
+import type DataService from "./data/DataService.ts";
+import type IntegrationService from "./integration/IntegrationService.ts";
+import type PushApiService from "./pushapi/PushApiService.ts";
+import type ServiceBase from "./ServiceBase.ts";
+import type ShoppingListService from "./shoppinglist/ShoppingListService.ts";
+import type SystemService from "./system/SystemService.ts";
+import type UserService from "./user/UserService.ts";
 
 export default class ServiceLocator {
 	services: Map<string, ServiceBase>;

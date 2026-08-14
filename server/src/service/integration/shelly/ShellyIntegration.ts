@@ -3,14 +3,14 @@ import shellies, {
 	type ShellyDeviceButton2,
 	type ShellyDevicePlugS
 } from "shellies";
-import IntegrationBase from "../IntegrationBase.js";
-import Value from "../../../model/Value.js";
-import type ShellyIntegrationSettings from "./ShellyIntegrationConfig.js";
-import type ServiceLocator from "../../ServiceLocator.js";
-import ShellyButton2Handler from "./devices/ShellyButton2Handler.js";
-import ShellyPlugSHandler from "./devices/ShellyPlugSHandler.js";
-import type ShellyDeviceHandler from "./devices/ShellyDeviceHandler.js";
-import logger from "../../../util/logger.js";
+import IntegrationBase from "../IntegrationBase.ts";
+import Value from "../../../model/Value.ts";
+import type ShellyIntegrationSettings from "./ShellyIntegrationConfig.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import ShellyButton2Handler from "./devices/ShellyButton2Handler.ts";
+import ShellyPlugSHandler from "./devices/ShellyPlugSHandler.ts";
+import type ShellyDeviceHandler from "./devices/ShellyDeviceHandler.ts";
+import logger from "../../../util/logger.ts";
 
 export const ShellyDeviceTypeButton2 = "SHBTN-2";
 export const ShellyDeviceTypePlugS = "SHPLG-S";

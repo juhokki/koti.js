@@ -1,6 +1,6 @@
 import { expect, test, vi } from "vitest";
 import type { PushSubscription } from "web-push";
-import AlarmType from "../../src/enums/AlarmType.js";
+import AlarmType from "../../src/constants/AlarmType.ts";
 import Alarm from "../../src/model/Alarm.js";
 import type AlarmService from "../../src/service/alarm/AlarmService.js";
 import PushApiService from "../../src/service/pushapi/PushApiService.js";

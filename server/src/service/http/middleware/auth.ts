@@ -1,8 +1,8 @@
 import type { NextFunction, Response } from "express";
-import type ServiceLocator from "../../ServiceLocator.js";
-import { HTTP_UNAUTHORIZED } from "../../../constants/Http.js";
-import type { AuthenticatedRequest } from "../requests/AuthenticatedRequest.js";
-import logger from "../../../util/logger.js";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import { HTTP_UNAUTHORIZED } from "../../../constants/Http.ts";
+import type { AuthenticatedRequest } from "../requests/AuthenticatedRequest.ts";
+import logger from "../../../util/logger.ts";
 
 export const AUTH_SCHEME_BASIC = "Basic";
 export const AUTH_SCHEME_BEARER = "Bearer";

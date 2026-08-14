@@ -1,6 +1,6 @@
-import Value from "../../model/Value.js";
-import type ValueType from "../../types/ValueType.js";
-import type ServiceLocator from "../ServiceLocator.js";
+import Value from "../../model/Value.ts";
+import type ValueType from "../../types/ValueType.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
 
 export default class ScriptContext {
 	services: ServiceLocator;

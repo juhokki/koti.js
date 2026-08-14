@@ -1,8 +1,8 @@
-import type ActionConfig from "../../asset/ActionConfig.js";
-import type ServiceLocator from "../../ServiceLocator.js";
-import type ScriptContext from "../ScriptContext.js";
-import type ActionHandler from "./ActionHandler.js";
-import logger from "../../../util/logger.js";
+import type ActionConfig from "../../asset/ActionConfig.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import type ScriptContext from "../ScriptContext.ts";
+import type ActionHandler from "./ActionHandler.ts";
+import logger from "../../../util/logger.ts";
 
 export default class OnChangeActionHandler implements ActionHandler {
 	services: ServiceLocator;

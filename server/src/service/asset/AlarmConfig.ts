@@ -1,4 +1,4 @@
-import type AlarmType from "../../enums/AlarmType.js";
+import type AlarmType from "../../constants/AlarmType.ts";
 
 export default class AlarmConfig {
 	name: string;

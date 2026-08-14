@@ -1,14 +1,14 @@
-import type ShoppingListServiceSettings from "./shoppinglist/ShoppingListServiceSettings.js";
-import type AssetServiceSettings from "./asset/AssetServiceSettings.js";
-import type DataServiceSettings from "./data/DataServiceSettings.js";
-import type IntegrationServiceSettings from "./integration/IntegrationServiceSettings.js";
-import type HttpServiceSettings from "./http/HttpServiceSettings.js";
-import type UserServiceSettings from "./user/UserServiceSettings.js";
-import type PushApiServiceSettings from "./pushapi/PushApiServiceSettings.js";
-import type AlarmServiceSettings from "./alarm/AlarmServiceSettings.js";
-import type ActionServiceSettings from "./action/ActionServiceSettings.js";
-import type SystemServiceSettings from "./system/SystemServiceSettings.js";
-import type SchedulerServiceSettings from "./scheduler/SchedulerServiceSettings.js";
+import type ShoppingListServiceSettings from "./shoppinglist/ShoppingListServiceSettings.ts";
+import type AssetServiceSettings from "./asset/AssetServiceSettings.ts";
+import type DataServiceSettings from "./data/DataServiceSettings.ts";
+import type IntegrationServiceSettings from "./integration/IntegrationServiceSettings.ts";
+import type HttpServiceSettings from "./http/HttpServiceSettings.ts";
+import type UserServiceSettings from "./user/UserServiceSettings.ts";
+import type PushApiServiceSettings from "./pushapi/PushApiServiceSettings.ts";
+import type AlarmServiceSettings from "./alarm/AlarmServiceSettings.ts";
+import type ActionServiceSettings from "./action/ActionServiceSettings.ts";
+import type SystemServiceSettings from "./system/SystemServiceSettings.ts";
+import type SchedulerServiceSettings from "./scheduler/SchedulerServiceSettings.ts";
 
 export default interface ServicesConfig {
 	AssetService: AssetServiceSettings;

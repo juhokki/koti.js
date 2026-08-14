@@ -1,8 +1,8 @@
 import { Router } from "express";
-import getUserRouter from "./user.js";
-import getValuesRouter from "./values.js";
-import getSystemRouter from "./system.js";
-import type ServiceLocator from "../../../ServiceLocator.js";
+import getUserRouter from "./user.ts";
+import getValuesRouter from "./values.ts";
+import getSystemRouter from "./system.ts";
+import type ServiceLocator from "../../../ServiceLocator.ts";
 
 export default function (services: ServiceLocator) {
 	const router = Router();

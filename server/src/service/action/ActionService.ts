@@ -1,12 +1,12 @@
-import ServiceBase from "../ServiceBase.js";
-import * as Messages from "../../constants/Messages.js";
-import OnChangeActionHandler from "./actionhandler/OnChangeActionHandler.js";
-import type ActionServiceSettings from "./ActionServiceSettings.js";
-import type ServiceLocator from "../ServiceLocator.js";
-import type Device from "../../model/Device.js";
-import type ActionHandler from "./actionhandler/ActionHandler.js";
-import type Value from "../../model/Value.js";
-import ScriptContext from "./ScriptContext.js";
+import ServiceBase from "../ServiceBase.ts";
+import * as Messages from "../../constants/Messages.ts";
+import OnChangeActionHandler from "./actionhandler/OnChangeActionHandler.ts";
+import type ActionServiceSettings from "./ActionServiceSettings.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
+import type Device from "../../model/Device.ts";
+import type ActionHandler from "./actionhandler/ActionHandler.ts";
+import type Value from "../../model/Value.ts";
+import ScriptContext from "./ScriptContext.ts";
 
 export default class ActionService extends ServiceBase {
 	options: ActionServiceSettings;

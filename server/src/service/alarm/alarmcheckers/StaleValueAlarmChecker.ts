@@ -1,8 +1,8 @@
-import AlarmCheckerBase from "./AlarmCheckerBase.js";
-import type ServiceLocator from "../../ServiceLocator.js";
-import type AlarmCheckerOptions from "./AlarmCheckerOptions.js";
-import type Value from "../../../model/Value.js";
-import type Measurement from "../../../model/Measurement.js";
+import AlarmCheckerBase from "./AlarmCheckerBase.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import type AlarmCheckerOptions from "./AlarmCheckerOptions.ts";
+import type Value from "../../../model/Value.ts";
+import type Measurement from "../../../model/Measurement.ts";
 
 export default class StaleValueAlarmChecker extends AlarmCheckerBase {
 	timeouts: Map<string, NodeJS.Timeout>;

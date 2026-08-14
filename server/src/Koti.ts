@@ -1,19 +1,19 @@
 import path from "path";
-import logger from "./util/logger.js";
-import ServiceLocator from "./service/ServiceLocator.js";
-import AssetService from "./service/asset/AssetService.js";
-import ShoppingListService from "./service/shoppinglist/ShoppingListService.js";
-import UserService from "./service/user/UserService.js";
-import DataService from "./service/data/DataService.js";
-import ActionService from "./service/action/ActionService.js";
-import IntegrationService from "./service/integration/IntegrationService.js";
-import AlarmService from "./service/alarm/AlarmService.js";
-import SystemService from "./service/system/SystemService.js";
-import PushApiService from "./service/pushapi/PushApiService.js";
-import SchedulerService from "./service/scheduler/SchedulerService.js";
-import HttpService from "./service/http/HttpService.js";
-import type ServicesConfig from "./service/ServicesConfig.js";
-import { readConfigFile } from "./util/FileUtil.js";
+import logger from "./util/logger.ts";
+import ServiceLocator from "./service/ServiceLocator.ts";
+import AssetService from "./service/asset/AssetService.ts";
+import ShoppingListService from "./service/shoppinglist/ShoppingListService.ts";
+import UserService from "./service/user/UserService.ts";
+import DataService from "./service/data/DataService.ts";
+import ActionService from "./service/action/ActionService.ts";
+import IntegrationService from "./service/integration/IntegrationService.ts";
+import AlarmService from "./service/alarm/AlarmService.ts";
+import SystemService from "./service/system/SystemService.ts";
+import PushApiService from "./service/pushapi/PushApiService.ts";
+import SchedulerService from "./service/scheduler/SchedulerService.ts";
+import HttpService from "./service/http/HttpService.ts";
+import type ServicesConfig from "./service/ServicesConfig.ts";
+import { readConfigFile } from "./util/FileUtil.ts";
 
 const SERVICES_CONFIG_FILE_NAME = "services.json";
 

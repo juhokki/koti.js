@@ -35,7 +35,6 @@ export default tseslint.config(
 	},
 	{
 		ignores: [
-			"dist/",
 			"node_modules/",
 			"coverage/",
 			"package-lock.json",

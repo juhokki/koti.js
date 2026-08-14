@@ -1,8 +1,8 @@
 import { Router, type Response } from "express";
-import type ServiceLocator from "../../../ServiceLocator.js";
-import { HTTP_UNAUTHORIZED } from "../../../../constants/Http.js";
-import type { PostLoginRequest } from "../../requests/PostLoginRequest.js";
-import logger from "../../../../util/logger.js";
+import type ServiceLocator from "../../../ServiceLocator.ts";
+import { HTTP_UNAUTHORIZED } from "../../../../constants/Http.ts";
+import type { PostLoginRequest } from "../../requests/PostLoginRequest.ts";
+import logger from "../../../../util/logger.ts";
 
 export default function (services: ServiceLocator) {
 	const router = Router();

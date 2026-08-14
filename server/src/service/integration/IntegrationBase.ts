@@ -1,5 +1,5 @@
-import type Value from "../../model/Value.js";
-import ServiceLocator from "../ServiceLocator.js";
+import type Value from "../../model/Value.ts";
+import ServiceLocator from "../ServiceLocator.ts";
 
 export default class IntegrationBase {
 	services: ServiceLocator;

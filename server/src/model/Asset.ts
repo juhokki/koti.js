@@ -1,4 +1,4 @@
-import type Device from "./Device.js";
+import type Device from "./Device.ts";
 
 export default class Asset {
 	id: string;

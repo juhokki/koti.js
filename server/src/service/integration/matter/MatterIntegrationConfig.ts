@@ -1,4 +1,4 @@
-import type IntegrationConfig from "../IntegrationConfig.js";
+import type IntegrationConfig from "../IntegrationConfig.ts";
 
 export default interface MatterIntegrationSettings extends IntegrationConfig {
 	enabled: boolean;

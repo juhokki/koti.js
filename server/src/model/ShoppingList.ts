@@ -1,4 +1,4 @@
-import type ShoppingListItem from "./ShoppingListItem.js";
+import type ShoppingListItem from "./ShoppingListItem.ts";
 
 export default class ShoppingList {
 	update: string;

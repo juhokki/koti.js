@@ -1,9 +1,9 @@
 import checkDiskSpace from "check-disk-space";
 import { fileURLToPath } from "url";
-import ServiceBase from "../ServiceBase.js";
-import Disk from "../../model/Disk.js";
-import type SystemServiceSettings from "./SystemServiceSettings.js";
-import type ServiceLocator from "../ServiceLocator.js";
+import ServiceBase from "../ServiceBase.ts";
+import Disk from "../../model/Disk.ts";
+import type SystemServiceSettings from "./SystemServiceSettings.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
 
 export default class SystemService extends ServiceBase {
 	options: SystemServiceSettings;

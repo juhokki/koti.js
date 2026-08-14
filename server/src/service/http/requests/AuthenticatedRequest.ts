@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import type UserPayload from "../../user/UserPayload.js";
+import type UserPayload from "../../user/UserPayload.ts";
 
 export interface AuthenticatedRequest<
 	T1,

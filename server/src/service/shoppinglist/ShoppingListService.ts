@@ -1,12 +1,12 @@
-import ServiceBase from "../ServiceBase.js";
-import * as Messages from "../../constants/Messages.js";
-import ShoppingList from "../../model/ShoppingList.js";
-import ServiceLocator from "../ServiceLocator.js";
-import type ShoppingListServiceSettings from "./ShoppingListServiceSettings.js";
-import ShoppingListItem from "../../model/ShoppingListItem.js";
-import type ShoppingListConfig from "./ShoppingListConfig.js";
-import { readConfigFile, writeConfigFile } from "../../util/FileUtil.js";
-import logger from "../../util/logger.js";
+import ServiceBase from "../ServiceBase.ts";
+import * as Messages from "../../constants/Messages.ts";
+import ShoppingList from "../../model/ShoppingList.ts";
+import ServiceLocator from "../ServiceLocator.ts";
+import type ShoppingListServiceSettings from "./ShoppingListServiceSettings.ts";
+import ShoppingListItem from "../../model/ShoppingListItem.ts";
+import type ShoppingListConfig from "./ShoppingListConfig.ts";
+import { readConfigFile, writeConfigFile } from "../../util/FileUtil.ts";
+import logger from "../../util/logger.ts";
 
 export default class ShoppingListService extends ServiceBase {
 	options: ShoppingListServiceSettings;

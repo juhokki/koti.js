@@ -1,4 +1,4 @@
-import type Value from "../../model/Value.js";
+import type Value from "../../model/Value.ts";
 
 export default class ValueCache {
 	cache: Map<string, Value>;

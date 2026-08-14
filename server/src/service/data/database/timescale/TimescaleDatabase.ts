@@ -1,10 +1,10 @@
 import pg from "pg";
 import format from "pg-format";
-import type Database from "../Database.js";
-import Value from "../../../../model/Value.js";
-import type TimescaleDatabaseSettings from "./TimescaleDatabaseSettings.js";
-import type TimescaleValueRow from "./TimescaleValueRow.js";
-import type ValueType from "../../../../types/ValueType.js";
+import type Database from "../Database.ts";
+import Value from "../../../../model/Value.ts";
+import type TimescaleDatabaseSettings from "./TimescaleDatabaseSettings.ts";
+import type TimescaleValueRow from "./TimescaleValueRow.ts";
+import type ValueType from "../../../../types/ValueType.ts";
 
 export const TABLE_VALUES = "values";
 

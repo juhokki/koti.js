@@ -2,7 +2,7 @@
 
 Koti.js is a home automation platform for monitoring sensors, controlling devices, and building practical automations around real household data.
 
-It combines a TypeScript backend, a React frontend, and multiple hardware bridges so Bluetooth, RF, and network-connected devices can be used through one interface.
+It combines a Node.js backend, a React frontend, and multiple hardware bridges so Bluetooth, RF, and network-connected devices can be used through one interface.
 
 ## What Koti.js Includes
 
@@ -33,7 +33,7 @@ cd ../frontend && npm install
 ```bash
 cd frontend && npm run build
 cd ..
-cd server && npm run build && npm run start
+cd server && npm run start
 ```
 
 4. Add optional bridges on devices (Raspberry Pi or similar):
@@ -49,17 +49,6 @@ cd server && npm run build && npm run start
 - `ruuvi-sensor/`: Bluetooth sensor ingestion client
 - `rtl433-doorbell-relay/`: 433 MHz doorbell event relay
 - `sonoff-rf-bridge-r2/`: Sonoff RF Bridge configuration
-
-## Development Workflow
-
-Common scripts in `server/` and `frontend/`:
-
-- `npm run start`
-- `npm run build`
-- `npm run test`
-- `npm run test:coverage`
-- `npm run lint`
-- `npm run prettier`
 
 ## Additional Insights
 

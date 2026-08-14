@@ -1,6 +1,6 @@
-import Measurement from "./Measurement.js";
-import DeviceOnlineStatus from "../enums/DeviceOnlineStatus.js";
-import DeviceType from "../enums/DeviceType.js";
+import Measurement from "./Measurement.ts";
+import DeviceOnlineStatus from "../constants/DeviceOnlineStatus.ts";
+import DeviceType from "../constants/DeviceType.ts";
 
 export default class Device {
 	id: string;

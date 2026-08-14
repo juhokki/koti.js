@@ -1,7 +1,7 @@
-import ScheduleConfig from "../service/asset/ScheduleConfig.js";
-import MeasurementType from "../enums/MeasurementType.js";
-import type ActionConfig from "../service/asset/ActionConfig.js";
-import type AlarmConfig from "../service/asset/AlarmConfig.js";
+import ScheduleConfig from "../service/asset/ScheduleConfig.ts";
+import MeasurementType from "../constants/MeasurementType.ts";
+import type ActionConfig from "../service/asset/ActionConfig.ts";
+import type AlarmConfig from "../service/asset/AlarmConfig.ts";
 
 export default class Measurement {
 	deviceId: string;

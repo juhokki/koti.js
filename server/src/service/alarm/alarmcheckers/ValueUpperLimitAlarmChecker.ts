@@ -1,6 +1,6 @@
-import type Measurement from "../../../model/Measurement.js";
-import type Value from "../../../model/Value.js";
-import AlarmCheckerBase from "./AlarmCheckerBase.js";
+import type Measurement from "../../../model/Measurement.ts";
+import type Value from "../../../model/Value.ts";
+import AlarmCheckerBase from "./AlarmCheckerBase.ts";
 
 export default class ValueUpperLimitAlarmChecker extends AlarmCheckerBase {
 	override check(measurement: Measurement, value: Value) {

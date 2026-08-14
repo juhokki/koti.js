@@ -1,14 +1,14 @@
 import { Router, type Response } from "express";
-import type ServiceLocator from "../../../ServiceLocator.js";
+import type ServiceLocator from "../../../ServiceLocator.ts";
 import {
 	HTTP_INTERNAL_SERVER_ERROR,
 	HTTP_OK
-} from "../../../../constants/Http.js";
-import type { PutWebPushSubscriptionRequest } from "../../requests/PutWebPushSubscriptionRequest.js";
-import type { PostWebPushSubscriptionRequest } from "../../requests/PostWebPushSubscriptionRequest.js";
-import type { DeleteWebPushSubscriptionRequest } from "../../requests/DeleteWebPushSubscriptionRequest.js";
-import type { AuthenticatedRequest } from "../../requests/AuthenticatedRequest.js";
-import logger from "../../../../util/logger.js";
+} from "../../../../constants/Http.ts";
+import type { PutWebPushSubscriptionRequest } from "../../requests/PutWebPushSubscriptionRequest.ts";
+import type { PostWebPushSubscriptionRequest } from "../../requests/PostWebPushSubscriptionRequest.ts";
+import type { DeleteWebPushSubscriptionRequest } from "../../requests/DeleteWebPushSubscriptionRequest.ts";
+import type { AuthenticatedRequest } from "../../requests/AuthenticatedRequest.ts";
+import logger from "../../../../util/logger.ts";
 
 export function getUser(
 	req: AuthenticatedRequest<

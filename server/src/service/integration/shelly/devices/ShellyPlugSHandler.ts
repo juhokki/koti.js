@@ -1,10 +1,10 @@
 import fetch from "node-fetch";
 import { type ShellyDevicePlugS } from "shellies";
-import Value from "../../../../model/Value.js";
-import type ServiceLocator from "../../../ServiceLocator.js";
-import UnconfiguredMeasurementError from "../UnconfiguredMeasurementError.js";
-import type ShellyDeviceHandler from "./ShellyDeviceHandler.js";
-import logger from "../../../../util/logger.js";
+import Value from "../../../../model/Value.ts";
+import type ServiceLocator from "../../../ServiceLocator.ts";
+import UnconfiguredMeasurementError from "../UnconfiguredMeasurementError.ts";
+import type ShellyDeviceHandler from "./ShellyDeviceHandler.ts";
+import logger from "../../../../util/logger.ts";
 
 export const RELAY_0 = "relay0";
 export const POWER_0 = "power0";

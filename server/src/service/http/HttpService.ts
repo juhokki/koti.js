@@ -2,14 +2,14 @@ import express, { type Express } from "express";
 import { Socket, Server as SocketIOServer } from "socket.io";
 import { authorize, UnauthorizedError } from "@thream/socketio-jwt";
 import http, { Server } from "http";
-import ServiceBase from "../ServiceBase.js";
-import * as Messages from "../../constants/Messages.js";
-import getRouter from "./routes/index.js";
-import type ServiceLocator from "../ServiceLocator.js";
-import type HttpServiceSettings from "./HttpServiceSettings.js";
-import type UserPayload from "../user/UserPayload.js";
-import type ShoppingList from "../../model/ShoppingList.js";
-import logger from "../../util/logger.js";
+import ServiceBase from "../ServiceBase.ts";
+import * as Messages from "../../constants/Messages.ts";
+import getRouter from "./routes/index.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
+import type HttpServiceSettings from "./HttpServiceSettings.ts";
+import type UserPayload from "../user/UserPayload.ts";
+import type ShoppingList from "../../model/ShoppingList.ts";
+import logger from "../../util/logger.ts";
 
 export default class HttpService extends ServiceBase {
 	options: HttpServiceSettings;

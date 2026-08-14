@@ -1,4 +1,4 @@
-import type ActionTrigger from "../../enums/ActionTrigger.js";
+import type ActionTrigger from "../../constants/ActionTrigger.ts";
 
 export default class ActionConfig {
 	name: string;

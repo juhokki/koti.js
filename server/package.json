@@ -3,13 +3,13 @@
 	"type": "module",
 	"version": "0.0.1",
 	"description": "",
-	"main": "dist/index.js",
+	"main": "index.ts",
 	"engines": {
 		"node": ">=22.18.0"
 	},
 	"scripts": {
 		"build": "npx tsc",
-		"start": "node dist/index.js",
+		"start": "node index.ts",
 		"test": "npx vitest run",
 		"test:coverage": "npx vitest run --coverage",
 		"lint": "npx eslint",
@@ -34,6 +34,8 @@
 		"pino": "^10.3.1",
 		"shellies": "^1.7.0",
 		"socket.io": "^4.8.1",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.67.0",
 		"web-push": "^3.6.7"
 	},
 	"optionalDependencies": {
@@ -54,8 +56,14 @@
 		"eslint-config-prettier": "^9.1.0",
 		"prettier": "3.4.2",
 		"supertest": "^7.0.0",
-		"typescript": "^5.7.2",
-		"typescript-eslint": "^8.18.1",
 		"vitest": "^2.1.8"
+	},
+	"allowScripts": {
+		"@serialport/bindings-cpp@12.0.1": true,
+		"@stoprocent/bleno@0.8.2": true,
+		"@stoprocent/bluetooth-hci-socket@1.4.4": true,
+		"@stoprocent/noble@1.18.2": true,
+		"esbuild@0.21.5": true,
+		"usb@2.14.0": true
 	}
 }

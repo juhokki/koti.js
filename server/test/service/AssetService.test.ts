@@ -1,8 +1,8 @@
 import { expect, test, vi } from "vitest";
 import * as Messages from "../../src/constants/Messages.js";
-import DeviceOnlineStatus from "../../src/enums/DeviceOnlineStatus.js";
-import DeviceType from "../../src/enums/DeviceType.js";
-import MeasurementType from "../../src/enums/MeasurementType.js";
+import DeviceOnlineStatus from "../../src/constants/DeviceOnlineStatus.ts";
+import DeviceType from "../../src/constants/DeviceType.ts";
+import MeasurementType from "../../src/constants/MeasurementType.ts";
 import AssetService from "../../src/service/asset/AssetService.js";
 import type AssetServiceSettings from "../../src/service/asset/AssetServiceSettings.js";
 import ServiceLocator from "../../src/service/ServiceLocator.js";

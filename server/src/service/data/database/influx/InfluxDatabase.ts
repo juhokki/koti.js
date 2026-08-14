@@ -1,10 +1,10 @@
 import Influx, { InfluxDB, FieldType, toNanoDate } from "influx";
-import type Database from "../Database.js";
-import Value from "../../../../model/Value.js";
-import type InfluxDatabaseSettings from "./InfluxDatabaseSettings.js";
-import type InfluxValueRow from "./InfluxValueRow.js";
-import type ValueType from "../../../../types/ValueType.js";
-import logger from "../../../../util/logger.js";
+import type Database from "../Database.ts";
+import Value from "../../../../model/Value.ts";
+import type InfluxDatabaseSettings from "./InfluxDatabaseSettings.ts";
+import type InfluxValueRow from "./InfluxValueRow.ts";
+import type ValueType from "../../../../types/ValueType.ts";
+import logger from "../../../../util/logger.ts";
 
 export const TABLE_VALUES = "valuedata";
 

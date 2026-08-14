@@ -1,9 +1,9 @@
 import fetch from "node-fetch";
-import IntegrationBase from "../IntegrationBase.js";
-import Value from "../../../model/Value.js";
-import type OpenWeatherIntegrationSettings from "./OpenWeatherIntegrationConfig.js";
-import type ServiceLocator from "../../ServiceLocator.js";
-import logger from "../../../util/logger.js";
+import IntegrationBase from "../IntegrationBase.ts";
+import Value from "../../../model/Value.ts";
+import type OpenWeatherIntegrationSettings from "./OpenWeatherIntegrationConfig.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import logger from "../../../util/logger.ts";
 
 export interface OpenWeatherMainResponse {
 	temp: number;

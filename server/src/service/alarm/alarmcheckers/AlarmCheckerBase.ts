@@ -1,11 +1,11 @@
-import * as Messages from "../../../constants/Messages.js";
-import type AlarmType from "../../../enums/AlarmType.js";
-import Alarm from "../../../model/Alarm.js";
-import type Measurement from "../../../model/Measurement.js";
-import type Value from "../../../model/Value.js";
-import type ServiceLocator from "../../ServiceLocator.js";
-import type AlarmCheckerOptions from "./AlarmCheckerOptions.js";
-import logger from "../../../util/logger.js";
+import * as Messages from "../../../constants/Messages.ts";
+import type AlarmType from "../../../constants/AlarmType.ts";
+import Alarm from "../../../model/Alarm.ts";
+import type Measurement from "../../../model/Measurement.ts";
+import type Value from "../../../model/Value.ts";
+import type ServiceLocator from "../../ServiceLocator.ts";
+import type AlarmCheckerOptions from "./AlarmCheckerOptions.ts";
+import logger from "../../../util/logger.ts";
 
 export default class AlarmCheckerBase {
 	services: ServiceLocator;

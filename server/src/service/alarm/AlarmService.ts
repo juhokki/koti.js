@@ -1,15 +1,15 @@
-import ServiceBase from "../ServiceBase.js";
-import * as Messages from "../../constants/Messages.js";
-import StaleValueAlarmChecker from "./alarmcheckers/StaleValueAlarmChecker.js";
-import ValueLowerLimitAlarmChecker from "./alarmcheckers/ValueLowerLimitAlarmChecker.js";
-import ValueUpperLimitAlarmChecker from "./alarmcheckers/ValueUpperLimitAlarmChecker.js";
-import type AlarmServiceSettings from "./AlarmServiceSettings.js";
-import type ServiceLocator from "../ServiceLocator.js";
-import AlarmType from "../../enums/AlarmType.js";
-import type Alarm from "../../model/Alarm.js";
-import type AlarmCheckerBase from "./alarmcheckers/AlarmCheckerBase.js";
-import type Measurement from "../../model/Measurement.js";
-import type AlarmCheckerOptions from "./alarmcheckers/AlarmCheckerOptions.js";
+import ServiceBase from "../ServiceBase.ts";
+import * as Messages from "../../constants/Messages.ts";
+import StaleValueAlarmChecker from "./alarmcheckers/StaleValueAlarmChecker.ts";
+import ValueLowerLimitAlarmChecker from "./alarmcheckers/ValueLowerLimitAlarmChecker.ts";
+import ValueUpperLimitAlarmChecker from "./alarmcheckers/ValueUpperLimitAlarmChecker.ts";
+import type AlarmServiceSettings from "./AlarmServiceSettings.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
+import AlarmType from "../../constants/AlarmType.ts";
+import type Alarm from "../../model/Alarm.ts";
+import type AlarmCheckerBase from "./alarmcheckers/AlarmCheckerBase.ts";
+import type Measurement from "../../model/Measurement.ts";
+import type AlarmCheckerOptions from "./alarmcheckers/AlarmCheckerOptions.ts";
 
 export default class AlarmService extends ServiceBase {
 	options: AlarmServiceSettings;

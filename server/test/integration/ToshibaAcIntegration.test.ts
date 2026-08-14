@@ -5,7 +5,7 @@ import ToshibaAcIntegration from "../../src/service/integration/toshiba/ToshibaA
 import type ToshibaAcIntegrationSettings from "../../src/service/integration/toshiba/ToshibaAcIntegrationConfig.js";
 import type DataService from "../../src/service/data/DataService.js";
 import type ServiceBase from "../../src/service/ServiceBase.js";
-import DeviceType from "../../src/enums/DeviceType.js";
+import DeviceType from "../../src/constants/DeviceType.ts";
 
 const mockFetch = vi.hoisted(() => vi.fn());
 vi.mock("node-fetch", () => {

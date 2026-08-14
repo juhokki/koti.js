@@ -1,4 +1,4 @@
-import type { AuthenticatedRequest } from "./AuthenticatedRequest.js";
+import type { AuthenticatedRequest } from "./AuthenticatedRequest.ts";
 
 export interface GetValueRangeRequestParams {
 	deviceId: "string";

@@ -1,13 +1,13 @@
-import ServiceBase from "../ServiceBase.js";
-import * as Messages from "../../constants/Messages.js";
-import DatabaseFactory from "./database/DatabaseFactory.js";
-import type DataServiceSettings from "./DataServiceSettings.js";
-import type ServiceLocator from "../ServiceLocator.js";
-import type Database from "./database/Database.js";
-import ValueCache from "./ValueCache.js";
-import type Value from "../../model/Value.js";
-import MeasurementType from "../../enums/MeasurementType.js";
-import logger from "../../util/logger.js";
+import ServiceBase from "../ServiceBase.ts";
+import * as Messages from "../../constants/Messages.ts";
+import DatabaseFactory from "./database/DatabaseFactory.ts";
+import type DataServiceSettings from "./DataServiceSettings.ts";
+import type ServiceLocator from "../ServiceLocator.ts";
+import type Database from "./database/Database.ts";
+import ValueCache from "./ValueCache.ts";
+import type Value from "../../model/Value.ts";
+import MeasurementType from "../../constants/MeasurementType.ts";
+import logger from "../../util/logger.ts";
 
 export default class DataService extends ServiceBase {
 	options: DataServiceSettings;

@@ -1,4 +1,4 @@
-import type ValueType from "../types/ValueType.js";
+import type ValueType from "../types/ValueType.ts";
 
 export default class Value {
 	deviceId: string;
