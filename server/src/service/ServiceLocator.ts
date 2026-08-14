@@ -12,9 +12,7 @@ export default class ServiceLocator {
 	services: Map<string, ServiceBase>;
 
 	constructor(services?: Map<string, ServiceBase>) {
-		if (!services) {
-			services = new Map<string, ServiceBase>();
-		}
+		services ??= new Map<string, ServiceBase>();
 
 		this.services = services;
 	}

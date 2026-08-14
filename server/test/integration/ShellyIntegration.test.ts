@@ -8,7 +8,7 @@ import Value from "../../src/model/Value.js";
 import type AssetService from "../../src/service/asset/AssetService.js";
 import type DataService from "../../src/service/data/DataService.js";
 import ShellyIntegration from "../../src/service/integration/shelly/ShellyIntegration.js";
-import type ShellyIntegrationSettings from "../../src/service/integration/shelly/ShellyIntegrationConfig.js";
+import type IntegrationConfig from "../../src/service/integration/IntegrationConfig.js";
 import type ServiceBase from "../../src/service/ServiceBase.js";
 import ServiceLocator from "../../src/service/ServiceLocator.js";
 
@@ -31,9 +31,9 @@ vi.useFakeTimers();
 vi.setSystemTime(now);
 
 const settings = {
-	enabled: true,
-	name: "ShellyIntegration"
-} satisfies ShellyIntegrationSettings;
+	name: "ShellyIntegration",
+	enabled: true
+} satisfies IntegrationConfig;
 
 const mockGetDevice = vi.hoisted(() => vi.fn());
 const mockWrite = vi.hoisted(() => vi.fn());

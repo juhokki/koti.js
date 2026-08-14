@@ -26,8 +26,8 @@ export default class Measurement {
 		unit: string,
 		icon: string,
 		controllable = false,
-		min: number | undefined = undefined,
-		max: number | undefined = undefined,
+		min?: number,
+		max?: number,
 		actions: ActionConfig[] = [],
 		alarms: AlarmConfig[] = [],
 		schedules: ScheduleConfig[] = []

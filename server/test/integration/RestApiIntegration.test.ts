@@ -3,7 +3,7 @@ import ServiceLocator from "../../src/service/ServiceLocator.js";
 import Value from "../../src/model/Value.js";
 import RestApiIntegration from "../../src/service/integration/rest/RestApiIntegration.js";
 import type DataService from "../../src/service/data/DataService.js";
-import type RestApiIntegrationSettings from "../../src/service/integration/rest/RestApiIntegrationConfig.js";
+import type IntegrationConfig from "../../src/service/integration/IntegrationConfig.js";
 
 const now = Date.now();
 vi.useFakeTimers();
@@ -12,7 +12,7 @@ vi.setSystemTime(now);
 const settings = {
 	enabled: true,
 	name: "RestApiIntegration"
-} satisfies RestApiIntegrationSettings;
+} satisfies IntegrationConfig;
 
 test("RestApiIntegration is created", () => {
 	const integration = new RestApiIntegration(new ServiceLocator(), settings);

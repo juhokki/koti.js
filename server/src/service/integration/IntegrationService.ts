@@ -10,9 +10,7 @@ import type MatterIntegrationConfig from "./matter/MatterIntegrationConfig.ts";
 import OpenWeatherIntegration from "./openweather/OpenWeatherIntegration.ts";
 import type OpenWeatherIntegrationConfig from "./openweather/OpenWeatherIntegrationConfig.ts";
 import RestApiIntegration from "./rest/RestApiIntegration.ts";
-import type RestApiIntegrationConfig from "./rest/RestApiIntegrationConfig.ts";
 import ShellyIntegration from "./shelly/ShellyIntegration.ts";
-import type ShellyIntegrationConfig from "./shelly/ShellyIntegrationConfig.ts";
 import ToshibaAcIntegration from "./toshiba/ToshibaAcIntegration.ts";
 import type ToshibaAcIntegrationConfig from "./toshiba/ToshibaAcIntegrationConfig.ts";
 import logger from "../../util/logger.ts";
@@ -54,10 +52,7 @@ export default class IntegrationService extends ServiceBase {
 				case RestApiIntegration.name:
 					integrations.set(
 						RestApiIntegration.name,
-						new RestApiIntegration(
-							this.services,
-							config as RestApiIntegrationConfig
-						)
+						new RestApiIntegration(this.services, config)
 					);
 					break;
 				case OpenWeatherIntegration.name:
@@ -72,10 +67,7 @@ export default class IntegrationService extends ServiceBase {
 				case ShellyIntegration.name:
 					integrations.set(
 						ShellyIntegration.name,
-						new ShellyIntegration(
-							this.services,
-							config as ShellyIntegrationConfig
-						)
+						new ShellyIntegration(this.services, config)
 					);
 					break;
 				case ToshibaAcIntegration.name:

@@ -1,12 +1,12 @@
 import type Value from "../../../model/Value.ts";
 import type ServiceLocator from "../../ServiceLocator.ts";
 import IntegrationBase from "../IntegrationBase.ts";
-import type RestApiIntegrationSettings from "./RestApiIntegrationConfig.ts";
+import type IntegrationConfig from "../IntegrationConfig.ts";
 
 export default class RestApiIntegration extends IntegrationBase {
-	options: RestApiIntegrationSettings;
+	options: IntegrationConfig;
 
-	constructor(services: ServiceLocator, options: RestApiIntegrationSettings) {
+	constructor(services: ServiceLocator, options: IntegrationConfig) {
 		super(services);
 
 		this.options = options;

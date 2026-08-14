@@ -5,7 +5,7 @@ import shellies, {
 } from "shellies";
 import IntegrationBase from "../IntegrationBase.ts";
 import Value from "../../../model/Value.ts";
-import type ShellyIntegrationSettings from "./ShellyIntegrationConfig.ts";
+import type IntegrationConfig from "../IntegrationConfig.ts";
 import type ServiceLocator from "../../ServiceLocator.ts";
 import ShellyButton2Handler from "./devices/ShellyButton2Handler.ts";
 import ShellyPlugSHandler from "./devices/ShellyPlugSHandler.ts";
@@ -16,10 +16,10 @@ export const ShellyDeviceTypeButton2 = "SHBTN-2";
 export const ShellyDeviceTypePlugS = "SHPLG-S";
 
 export default class ShellyIntegration extends IntegrationBase {
-	options: ShellyIntegrationSettings;
+	options: IntegrationConfig;
 	deviceHandlers: Map<string, ShellyDeviceHandler>;
 
-	constructor(services: ServiceLocator, options: ShellyIntegrationSettings) {
+	constructor(services: ServiceLocator, options: IntegrationConfig) {
 		super(services);
 
 		this.options = options;

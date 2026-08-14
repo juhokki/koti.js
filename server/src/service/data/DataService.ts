@@ -89,9 +89,12 @@ export default class DataService extends ServiceBase {
 				}
 			}
 
-			if (!currentValue || currentValue.value !== value.value) {
-				newValues.push(value);
+			if (currentValue?.value === value.value) {
+				// Value has not changed, ignore...
+				return;
 			}
+
+			newValues.push(value);
 		});
 
 		if (newValues.length === 0) {
