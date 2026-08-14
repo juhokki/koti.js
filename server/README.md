@@ -8,13 +8,13 @@ See also:
 
 # Scripts
 
-| Script | Description |
-| ------ | ----------- |
-| npm run start | Starts the Koti server |
-| npm run test | Runs units tests |
-| npm run test:coverage | Reports test coverage |
-| npm run lint | Finds problems in code according to rules in eslint.config.js |
-| npm run prettier | Formats code according to rules in .prettierrc.js |
+| Script                | Description                                                   |
+| --------------------- | ------------------------------------------------------------- |
+| npm run start         | Starts the Koti server                                        |
+| npm run test          | Runs units tests                                              |
+| npm run test:coverage | Reports test coverage                                         |
+| npm run lint          | Finds problems in code according to rules in eslint.config.js |
+| npm run prettier      | Formats code according to rules in .prettierrc.js             |
 
 ## Systemd service setup
 

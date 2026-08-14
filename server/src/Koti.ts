@@ -101,7 +101,10 @@ export default class Koti {
 				logger.info(`Starting service ${service.constructor.name}.`);
 				await service.start();
 			} catch (e) {
-				logger.error(e, `Failed to start service ${service.constructor.name}.`);
+				logger.error(
+					e,
+					`Failed to start service ${service.constructor.name}.`
+				);
 				throw e;
 			}
 		}
@@ -128,7 +131,10 @@ export default class Koti {
 				logger.info(`Stopping service ${service.constructor.name}.`);
 				await service.stop();
 			} catch (e) {
-				logger.error(e, `Failed to stop service ${service.constructor.name}.`);
+				logger.error(
+					e,
+					`Failed to stop service ${service.constructor.name}.`
+				);
 			}
 		}
 

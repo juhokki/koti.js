@@ -9,9 +9,7 @@ if (!username || !password) {
 	throw new Error("Incorrect arguments [username, password]");
 }
 
-const config = readConfigFile<ServicesConfig>(
-	"../conf/services.json"
-);
+const config = readConfigFile<ServicesConfig>("../conf/services.json");
 const userServiceConfig = config.UserService;
 const salt = userServiceConfig.secret;
 const hash = crypto

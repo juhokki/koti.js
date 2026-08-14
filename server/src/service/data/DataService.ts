@@ -83,7 +83,9 @@ export default class DataService extends ServiceBase {
 			if (measurement.type === MeasurementType.Counter) {
 				if (currentValue) {
 					// Increment counter type by new value.
-					value.value = (currentValue.value as number) + (value.value as number);
+					value.value =
+						(currentValue.value as number) +
+						(value.value as number);
 				}
 			}
 

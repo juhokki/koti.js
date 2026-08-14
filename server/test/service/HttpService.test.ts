@@ -140,11 +140,9 @@ test("Starts and stops http server", async () => {
 
 	mockSocketsClose.mockReturnValue(Promise.resolve());
 
-	service
-		.stop()
-		.catch((e: unknown) => {
-			/* Ignore */
-		});
+	service.stop().catch((e: unknown) => {
+		/* Ignore */
+	});
 
 	await new Promise<void>((resolve) => {
 		setTimeout(() => {

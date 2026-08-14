@@ -16,9 +16,7 @@ if (!qrCodeArg) {
 	throw new Error("QR code missing");
 }
 
-const config = readConfigFile<IntegrationConfig[]>(
-	"../conf/integrations.json"
-);
+const config = readConfigFile<IntegrationConfig[]>("../conf/integrations.json");
 const integrationConfig = config.find((c) => c.name === MatterIntegration.name);
 
 if (!integrationConfig) {
