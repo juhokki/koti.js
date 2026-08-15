@@ -55,21 +55,23 @@ vi.mock("@matter/main/clusters", () => ({
 }));
 
 vi.mock("@project-chip/matter.js", () => ({
-	CommissioningController: vi.fn().mockImplementation(() => ({
-		start: () => Promise.resolve(),
-		getCommissionedNodes: mockGetCommissionedNodes,
-		connectNode: () =>
-			Promise.resolve({
-				getDevices: mockGetDevices,
-				events: {
-					stateChanged: {
-						on: () => {
-							/* Do nothing */
+	CommissioningController: vi.fn().mockImplementation(function () {
+		return {
+			start: () => Promise.resolve(),
+			getCommissionedNodes: mockGetCommissionedNodes,
+			connectNode: () =>
+				Promise.resolve({
+					getDevices: mockGetDevices,
+					events: {
+						stateChanged: {
+							on: () => {
+								/* Do nothing */
+							}
 						}
 					}
-				}
-			})
-	}))
+				})
+		};
+	})
 }));
 
 const now = Date.now();

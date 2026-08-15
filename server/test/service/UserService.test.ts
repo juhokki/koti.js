@@ -33,7 +33,7 @@ const services = new ServiceLocator(
 const settings = {
 	file: "./users.json",
 	secret: "test-secret",
-	tokenExpiration: "365d"
+	tokenExpiration: 31536000
 } satisfies UserServiceSettings;
 
 test("UserService is created", () => {

@@ -1,6 +1,6 @@
 import { vi, expect, test } from "vitest";
-import Value from "../../src/model/Value.js";
-import InfluxDatabase from "../../src/service/data/database/influx/InfluxDatabase.js";
+import Value from "../../src/model/Value.ts";
+import InfluxDatabase from "../../src/service/data/database/influx/InfluxDatabase.ts";
 
 const mockQuery = vi.hoisted(() => vi.fn());
 const mockWrite = vi.hoisted(() => vi.fn());
@@ -16,10 +16,12 @@ vi.mock("influx", async () => {
 				stringLit: vi.fn()
 			}
 		},
-		InfluxDB: mockInfluxDb.mockImplementation(() => ({
-			query: mockQuery,
-			writePoints: mockWrite
-		}))
+		InfluxDB: mockInfluxDb.mockImplementation(function () {
+			return {
+				query: mockQuery,
+				writePoints: mockWrite
+			};
+		})
 	};
 });
 

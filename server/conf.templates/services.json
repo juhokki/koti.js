@@ -21,7 +21,7 @@
 	"UserService": {
 		"file": "./conf/users.json",
 		"secret": "...",
-		"tokenExpiration": "3650d"
+		"tokenExpiration": 315360000
 	},
 	"AlarmService": {},
 	"ActionService": {},

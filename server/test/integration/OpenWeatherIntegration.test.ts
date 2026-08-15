@@ -117,5 +117,5 @@ test("Throws error when control is not implemented", async () => {
 
 	await expect(() =>
 		integration.control("1", "2", new Value("1", "1", 1))
-	).rejects.toThrowError();
+	).rejects.toThrow();
 });

@@ -17,15 +17,17 @@ const mockGetMeasurement = vi.hoisted(() => vi.fn());
 const mockControl = vi.hoisted(() => vi.fn());
 
 vi.mock("../../src/service/data/database/DatabaseFactory.js", () => ({
-	default: vi.fn().mockImplementation(() => ({
-		create: () => ({
-			start: () => Promise.resolve(),
-			stop: () => Promise.resolve(),
-			readLatestValues: mockReadLatestValues,
-			readValueRange: mockReadValueRange,
-			write: mockWrite
-		})
-	}))
+	default: vi.fn().mockImplementation(function () {
+		return {
+			create: () => ({
+				start: () => Promise.resolve(),
+				stop: () => Promise.resolve(),
+				readLatestValues: mockReadLatestValues,
+				readValueRange: mockReadValueRange,
+				write: mockWrite
+			})
+		};
+	})
 }));
 
 const now = Date.now();

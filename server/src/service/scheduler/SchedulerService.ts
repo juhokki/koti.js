@@ -23,12 +23,10 @@ export default class SchedulerService extends ServiceBase {
 		return Promise.resolve();
 	}
 
-	override stop() {
-		this.tasks.forEach((task) => {
-			task.stop();
-		});
-
-		return Promise.resolve();
+	override async stop() {
+		for (const task of this.tasks) {
+			await task.stop();
+		}
 	}
 
 	parseSchedules() {

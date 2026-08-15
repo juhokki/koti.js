@@ -59,7 +59,7 @@ export default class UserService extends ServiceBase {
 
 				return jwt.sign(payload, this.getSecret(), {
 					expiresIn: this.options.tokenExpiration
-				});
+				} satisfies jwt.SignOptions);
 			}
 		}
 

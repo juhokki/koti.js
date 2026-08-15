@@ -59,7 +59,7 @@ test("Schedule is called", async () => {
 
 	await service.start();
 
-	vi.advanceTimersByTime(86400001);
+	await vi.advanceTimersByTimeAsync(86400001);
 
 	expect(mockControl).toHaveBeenCalledWith(
 		expect.objectContaining({

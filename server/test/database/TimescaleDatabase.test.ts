@@ -9,11 +9,13 @@ const mockEnd = vi.hoisted(() => vi.fn());
 vi.mock("pg", () => {
 	return {
 		default: {
-			Client: vi.fn().mockImplementation(() => ({
-				connect: mockConnect,
-				query: mockQuery,
-				end: mockEnd
-			}))
+			Client: vi.fn().mockImplementation(function () {
+				return {
+					connect: mockConnect,
+					query: mockQuery,
+					end: mockEnd
+				};
+			})
 		}
 	};
 });

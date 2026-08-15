@@ -49,15 +49,17 @@ vi.mock("http", () => ({
 }));
 
 vi.mock("socket.io", () => ({
-	Server: vi.fn().mockImplementation(() => ({
-		use: function () {
-			return this as Server;
-		},
-		on: function () {
-			return this as Server;
-		},
-		close: mockSocketsClose
-	}))
+	Server: vi.fn().mockImplementation(function () {
+		return {
+			use: function () {
+				return this as Server;
+			},
+			on: function () {
+				return this as Server;
+			},
+			close: mockSocketsClose
+		};
+	})
 }));
 
 vi.mock("@thream/socketio-jwt", () => ({
