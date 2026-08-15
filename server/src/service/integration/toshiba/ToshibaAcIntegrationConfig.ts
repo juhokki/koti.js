@@ -1,7 +1,6 @@
 import type IntegrationConfig from "../IntegrationConfig.ts";
 
-export default interface ToshibaAcIntegrationSettings
-	extends IntegrationConfig {
+export default interface ToshibaAcIntegrationSettings extends IntegrationConfig {
 	enabled: boolean;
 	username: string;
 	password: string;

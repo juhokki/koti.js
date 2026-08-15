@@ -1,8 +1,8 @@
-import { Environment, Logger, singleton, StorageService } from "@matter/main";
+import { Environment, Filesystem, Logger, StorageService } from "@matter/main";
 import { GeneralCommissioning } from "@matter/main/clusters";
-import { Ble } from "@matter/main/protocol";
 import { NodeId, QrPairingCodeCodec } from "@matter/main/types";
-import { NodeJsBle } from "@matter/nodejs-ble";
+import { NodeJsFilesystem } from "@matter/nodejs";
+import "@matter/nodejs-ble";
 import { CommissioningController } from "@project-chip/matter.js";
 import process from "node:process";
 import type IntegrationConfig from "../src/service/integration/IntegrationConfig.js";
@@ -37,11 +37,15 @@ pair(qrCodeArg).catch((e: unknown) => {
 
 // Pairing with Windows does not work currently: https://github.com/stoprocent/noble/issues/11
 export default async function pair(qrCode: string) {
-	const environment = Environment.default;
-	const storageService = environment.get(StorageService);
-	storageService.location = settings.storageLocation;
+	Environment.default.vars.set("ble.enable", true);
 
-	Ble.get = singleton(() => new NodeJsBle());
+	const environment = Environment.default;
+	environment.set(
+		Filesystem,
+		new NodeJsFilesystem(() => settings.storageLocation)
+	);
+
+	const storageService = environment.get(StorageService);
 
 	const controllerStorage = (
 		await storageService.open("controller")
@@ -81,7 +85,8 @@ export default async function pair(qrCode: string) {
 			environment,
 			id: settings.controllerId
 		},
-		autoConnect: false
+		autoConnect: false,
+		adminFabricLabel: "Koti.js"
 	});
 
 	await commissioningController.start();

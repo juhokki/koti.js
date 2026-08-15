@@ -132,8 +132,7 @@ test("ShellyIntegration starts discovery", async () => {
 
 test("Discovered device writes initial values and changed values", () => {
 	let onValueUpdatedCallback:
-		| ((prop: string, value: number | boolean) => void)
-		| undefined;
+		((prop: string, value: number | boolean) => void) | undefined;
 
 	const integration = new ShellyIntegration(services, settings);
 	const mockShellyDevice: ShellyDevicePlugS = {

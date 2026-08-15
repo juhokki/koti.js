@@ -1,12 +1,12 @@
-import { Environment, Logger, StorageService } from "@matter/main";
+import { Environment, Filesystem, Logger, StorageService } from "@matter/main";
 import { LevelControl, OnOff } from "@matter/main/clusters";
-import type { EndpointInterface } from "@matter/main/protocol";
-import { NodeId, type TypeFromPartialBitSchema } from "@matter/main/types";
+import { NodeId } from "@matter/main/types";
 import {
 	CommissioningController,
 	type CommissioningControllerOptions
 } from "@project-chip/matter.js";
-import { NodeStates } from "@project-chip/matter.js/device";
+import { NodeStates, Endpoint } from "@project-chip/matter.js/device";
+import { NodeJsFilesystem } from "@matter/nodejs";
 import DeviceOnlineStatus from "../../../constants/DeviceOnlineStatus.ts";
 import DeviceType from "../../../constants/DeviceType.ts";
 import Value from "../../../model/Value.ts";
@@ -20,7 +20,7 @@ export const MEASUREMENT_BRIGHTNESS = "brightness";
 
 export default class MatterIntegration extends IntegrationBase {
 	options: MatterIntegrationSettings;
-	matterDevices: EndpointInterface[];
+	matterDevices: Endpoint[];
 
 	constructor(services: ServiceLocator, options: MatterIntegrationSettings) {
 		super(services);
@@ -44,8 +44,12 @@ export default class MatterIntegration extends IntegrationBase {
 		Logger.level = 1; // INFO
 
 		const environment = Environment.default;
+		environment.set(
+			Filesystem,
+			new NodeJsFilesystem(() => this.options.storageLocation)
+		);
+
 		const storageService = environment.get(StorageService);
-		storageService.location = this.options.storageLocation;
 
 		const controllerStorage = (
 			await storageService.open("controller")
@@ -58,7 +62,8 @@ export default class MatterIntegration extends IntegrationBase {
 				environment: environment,
 				id: this.options.controllerId
 			},
-			autoConnect: false
+			autoConnect: false,
+			adminFabricLabel: "Koti.js"
 		};
 
 		const commissioningController = new CommissioningController(
@@ -79,19 +84,23 @@ export default class MatterIntegration extends IntegrationBase {
 		node: NodeId
 	): Promise<void> {
 		const nodeId = NodeId(node);
-		const pairedNode = await commissioningController.connectNode(nodeId);
+		const pairedNode = await commissioningController.getNode(nodeId);
 		const devices = pairedNode.getDevices();
 
-		pairedNode.events.stateChanged.on((info) =>
-			this.onNodeStateChanged(info, devices)
-		);
+		pairedNode.events.stateChanged.on((info) => {
+			this.onNodeStateChanged(info, devices).catch((e: unknown) => {
+				logger.error(e, "Failed to handle node state change.");
+			});
+		});
+
+		pairedNode.connect();
 
 		for (const matterDevice of devices) {
 			await this.getMatterDeviceValues(matterDevice);
 		}
 	}
 
-	async getMatterDeviceValues(matterDevice: EndpointInterface) {
+	async getMatterDeviceValues(matterDevice: Endpoint) {
 		const deviceIdString = String(matterDevice.number);
 
 		try {
@@ -108,10 +117,8 @@ export default class MatterIntegration extends IntegrationBase {
 		this.matterDevices.push(matterDevice);
 
 		const values = [];
-		const onOffClient = matterDevice.getClusterClient(OnOff.Complete);
-		const levelControlClient = matterDevice.getClusterClient(
-			LevelControl.Complete
-		);
+		const onOffClient = matterDevice.getClusterClient(OnOff);
+		const levelControlClient = matterDevice.getClusterClient(LevelControl);
 
 		if (onOffClient) {
 			const onOffStatus = await onOffClient.getOnOffAttribute();
@@ -194,7 +201,7 @@ export default class MatterIntegration extends IntegrationBase {
 		await this.services.getDataService().write(values);
 	}
 
-	async onNodeStateChanged(info: NodeStates, devices: EndpointInterface[]) {
+	async onNodeStateChanged(info: NodeStates, devices: Endpoint[]) {
 		switch (info) {
 			case NodeStates.Connected:
 				for (const matterDevice of devices) {
@@ -205,7 +212,15 @@ export default class MatterIntegration extends IntegrationBase {
 							deviceIdString,
 							DeviceOnlineStatus.ONLINE
 						);
-					await this.updateDevicePreviousState(matterDevice);
+
+					await this.updateDevicePreviousState(matterDevice).catch(
+						(e: unknown) => {
+							logger.error(
+								e,
+								`Failed to update previous state for device ${deviceIdString}.`
+							);
+						}
+					);
 				}
 				break;
 			case NodeStates.Disconnected:
@@ -224,12 +239,10 @@ export default class MatterIntegration extends IntegrationBase {
 		}
 	}
 
-	async updateDevicePreviousState(matterDevice: EndpointInterface) {
+	async updateDevicePreviousState(matterDevice: Endpoint) {
 		const deviceIdString = String(matterDevice.number);
-		const onOffClient = matterDevice.getClusterClient(OnOff.Complete);
-		const levelControlClient = matterDevice.getClusterClient(
-			LevelControl.Complete
-		);
+		const onOffClient = matterDevice.getClusterClient(OnOff);
+		const levelControlClient = matterDevice.getClusterClient(LevelControl);
 
 		if (onOffClient) {
 			const power = this.services
@@ -280,8 +293,8 @@ export default class MatterIntegration extends IntegrationBase {
 		}
 	}
 
-	async toggleDeviceOnOff(matterDevice: EndpointInterface, value: Value) {
-		const client = matterDevice.getClusterClient(OnOff.Complete);
+	async toggleDeviceOnOff(matterDevice: Endpoint, value: Value) {
+		const client = matterDevice.getClusterClient(OnOff);
 
 		if (client) {
 			if (value.value) {
@@ -296,20 +309,16 @@ export default class MatterIntegration extends IntegrationBase {
 		}
 	}
 
-	async toggleDeviceLevel(matterDevice: EndpointInterface, value: Value) {
-		const client = matterDevice.getClusterClient(LevelControl.Complete);
+	async toggleDeviceLevel(matterDevice: Endpoint, value: Value) {
+		const client = matterDevice.getClusterClient(LevelControl);
 
 		if (client) {
 			const opts = {
 				level: value.value as number,
 				transitionTime: null,
-				optionsMask: 0 as TypeFromPartialBitSchema<
-					typeof LevelControl.Options
-				>,
-				optionsOverride: 0 as TypeFromPartialBitSchema<
-					typeof LevelControl.Options
-				>
-			};
+				optionsMask: {},
+				optionsOverride: {}
+			} satisfies LevelControl.MoveToLevelRequest;
 
 			await client.moveToLevel(opts);
 		} else {

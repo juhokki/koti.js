@@ -1,7 +1,6 @@
 import { LevelControl, OnOff } from "@matter/main/clusters";
-import type { EndpointInterface } from "@matter/protocol";
 import { EndpointNumber } from "@matter/types";
-import { NodeStates } from "@project-chip/matter.js/device";
+import { NodeStates, Endpoint } from "@project-chip/matter.js/device";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import DeviceOnlineStatus from "../../src/constants/DeviceOnlineStatus.ts";
 import DeviceType from "../../src/constants/DeviceType.ts";
@@ -18,6 +17,7 @@ import MatterIntegration, {
 import type MatterIntegrationSettings from "../../src/service/integration/matter/MatterIntegrationConfig.js";
 import type ServiceBase from "../../src/service/ServiceBase.js";
 import ServiceLocator from "../../src/service/ServiceLocator.js";
+import { MockFilesystem } from "@matter/main";
 
 const mockGetCommissionedNodes = vi.hoisted(() => vi.fn());
 const mockGetDevices = vi.hoisted(() => vi.fn());
@@ -28,7 +28,7 @@ const mockSetDeviceMeasurementDisabledStatus = vi.hoisted(() => vi.fn());
 const mockReadLatestValue = vi.hoisted(() => vi.fn());
 const mockWrite = vi.hoisted(() => vi.fn());
 
-vi.mock("@matter/main", () => ({
+vi.mock("@matter/main", async () => ({
 	Environment: {
 		default: {
 			get: () => ({
@@ -38,20 +38,23 @@ vi.mock("@matter/main", () => ({
 							set: () => Promise.resolve()
 						})
 					})
-			})
+			}),
+			set: (type: unknown) => {
+				if (type === "filesystem") {
+					return new MockFilesystem();
+				}
+			}
 		}
 	},
 	Logger: {},
-	StorageService: {}
+	StorageService: {},
+	Filesystem: "filesystem",
+	MockFilesystem: (await vi.importActual("@matter/main")).MockFilesystem
 }));
 
 vi.mock("@matter/main/clusters", () => ({
-	OnOff: {
-		Complete: "OnOff"
-	},
-	LevelControl: {
-		Complete: "LevelControl"
-	}
+	OnOff: "OnOff",
+	LevelControl: "LevelControl"
 }));
 
 vi.mock("@project-chip/matter.js", () => ({
@@ -59,8 +62,11 @@ vi.mock("@project-chip/matter.js", () => ({
 		return {
 			start: () => Promise.resolve(),
 			getCommissionedNodes: mockGetCommissionedNodes,
-			connectNode: () =>
+			getNode: () =>
 				Promise.resolve({
+					connect: () => {
+						/* Do nothing */
+					},
 					getDevices: mockGetDevices,
 					events: {
 						stateChanged: {
@@ -123,28 +129,24 @@ test("Sets device state to false and connects to matter node and writes initial 
 	const matterDevices = [
 		{
 			number: EndpointNumber(Number(device.id)),
-			getClusterClient: vi
-				.fn()
-				.mockImplementation(
-					(clusterType: OnOff.Complete | LevelControl.Complete) => {
-						switch (clusterType) {
-							case OnOff.Complete:
-								return {
-									getOnOffAttribute: () => true,
-									addOnOffAttributeListener: () => {
-										/* Do nothing */
-									}
-								};
-							case LevelControl.Complete:
-								return {
-									getCurrentLevelAttribute: () => 50,
-									addCurrentLevelAttributeListener: () => {
-										/* Do nothing */
-									}
-								};
-						}
-					}
-				)
+			getClusterClient: vi.fn().mockImplementation((clusterType) => {
+				switch (clusterType) {
+					case OnOff:
+						return {
+							getOnOffAttribute: () => true,
+							addOnOffAttributeListener: () => {
+								/* Do nothing */
+							}
+						};
+					case LevelControl:
+						return {
+							getCurrentLevelAttribute: () => 50,
+							addCurrentLevelAttributeListener: () => {
+								/* Do nothing */
+							}
+						};
+				}
+			})
 		}
 	];
 
@@ -175,26 +177,22 @@ test("Node state changes online status and restores previous state on connected"
 	const matterDevices = [
 		{
 			number: EndpointNumber(Number(device.id)),
-			getClusterClient: vi
-				.fn()
-				.mockImplementation(
-					(clusterType: OnOff.Complete | LevelControl.Complete) => {
-						switch (clusterType) {
-							case OnOff.Complete:
-								return {
-									getOnOffAttribute: () => false,
-									on: mockOn
-								};
-							case LevelControl.Complete:
-								return {
-									getCurrentLevelAttribute: () => 40,
-									moveToLevel: mockMoveToLevel
-								};
-						}
-					}
-				)
+			getClusterClient: vi.fn().mockImplementation((clusterType) => {
+				switch (clusterType) {
+					case OnOff:
+						return {
+							getOnOffAttribute: () => false,
+							on: mockOn
+						};
+					case LevelControl:
+						return {
+							getCurrentLevelAttribute: () => 40,
+							moveToLevel: mockMoveToLevel
+						};
+				}
+			})
 		}
-	] as unknown as EndpointInterface[];
+	] as unknown as Endpoint[];
 
 	await integration.onNodeStateChanged(
 		NodeStates.Disconnected,
@@ -293,27 +291,21 @@ describe("Control device", () => {
 		integration.matterDevices = [
 			{
 				number: EndpointNumber(Number(device.id)),
-				getClusterClient: vi
-					.fn()
-					.mockImplementation(
-						(
-							clusterType: OnOff.Complete | LevelControl.Complete
-						) => {
-							switch (clusterType) {
-								case OnOff.Complete:
-									return {
-										on: mockOn,
-										off: mockOff
-									};
-								case LevelControl.Complete:
-									return {
-										moveToLevel: mockMoveToLevel
-									};
-							}
-						}
-					)
+				getClusterClient: vi.fn().mockImplementation((clusterType) => {
+					switch (clusterType) {
+						case OnOff:
+							return {
+								on: mockOn,
+								off: mockOff
+							};
+						case LevelControl:
+							return {
+								moveToLevel: mockMoveToLevel
+							};
+					}
+				})
 			}
-		] as unknown as EndpointInterface[];
+		] as unknown as Endpoint[];
 	});
 
 	test("Sets power on", async () => {
