@@ -13,17 +13,7 @@ It combines a Node.js backend, a React frontend, and multiple hardware bridges s
 - 433 MHz communication through [rtl433-doorbell-relay](rtl433-doorbell-relay/) and [sonoff-rf-bridge-r2](sonoff-rf-bridge-r2/)
 - [Shelly devices](server/src/service/integration/shelly/ShellyIntegration.ts)
 - [Toshiba heat pump integration](server/src/service/integration/toshiba/ToshibaAcIntegration.ts)
-- A shopping list with real-time WebSocket updates
-
-## What Koti.js Includes
-
-| Component | Purpose | Link | 
-| --- | --- | --- | 
-| `server` | Backend API, integrations, scheduling, and data handling | [server/README.md](server/README.md) |
-| `frontend` | Web UI for device state, controls, and monitoring | [frontend/README.md](frontend/README.md) |
-| `ruuvi-sensor` | Bridge for RuuviTag Bluetooth sensor data | [ruuvi-sensor/README.md](ruuvi-sensor/README.md) |
-| `rtl433-doorbell-relay` | Python relay that listens with `rtl_433` and posts doorbell events to the API | [rtl433-doorbell-relay/README.md](rtl433-doorbell-relay/README.md) | 
-| `sonoff-rf-bridge-r2` | RF bridge setup for Sonoff RF Bridge R2 + ESPHome | [sonoff-rf-bridge-r2/README.md](sonoff-rf-bridge-r2/README.md) |
+- A shopping list with real-time WebSocket updates.
 
 ## Quick Start
 
@@ -34,12 +24,11 @@ cd server && npm install
 cd ../frontend && npm install
 ```
 
-2. Configure services:
+2. Configure server:
 
 - Copy `server/conf.templates/*` into `server/conf/` and fill in environment-specific values.
-- Copy relay/sensor templates into local `conf/` folders where applicable.
 
-3. Build source and start server:
+3. Build frontend and start server:
 
 ```bash
 cd frontend && npm run build
