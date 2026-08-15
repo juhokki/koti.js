@@ -31,7 +31,11 @@ const mockWrite = vi.hoisted(() => vi.fn());
 vi.mock("@matter/main", async () => ({
 	Environment: {
 		default: {
+			vars: new Map(),
 			get: () => ({
+				registerDriver: () => {
+					/* Do nothing */
+				},
 				open: () =>
 					Promise.resolve({
 						createContext: () => ({
@@ -49,7 +53,14 @@ vi.mock("@matter/main", async () => ({
 	Logger: {},
 	StorageService: {},
 	Filesystem: "filesystem",
-	MockFilesystem: (await vi.importActual("@matter/main")).MockFilesystem
+	MockFilesystem: (await vi.importActual("@matter/main")).MockFilesystem,
+	LogLevel: {
+		INFO: 1
+	},
+	LogFormat: {
+		formats: {}
+	},
+	Diagnostic: {}
 }));
 
 vi.mock("@matter/main/clusters", () => ({

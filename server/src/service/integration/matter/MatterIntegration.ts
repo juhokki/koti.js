@@ -1,4 +1,14 @@
-import { Environment, Filesystem, Logger, StorageService } from "@matter/main";
+import {
+	Environment,
+	Filesystem,
+	Logger,
+	StorageService,
+	StorageManager,
+	MaybePromise,
+	LogFormat,
+	LogLevel,
+	Diagnostic
+} from "@matter/main";
 import { LevelControl, OnOff } from "@matter/main/clusters";
 import { NodeId } from "@matter/main/types";
 import {
@@ -6,7 +16,7 @@ import {
 	type CommissioningControllerOptions
 } from "@project-chip/matter.js";
 import { NodeStates, Endpoint } from "@project-chip/matter.js/device";
-import { NodeJsFilesystem } from "@matter/nodejs";
+import { FileStorageDriver, NodeJsFilesystem } from "@matter/nodejs";
 import DeviceOnlineStatus from "../../../constants/DeviceOnlineStatus.ts";
 import DeviceType from "../../../constants/DeviceType.ts";
 import Value from "../../../model/Value.ts";
@@ -21,12 +31,30 @@ export const MEASUREMENT_BRIGHTNESS = "brightness";
 export default class MatterIntegration extends IntegrationBase {
 	options: MatterIntegrationSettings;
 	matterDevices: Endpoint[];
+	storageManager: StorageManager | null = null;
 
 	constructor(services: ServiceLocator, options: MatterIntegrationSettings) {
 		super(services);
 
 		this.options = options;
 		this.matterDevices = [];
+
+		const matterLogger = logger.child({ module: MatterIntegration.name });
+
+		Logger.destinations = {
+			console: {
+				name: "Koti.js",
+				level: LogLevel.INFO,
+				facilityLevels: {},
+				add(message: Diagnostic.Message) {
+					this.write(this.format(message), message);
+				},
+				format: LogFormat.formats.plain ?? (() => ""),
+				write: (text: string) => {
+					matterLogger.info(text);
+				}
+			}
+		};
 	}
 
 	override async start() {
@@ -41,21 +69,19 @@ export default class MatterIntegration extends IntegrationBase {
 				);
 			});
 
-		Logger.level = 1; // INFO
-
 		const environment = Environment.default;
+		environment.vars.set("storage.path", this.options.storageLocation);
 		environment.set(
 			Filesystem,
 			new NodeJsFilesystem(() => this.options.storageLocation)
 		);
 
 		const storageService = environment.get(StorageService);
+		storageService.registerDriver(FileStorageDriver);
+		storageService.defaultDriver = "file";
 
-		const controllerStorage = (
-			await storageService.open("controller")
-		).createContext("data");
-
-		await controllerStorage.set("uniqueid", this.options.controllerId);
+		const storageManager = await storageService.open("controller");
+		this.storageManager = storageManager;
 
 		const commissioningOptions: CommissioningControllerOptions = {
 			environment: {
@@ -77,6 +103,18 @@ export default class MatterIntegration extends IntegrationBase {
 		for (const node of nodes) {
 			await this.connectNode(commissioningController, node);
 		}
+	}
+
+	override async stop() {
+		if (this.storageManager) {
+			const storageManagerClose = this.storageManager.close();
+
+			if (MaybePromise.is(storageManagerClose)) {
+				await storageManagerClose;
+			}
+		}
+
+		return Promise.resolve();
 	}
 
 	async connectNode(
