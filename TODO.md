@@ -1,6 +1,5 @@
 TODO
 
-- Ruuvi air quality device
 - Implement UI for configuring assets
 - Implement UI for configuring devices
 - Implement UI for configuring users

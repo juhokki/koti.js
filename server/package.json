@@ -1,24 +1,23 @@
 {
 	"name": "@koti/server",
 	"type": "module",
-	"version": "0.0.1",
-	"description": "",
+	"version": "1.0.0",
+	"description": "Koti.js server",
 	"main": "index.ts",
 	"engines": {
 		"node": ">=22.18.0"
 	},
 	"scripts": {
 		"start": "node index.ts",
+		"build": "npx tsc",
 		"test": "npx vitest run",
 		"test:coverage": "npx vitest run --coverage",
 		"lint": "npx eslint",
 		"prettier": "prettier --write ."
 	},
-	"private": true,
 	"dependencies": {
 		"@matter/main": "~0.17.9",
 		"@matter/nodejs": "^0.17.9",
-		"@matter/protocol": "~0.17.9",
 		"@matter/types": "~0.17.9",
 		"@project-chip/matter.js": "~0.17.9",
 		"@thream/socketio-jwt": "^3.1.4",
@@ -46,6 +45,7 @@
 		"@types/compression": "^1.8.1",
 		"@types/express": "^5.0.6",
 		"@types/jsonwebtoken": "^9.0.10",
+		"@types/node": "^26.2.0",
 		"@types/node-cron": "^3.0.11",
 		"@types/pg": "^8.21.0",
 		"@types/pg-format": "^1.0.5",

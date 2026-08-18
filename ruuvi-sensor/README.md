@@ -11,11 +11,12 @@ See also:
 ## Install
 
 - create user koti
-- git checkout koti
+- git clone koti
 - cd ruuvi-sensor
 - npm install
+- npm build
 - npm run start
-- create systemd service file
+- optional: create systemd service file
 
 ## systemd service file
 
