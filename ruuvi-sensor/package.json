@@ -1,21 +1,41 @@
 {
 	"name": "@koti/ruuvi-sensor",
 	"type": "module",
-	"version": "0.0.1",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"start": "node index.js",
-		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-		"lint": "npx eslint src test"
+	"version": "1.0.0",
+	"description": "Koti.js Ruuvi sensor",
+	"main": "dist/index.js",
+	"engines": {
+		"node": ">=18.20.8"
 	},
-	"private": true,
+	"scripts": {
+		"start": "node dist/index.js",
+		"build": "npx tsc",
+		"test": "npx vitest run",
+		"test:coverage": "npx vitest run --coverage",
+		"lint": "npx eslint",
+		"prettier": "prettier --write ."
+	},
 	"dependencies": {
+		"globals": "^17.11.0",
 		"node-fetch": "^3.3.2",
-		"node-ruuvitag": "^5.1.0"
+		"node-ruuvitag": "github:juhokki/node-ruuvitag",
+		"pino": "^9.13.1",
+		"typescript": "^6.0.3"
 	},
 	"devDependencies": {
-		"eslint": "^9.14.0",
-		"jest": "^29.7.0"
+		"@eslint/js": "^8.57.1",
+		"@types/node": "^26.2.0",
+		"brace-expansion": "4.0.1",
+		"eslint": "^8.57.1",
+		"eslint-config-prettier": "^10.1.8",
+		"node-ruuvitag-types": "github:juhokki/node-ruuvitag-types",
+		"prettier": "^3.9.6",
+		"typescript-eslint": "^7.18.0",
+		"vitest": "^3.2.7"
+	},
+	"allowScripts": {
+		"@abandonware/bluetooth-hci-socket@0.5.3-12": true,
+		"@abandonware/noble@1.9.2-26": true,
+		"usb@2.18.0": true
 	}
 }

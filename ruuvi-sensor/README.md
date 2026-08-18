@@ -18,9 +18,11 @@ See also:
 - create systemd service file
 
 ## systemd service file
+
 ```
 sudo nano /etc/systemd/system/ruuvi-sensor.service
 ```
+
 ```
 [Unit]
 Description=Ruuvi sensor
@@ -35,6 +37,7 @@ User=koti
 [Install]
 WantedBy=multi-user.target
 ```
+
 ```
 sudo systemctl daemon-reload
 sudo systemctl enable ruuvi-sensor.service
