@@ -19,7 +19,9 @@ export default function DeviceView(props: DeviceViewProps) {
 	const offline = device.onlineStatus === DeviceOnlineStatus.OFFLINE;
 	const measurements = device.measurements;
 	const openMeasurementHistory = () => {
-		Promise.resolve(navigate(`/assets/${asset.id}/${device.id}`)).catch(console.log);
+		Promise.resolve(navigate(`/assets/${asset.id}/${device.id}`)).catch(
+			console.log
+		);
 	};
 
 	const hasActions = !!device.measurements.find(

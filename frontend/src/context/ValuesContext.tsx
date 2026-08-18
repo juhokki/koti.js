@@ -10,17 +10,22 @@ interface ValuesContextType {
 
 const ValuesContext = createContext<ValuesContextType>({} as ValuesContextType);
 
-const ValuesContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ValuesContextProvider: React.FC<{ children: React.ReactNode }> = ({
+	children
+}) => {
 	const [values] = useState(new ValueContextEmitter());
-	
+
 	useEffect(() => {
 		socket.on(Messages.VALUES, (latestValues: Value[]) => {
 			if (!values.isInitialized()) {
 				latestValues.forEach((value) => {
 					values.set(
-						ValueUtil.createValueKey(value.deviceId, value.measurementId),
+						ValueUtil.createValueKey(
+							value.deviceId,
+							value.measurementId
+						),
 						value
-					)
+					);
 				});
 
 				values.setInitialized();

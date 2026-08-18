@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import FeedIcon from '@mui/icons-material/Feed';
+import FeedIcon from "@mui/icons-material/Feed";
 import SettingsIcon from "@mui/icons-material/Settings";
 import StorageIcon from "@mui/icons-material/Storage";
 import prettyBytes from "pretty-bytes";
@@ -127,7 +127,9 @@ export default function System() {
 										<span>Loki</span>
 									</th>
 									<td className="centered">
-										<button style={{ margin: 0 }}>Avaa</button>
+										<button style={{ margin: 0 }}>
+											Avaa
+										</button>
 									</td>
 								</tr>
 							</tbody>

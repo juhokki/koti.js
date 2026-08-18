@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, FormEvent } from "react";
+import { useState, useContext, useEffect, SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import update from "immutability-helper";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -45,7 +45,7 @@ export default function ShoppingListView() {
 		});
 	};
 
-	const addItem = (event: FormEvent<HTMLFormElement>) => {
+	const addItem = (event: SubmitEvent) => {
 		event.preventDefault();
 
 		if (!newItem) {
@@ -136,7 +136,9 @@ export default function ShoppingListView() {
 									{item.text}
 								</span>
 								<RemoveCircleIcon
-									onClick={() => { removeItem(item.id); }}
+									onClick={() => {
+										removeItem(item.id);
+									}}
 									className="danger"
 								/>
 							</li>
@@ -145,7 +147,9 @@ export default function ShoppingListView() {
 					<form onSubmit={addItem}>
 						<input
 							value={newItem}
-							onChange={(e) => { setNewItem(e.target.value) }}
+							onChange={(e) => {
+								setNewItem(e.target.value);
+							}}
 							type="text"
 							placeholder="Lisää ostettava asia"
 						/>

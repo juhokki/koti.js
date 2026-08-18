@@ -17,21 +17,27 @@ const ShoppingListContext = createContext<ShoppingListContextType>(
 	{} as ShoppingListContextType
 );
 
-const ShoppingListContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ShoppingListContextProvider: React.FC<{ children: React.ReactNode }> = ({
+	children
+}) => {
 	const [shoppingList, setShoppingList] = useState<ShoppingList | null>(null);
 
 	const setShoppingListInternal = (
 		shoppingList: ShoppingList,
 		callback: (error?: Error) => void
 	) => {
-		socket.emit(Messages.SHOPPINGLIST, shoppingList, (response: HttpStatus) => {
-			if (response === STATUS_OK) {
-				//setShoppingList(shoppingList);
-				callback();
-			} else {
-				callback(new Error("Failed to update shopping list"));
+		socket.emit(
+			Messages.SHOPPINGLIST,
+			shoppingList,
+			(response: HttpStatus) => {
+				if (response === STATUS_OK) {
+					//setShoppingList(shoppingList);
+					callback();
+				} else {
+					callback(new Error("Failed to update shopping list"));
+				}
 			}
-		});
+		);
 	};
 
 	useEffect(() => {

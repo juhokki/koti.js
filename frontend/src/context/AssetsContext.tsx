@@ -9,7 +9,9 @@ interface AssetsContextType {
 
 const AssetsContext = createContext<AssetsContextType>({} as AssetsContextType);
 
-const AssetsContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AssetsContextProvider: React.FC<{ children: React.ReactNode }> = ({
+	children
+}) => {
 	const [assets, setAssets] = useState<Asset[]>([]);
 
 	useEffect(() => {

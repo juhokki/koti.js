@@ -110,7 +110,7 @@ export default function DeviceChart(props: DeviceChartProps) {
 						}
 
 						label +=
-							context.parsed.y.toFixed(1) +
+							(context.parsed.y?.toFixed(1) ?? "") +
 							` ${measurement.unit}`;
 
 						return label;

@@ -30,7 +30,9 @@ export default function User() {
 		context.setUser(null);
 		localStorage.removeItem("jwt");
 		socket.disconnect();
-		Promise.resolve(navigate("/login", { replace: true })).catch(console.log);
+		Promise.resolve(navigate("/login", { replace: true })).catch(
+			console.log
+		);
 	};
 	const onWebPushToggled = async (checked: boolean) => {
 		setLoading(true);
@@ -158,13 +160,11 @@ export default function User() {
 										<Switch
 											checked={webPushEnabled}
 											onChange={(event, checked) => {
-												onWebPushToggled(checked)
-													.catch((e: unknown) => {
+												onWebPushToggled(checked).catch(
+													(e: unknown) => {
 														console.log(e);
-													});
-											}}
-											inputProps={{
-												"aria-label": "Toggle value"
+													}
+												);
 											}}
 										/>
 									</td>

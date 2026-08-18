@@ -15,10 +15,9 @@ export default function Assets() {
 		Promise.resolve(navigate(`/assets/${assetId}`)).catch(console.log);
 	};
 
-	const filteredAssets =
-		assets.filter((asset) => {
-			return asset.devices.length > 0;
-		});
+	const filteredAssets = assets.filter((asset) => {
+		return asset.devices.length > 0;
+	});
 
 	return (
 		<section>
@@ -42,7 +41,9 @@ export default function Assets() {
 					{filteredAssets.map((asset) => (
 						<div className="grid-item" key={asset.id}>
 							<h3
-								onClick={() => { open(asset.id); }}
+								onClick={() => {
+									open(asset.id);
+								}}
 								className="centered clickable"
 							>
 								<Icon>{asset.icon}</Icon>

@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { SubmitEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
@@ -15,11 +15,13 @@ export default function Login() {
 
 	useEffect(() => {
 		if (jwt) {
-			Promise.resolve(navigate("/", { replace: true })).catch(console.log);
+			Promise.resolve(navigate("/", { replace: true })).catch(
+				console.log
+			);
 		}
 	});
 
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
 
 		setError(false);
@@ -30,7 +32,9 @@ export default function Login() {
 				localStorage.setItem("jwt", newJwt);
 				socket.auth = { token: `Bearer ${newJwt}` };
 				socket.connect();
-				Promise.resolve(navigate("/", { replace: true })).catch(console.log);
+				Promise.resolve(navigate("/", { replace: true })).catch(
+					console.log
+				);
 			})
 			.catch((e: unknown) => {
 				setError(true);
@@ -66,7 +70,9 @@ export default function Login() {
 							<PersonIcon />
 						</label>
 						<input
-							onChange={(e) => { setUsername(e.target.value); }}
+							onChange={(e) => {
+								setUsername(e.target.value);
+							}}
 							type="text"
 							placeholder="Käyttäjätunnus"
 							autoComplete="username"
@@ -77,7 +83,9 @@ export default function Login() {
 							<LockIcon />
 						</label>
 						<input
-							onChange={(e) => { setPassword(e.target.value); }}
+							onChange={(e) => {
+								setPassword(e.target.value);
+							}}
 							type="password"
 							placeholder="Salasana"
 							autoComplete="current-password"

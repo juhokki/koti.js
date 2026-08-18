@@ -9,7 +9,9 @@ interface AlarmsContextType {
 
 const AlarmsContext = createContext<AlarmsContextType>({} as AlarmsContextType);
 
-const AlarmsContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AlarmsContextProvider: React.FC<{ children: React.ReactNode }> = ({
+	children
+}) => {
 	const [alarms, setAlarms] = useState<Alarm[] | null>(null);
 
 	useEffect(() => {

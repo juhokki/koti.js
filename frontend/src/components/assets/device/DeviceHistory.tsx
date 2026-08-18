@@ -7,7 +7,11 @@ import { AssetsContext } from "../../../context/AssetsContext";
 import ValuesApi from "../../../api/ValuesApi";
 import DeviceChart from "./DeviceChart";
 import { DeviceChartData } from "../../../interface/DeviceChartData";
-import { getEndOfMonth, getStartOfMonth, shortDate } from "../../../util/TimeUtil";
+import {
+	getEndOfMonth,
+	getStartOfMonth,
+	shortDate
+} from "../../../util/TimeUtil";
 import { Measurement } from "../../../interface/Asset";
 
 export default function DeviceHistory() {
@@ -36,10 +40,12 @@ export default function DeviceHistory() {
 				endDate.getTime()
 			)
 				.then((values) => {
-					const measurementValues: Record<string, DeviceChartData> = {};
+					const measurementValues: Record<string, DeviceChartData> =
+						{};
 
 					values.forEach((value) => {
-						const deviceChartData = measurementValues[value.measurementId];
+						const deviceChartData =
+							measurementValues[value.measurementId];
 						const point = {
 							x: new Date(value.time),
 							y: value.value
@@ -82,7 +88,9 @@ export default function DeviceHistory() {
 	};
 	const getMeasurement = (measurementId: string): Measurement => {
 		if (device) {
-			const measurement = device.measurements.find((m) => m.id === measurementId);
+			const measurement = device.measurements.find(
+				(m) => m.id === measurementId
+			);
 
 			if (!measurement) {
 				throw new Error("Missing measurement");
@@ -151,17 +159,20 @@ export default function DeviceHistory() {
 					<div className="left">
 						<ChevronLeftIcon
 							className="clickable"
-							onClick={() => { changeMonth(-1); }}
+							onClick={() => {
+								changeMonth(-1);
+							}}
 						/>
 					</div>
 					<div>
-						{shortDate(startDate)} -{" "}
-						{shortDate(endDate)}
+						{shortDate(startDate)} - {shortDate(endDate)}
 					</div>
 					<div className="right">
 						<ChevronRightIcon
 							className="clickable"
-							onClick={() => { changeMonth(+1); }}
+							onClick={() => {
+								changeMonth(1);
+							}}
 						/>
 					</div>
 				</h2>

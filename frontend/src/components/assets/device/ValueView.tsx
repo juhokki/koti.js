@@ -4,7 +4,12 @@ import Switch from "@mui/material/Switch";
 import ValuesApi from "../../../api/ValuesApi";
 import { ValuesContext } from "../../../context/ValuesContext";
 import ValueUtil from "../../../util/ValueUtil";
-import { Device, DeviceOnlineStatus, Measurement, MeasurementType } from "../../../interface/Asset";
+import {
+	Device,
+	DeviceOnlineStatus,
+	Measurement,
+	MeasurementType
+} from "../../../interface/Asset";
 import { Value, ValueType } from "../../../interface/Value";
 
 interface ValueViewProps {
@@ -40,7 +45,7 @@ export default function ValueView(props: ValueViewProps) {
 	useEffect(() => {
 		setDisabled(
 			measurement.disabled ||
-				device.onlineStatus ===DeviceOnlineStatus.OFFLINE
+				device.onlineStatus === DeviceOnlineStatus.OFFLINE
 		);
 	}, [measurement.disabled, device.onlineStatus]);
 
@@ -55,8 +60,8 @@ export default function ValueView(props: ValueViewProps) {
 				measurement.id,
 				newValue
 			);
-			setValue({ 
-				deviceId: measurement.deviceId, 
+			setValue({
+				deviceId: measurement.deviceId,
 				measurementId: measurement.id,
 				value: newValue,
 				time: Date.now()
@@ -90,19 +95,25 @@ export default function ValueView(props: ValueViewProps) {
 					min={measurement.min}
 					max={measurement.max}
 					value={value.value as number}
-					onChange={(event: Event, newValue: number | number[], activeThumb: number) => {
-						setValue({ 
-							deviceId: measurement.deviceId, 
+					onChange={(
+						event: Event,
+						newValue: number | number[],
+						activeThumb: number
+					) => {
+						setValue({
+							deviceId: measurement.deviceId,
 							measurementId: measurement.id,
 							value: newValue as number,
 							time: Date.now()
 						} satisfies Value);
 					}}
-					onChangeCommitted={(event: React.SyntheticEvent | Event, newValue: number | number[]) => { 
-						changeValue(newValue as number)
-							.catch((e: unknown) => { 
-								console.log(e)
-							}); 
+					onChangeCommitted={(
+						event: React.SyntheticEvent | Event,
+						newValue: number | number[]
+					) => {
+						changeValue(newValue as number).catch((e: unknown) => {
+							console.log(e);
+						});
 					}}
 					aria-label="Value slider"
 				/>
@@ -113,18 +124,21 @@ export default function ValueView(props: ValueViewProps) {
 					key={key}
 					disabled={disabled}
 					checked={value.value as boolean}
-					onChange={(event: React.ChangeEvent<HTMLInputElement>) => { 
-						changeValue(event.target.checked)
-							.catch((e: unknown) => { 
-								console.log(e)
-							}); 
-						}}
-					inputProps={{ "aria-label": "Toggle value" }}
+					onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+						changeValue(event.target.checked).catch(
+							(e: unknown) => {
+								console.log(e);
+							}
+						);
+					}}
 				/>
 			);
 		}
 	} else {
-		if (type === MeasurementType.Number || type === MeasurementType.Counter) {
+		if (
+			type === MeasurementType.Number ||
+			type === MeasurementType.Counter
+		) {
 			return (
 				<span>
 					{value.value} {measurement.unit}

@@ -8,7 +8,9 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
 
-const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({
+	children
+}) => {
 	const [connected, setConnected] = useState<boolean>(false);
 
 	useEffect(() => {

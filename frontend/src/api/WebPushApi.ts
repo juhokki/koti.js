@@ -2,7 +2,9 @@ import { SubscribeStatus } from "../interface/Subscription";
 import AuthUtil from "../util/AuthUtil";
 
 class WebPushApi {
-	async checkSubscription(subscription: PushSubscription): Promise<SubscribeStatus> {
+	async checkSubscription(
+		subscription: PushSubscription
+	): Promise<SubscribeStatus> {
 		const url = "/api/user/web-push";
 		const options = {
 			method: "PUT",
@@ -15,7 +17,7 @@ class WebPushApi {
 
 		const response = await fetch(url, options);
 
-		return await response.json() as SubscribeStatus;
+		return (await response.json()) as SubscribeStatus;
 	}
 
 	async subscribe(subscription: PushSubscription): Promise<void> {
@@ -48,7 +50,6 @@ class WebPushApi {
 			},
 			body: JSON.stringify(subscription)
 		};
-
 
 		const response = await fetch(url, options);
 

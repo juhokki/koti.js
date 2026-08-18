@@ -32,7 +32,7 @@ class ValuesApi {
 
 		const response = await fetch(url, options);
 
-		return await response.json() as MeasurementValue[];
+		return (await response.json()) as MeasurementValue[];
 	}
 }
 

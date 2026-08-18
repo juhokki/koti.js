@@ -67,16 +67,16 @@ export default function Alarms() {
 												<span
 													className="clickable"
 													onClick={() => {
-														goToAsset(alarm.assetId)
+														goToAsset(
+															alarm.assetId
+														);
 													}}
 												>
 													{alarm.assetName}
 												</span>
 											</td>
 											<td>{alarm.name}</td>
-											<td>
-												{timeElapsed(alarm.time)}
-											</td>
+											<td>{timeElapsed(alarm.time)}</td>
 										</tr>
 									))}
 								</tbody>

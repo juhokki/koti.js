@@ -13,7 +13,7 @@ class SystemApi {
 
 		const response = await fetch(url, options);
 
-		return await response.json() as SystemDiskState;
+		return (await response.json()) as SystemDiskState;
 	}
 }
 

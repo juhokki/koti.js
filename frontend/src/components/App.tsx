@@ -77,7 +77,9 @@ export default function App() {
 			socket.connect();
 		} else {
 			if (pathname !== "/login") {
-				Promise.resolve(navigate("/login", { replace: true })).catch(console.log);
+				Promise.resolve(navigate("/login", { replace: true })).catch(
+					console.log
+				);
 			}
 		}
 	});

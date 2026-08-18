@@ -1,3 +1,3 @@
 export interface SubscribeStatus {
-    status: boolean;
+	status: boolean;
 }
