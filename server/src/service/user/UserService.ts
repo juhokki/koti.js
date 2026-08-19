@@ -167,7 +167,7 @@ export default class UserService extends ServiceBase {
 			throw new Error("User not found");
 		}
 
-		this.services.getPushApiService().addSubscription(subscription);
+		this.services.getPushApiService().addSubscription(user.username, subscription);
 		user.subscriptions.push(subscription);
 		this.saveUserChanges();
 	}
@@ -187,7 +187,7 @@ export default class UserService extends ServiceBase {
 		);
 
 		if (userSub) {
-			this.services.getPushApiService().removeSubscription(userSub);
+			this.services.getPushApiService().removeSubscription(user.username, userSub);
 			user.subscriptions.splice(user.subscriptions.indexOf(userSub), 1);
 			this.saveUserChanges();
 		} else {

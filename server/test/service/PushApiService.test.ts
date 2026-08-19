@@ -68,7 +68,7 @@ test("PushApiService start subscribes to alarms and fetches subscriptions", asyn
 	await service.start();
 
 	expect(service.subscriptions.length).toBe(1);
-	expect(service.subscriptions[0]).toBe("test");
+	expect(service.subscriptions[0]?.subscription).toBe("test");
 	expect(mockOnAlarm).toHaveBeenCalled();
 });
 
@@ -117,12 +117,12 @@ test("PushApiService adds and removes subscriptions", async () => {
 	const service = new PushApiService(services, settings);
 
 	await service.start();
-	service.addSubscription("test" as unknown as PushSubscription);
+	service.addSubscription("test", "test" as unknown as PushSubscription);
 
 	expect(service.subscriptions.length).toBe(1);
-	expect(service.subscriptions[0]).toBe("test");
+	expect(service.subscriptions[0]?.subscription).toBe("test");
 
-	service.removeSubscription("test" as unknown as PushSubscription);
+	service.removeSubscription("test", "test" as unknown as PushSubscription);
 
 	expect(service.subscriptions.length).toBe(0);
 });

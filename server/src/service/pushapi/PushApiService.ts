@@ -1,14 +1,15 @@
-import webpush, { type PushSubscription } from "web-push";
+import webpush, { WebPushError, type PushSubscription } from "web-push";
 import ServiceBase from "../ServiceBase.ts";
 import * as Messages from "../../constants/Messages.ts";
 import type PushApiServiceSettings from "./PushApiServiceSettings.ts";
 import type ServiceLocator from "../ServiceLocator.ts";
 import type Alarm from "../../model/Alarm.ts";
 import logger from "../../util/logger.ts";
+import type { UserSubscription } from "./UserSubscription.ts";
 
 export default class PushApiService extends ServiceBase {
 	options: PushApiServiceSettings;
-	subscriptions: PushSubscription[];
+	subscriptions: UserSubscription[];
 	alarmsLastSent: number;
 
 	constructor(services: ServiceLocator, options: PushApiServiceSettings) {
@@ -19,12 +20,15 @@ export default class PushApiService extends ServiceBase {
 		this.alarmsLastSent = -1;
 	}
 
-	readSubscriptions(): PushSubscription[] {
+	readSubscriptions(): UserSubscription[] {
 		return this.services
 			.getUserService()
 			.getUsers()
 			.map((user) => {
-				return user.subscriptions;
+				return user.subscriptions.map(subscription => ({
+					username: user.username,
+					subscription: subscription
+				} satisfies UserSubscription));
 			})
 			.flat();
 	}
@@ -72,29 +76,35 @@ export default class PushApiService extends ServiceBase {
 			`Sending push notification to ${String(this.subscriptions.length)} users with title "${title}" and body "${body}".`
 		);
 
-		for (const subscription of this.subscriptions) {
+		for (const userSubscription of this.subscriptions) {
 			try {
 				const payload = JSON.stringify({ title, body });
-				await webpush.sendNotification(subscription, payload);
+				await webpush.sendNotification(userSubscription.subscription, payload);
 			} catch (e) {
+				// Remove subscription if it is no longer valid (HTTP 410 Gone)
+				if (e instanceof WebPushError && e.statusCode === 410) {
+					this.removeStaleSubscription(userSubscription);
+				}
+
 				logger.error(e, "Failed to send web-push.");
 			}
 		}
 	}
-
-	addSubscription(subscription: PushSubscription) {
-		this.subscriptions.push(subscription);
+	
+	removeStaleSubscription(userSubscription: UserSubscription) {
+		this.services.getUserService().deleteUserSubscription(
+			userSubscription.username,
+			userSubscription.subscription
+		);
 	}
 
-	removeSubscription(subscription: PushSubscription) {
-		const index = this.subscriptions.findIndex(
-			(s) => JSON.stringify(s) === JSON.stringify(subscription)
-		);
+	addSubscription(username: string, subscription: PushSubscription) {
+		this.subscriptions.push({ username, subscription });
+	}
 
-		if (index !== -1) {
-			this.subscriptions.splice(index, 1);
-		} else {
-			logger.warn("Unable to find Push API subscription.");
-		}
+	removeSubscription(username: string, subscription: PushSubscription) {
+		this.subscriptions = this.subscriptions.filter(
+			(s) => s.username === username && JSON.stringify(s.subscription) !== JSON.stringify(subscription)
+		);
 	}
 }

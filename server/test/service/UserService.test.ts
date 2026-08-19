@@ -210,7 +210,7 @@ test("Add user subscription", async () => {
 		})
 	);
 
-	expect(mockAddSubscription).toHaveBeenCalledWith("test");
+	expect(mockAddSubscription).toHaveBeenCalledWith(username, "test");
 	expect(mockWriteFileSync).toHaveBeenCalledTimes(1);
 	expect(mockWriteFileSync).toHaveBeenLastCalledWith(
 		settings.file,
@@ -250,7 +250,7 @@ test("Remove user subscription", async () => {
 		})
 	);
 
-	expect(mockRemoveSubscription).toHaveBeenCalledWith("test");
+	expect(mockRemoveSubscription).toHaveBeenCalledWith(username, "test");
 	expect(mockWriteFileSync).toHaveBeenCalledTimes(1);
 	expect(mockWriteFileSync).toHaveBeenLastCalledWith(
 		settings.file,
