@@ -8,6 +8,7 @@ import ValueCache from "./ValueCache.ts";
 import type Value from "../../model/Value.ts";
 import MeasurementType from "../../constants/MeasurementType.ts";
 import logger from "../../util/logger.ts";
+import type Measurement from "../../model/Measurement.ts";
 
 export default class DataService extends ServiceBase {
 	options: DataServiceSettings;
@@ -75,6 +76,14 @@ export default class DataService extends ServiceBase {
 				return;
 			}
 
+			if (!this.verifyMeasurementType(measurement, value)) {
+				logger.warn(
+					{ measurement, value },
+					"Value type does not match measurement type."
+				);
+				return;
+			}
+
 			const currentValue = this.latestValueCache.get(
 				value.deviceId,
 				value.measurementId
@@ -119,6 +128,19 @@ export default class DataService extends ServiceBase {
 			await this.database.write(newValues);
 		} catch (e) {
 			logger.error(e, "Failed to write values.");
+		}
+	}
+	verifyMeasurementType(measurement: Measurement, value: Value) {
+		switch (measurement.type) {
+			case MeasurementType.Number:
+			case MeasurementType.Counter:
+				return typeof value.value === "number";
+			case MeasurementType.String:
+				return typeof value.value === "string";
+			case MeasurementType.Boolean:
+				return typeof value.value === "boolean";
+			default:
+				throw new Error("Measurement type not recognized.");
 		}
 	}
 

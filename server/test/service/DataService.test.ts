@@ -142,6 +142,31 @@ test("DataService writes values", async () => {
 	expect(mockWrite).toHaveBeenLastCalledWith(values);
 });
 
+test("Wrong value types are not written", async () => {
+	const service = new DataService(services, settings);
+
+	mockGetMeasurement.mockReturnValueOnce(
+		new Measurement(
+			"device-1",
+			"meas-1",
+			"",
+			MeasurementType.Number,
+			"",
+			""
+		)
+	);
+	mockReadLatestValues.mockReturnValueOnce(Promise.resolve([]));
+	mockWrite.mockReturnValueOnce(Promise.resolve());
+
+	await service.start();
+
+	const values = [new Value("device-1", "meas-1", true)];
+
+	await service.write(values);
+
+	expect(mockWrite).not.toHaveBeenCalled();
+});
+
 test("Control emits value", async () => {
 	const value = new Value("device-1", "meas-1", 1);
 	const service = new DataService(services, settings);
