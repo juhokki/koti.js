@@ -2,6 +2,7 @@ import { Router } from "express";
 import getUserRouter from "./user.ts";
 import getValuesRouter from "./values.ts";
 import getSystemRouter from "./system.ts";
+import getLogsRouter from "./logs.ts";
 import type ServiceLocator from "../../../ServiceLocator.ts";
 
 export default function (services: ServiceLocator) {
@@ -10,6 +11,7 @@ export default function (services: ServiceLocator) {
 	router.use(getUserRouter(services));
 	router.use(getValuesRouter(services));
 	router.use(getSystemRouter(services));
+	router.use(getLogsRouter());
 
 	return router;
 }

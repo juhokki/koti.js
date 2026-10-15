@@ -127,7 +127,14 @@ export default function System() {
 										<span>Loki</span>
 									</th>
 									<td className="centered">
-										<button style={{ margin: 0 }}>
+										<button
+											style={{ margin: 0 }}
+											onClick={() => {
+												Promise.resolve(
+													navigate("/system/logs")
+												).catch(console.log);
+											}}
+										>
 											Avaa
 										</button>
 									</td>

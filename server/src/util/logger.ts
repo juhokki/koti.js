@@ -1,5 +1,12 @@
 import pino from "pino";
+import { logBuffer } from "./LogBuffer.ts";
 
-export default pino({
-	level: process.env.LOG_LEVEL ?? "info"
-});
+const level = process.env.LOG_LEVEL ?? "info";
+
+export default pino(
+	{ level },
+	pino.multistream([
+		{ level: "trace", stream: process.stdout },
+		{ level: "trace", stream: logBuffer }
+	])
+);

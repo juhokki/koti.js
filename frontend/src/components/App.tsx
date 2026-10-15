@@ -25,6 +25,7 @@ import DeviceHistory from "./assets/device/DeviceHistory";
 import ShoppingList from "./shoppinglist/ShoppingListView";
 import Alarms from "./alarms/Alarms";
 import System from "./system/System";
+import Logs from "./system/Logs";
 import PullToRefresh from "./PullToRefresh";
 
 const theme = createTheme({
@@ -35,9 +36,6 @@ const theme = createTheme({
 		error: {
 			main: "#df1c44"
 		},
-		/*"text": {
-			"main": "#fff"
-		},*/
 		background: {
 			default: "var(--background-color)"
 		}
@@ -54,6 +52,56 @@ const theme = createTheme({
 			styleOverrides: {
 				root: {
 					marginLeft: "-12px"
+				}
+			}
+		},
+		MuiSelect: {
+			styleOverrides: {
+				select: {
+					backgroundColor: "var(--box-background-color)",
+					color: "var(--font-color)",
+					minWidth: "120px"
+				},
+				icon: {
+					color: "var(--font-color)"
+				},
+				nativeInput: {
+					color: "var(--font-color)"
+				}
+			}
+		},
+		MuiOutlinedInput: {
+			styleOverrides: {
+				root: {
+					"& .MuiOutlinedInput-notchedOutline": {
+						borderColor: "transparent"
+					},
+					"&:hover .MuiOutlinedInput-notchedOutline": {
+						borderColor: "var(--highlight-color)"
+					},
+					"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+						borderColor: "var(--highlight-color)"
+					}
+				}
+			}
+		},
+		MuiMenu: {
+			styleOverrides: {
+				paper: {
+					backgroundColor: "var(--box-background-color)",
+					color: "var(--font-color)"
+				}
+			}
+		},
+		MuiMenuItem: {
+			styleOverrides: {
+				root: {
+					"&.Mui-selected, &.Mui-selected:hover": {
+						backgroundColor: "var(--highlight-color)"
+					},
+					"&:hover": {
+						backgroundColor: "rgba(48, 188, 237, 0.3)"
+					}
 				}
 			}
 		}
@@ -144,6 +192,10 @@ export default function App() {
 										<Route
 											path="system"
 											element={<System />}
+										/>
+										<Route
+											path="system/logs"
+											element={<Logs />}
 										/>
 									</Routes>
 									<Outlet />
