@@ -19,6 +19,7 @@ const services = new ServiceLocator(
 	new Map([
 		["DataService", {} as DataService],
 		["SystemService", {} as DataService],
+		["RecipeService", {} as DataService],
 		[
 			"UserService",
 			{

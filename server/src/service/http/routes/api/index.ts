@@ -3,6 +3,7 @@ import getUserRouter from "./user.ts";
 import getValuesRouter from "./values.ts";
 import getSystemRouter from "./system.ts";
 import getLogsRouter from "./logs.ts";
+import getRecipesRouter from "./recipes.ts";
 import type ServiceLocator from "../../../ServiceLocator.ts";
 
 export default function (services: ServiceLocator) {
@@ -12,6 +13,7 @@ export default function (services: ServiceLocator) {
 	router.use(getValuesRouter(services));
 	router.use(getSystemRouter(services));
 	router.use(getLogsRouter());
+	router.use(getRecipesRouter(services));
 
 	return router;
 }

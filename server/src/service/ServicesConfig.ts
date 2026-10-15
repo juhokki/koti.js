@@ -9,6 +9,7 @@ import type AlarmServiceSettings from "./alarm/AlarmServiceSettings.ts";
 import type ActionServiceSettings from "./action/ActionServiceSettings.ts";
 import type SystemServiceSettings from "./system/SystemServiceSettings.ts";
 import type SchedulerServiceSettings from "./scheduler/SchedulerServiceSettings.ts";
+import type RecipeServiceSettings from "./recipe/RecipeServiceSettings.ts";
 
 export default interface ServicesConfig {
 	AssetService: AssetServiceSettings;
@@ -16,6 +17,7 @@ export default interface ServicesConfig {
 	HttpService: HttpServiceSettings;
 	IntegrationService: IntegrationServiceSettings;
 	ShoppingListService: ShoppingListServiceSettings;
+	RecipeService: RecipeServiceSettings;
 	UserService: UserServiceSettings;
 	AlarmService: AlarmServiceSettings;
 	ActionService: ActionServiceSettings;

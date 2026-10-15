@@ -118,7 +118,8 @@ const services = new ServiceLocator(
 				getShoppingList: () => ({ items: [{ id: "item-1" }] })
 			} as unknown as ShoppingListService
 		],
-		["SystemService", {}]
+		["SystemService", {}],
+		["RecipeService", {}]
 	] as [string, ServiceBase][])
 );
 

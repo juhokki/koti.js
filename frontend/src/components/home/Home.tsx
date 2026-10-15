@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { AlarmsContext } from "../../context/AlarmsContext";
 
@@ -15,6 +16,9 @@ export default function Home() {
 	};
 	const goToShoppingList = () => {
 		Promise.resolve(navigate("/shoppinglist/")).catch(console.log);
+	};
+	const goToRecipes = () => {
+		Promise.resolve(navigate("/recipes/")).catch(console.log);
 	};
 	const goToAlarms = () => {
 		Promise.resolve(navigate("/alarms/")).catch(console.log);
@@ -35,6 +39,12 @@ export default function Home() {
 				<h3 onClick={goToShoppingList} className="centered clickable">
 					<ShoppingCartIcon />
 					<span>Ostoslista</span>
+				</h3>
+			</div>
+			<div className="grid-item">
+				<h3 onClick={goToRecipes} className="centered clickable">
+					<RestaurantMenuIcon />
+					<span>Reseptit</span>
 				</h3>
 			</div>
 			<div className="grid-item">

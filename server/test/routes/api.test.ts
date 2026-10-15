@@ -21,6 +21,7 @@ const services = new ServiceLocator(
 	new Map([
 		["UserService", {} as unknown as UserService],
 		["AlarmService", {} as unknown as AlarmService],
+		["RecipeService", {}],
 		[
 			"DataService",
 			{

@@ -9,6 +9,7 @@ vi.mock("../src/util/FileUtil.js", () => ({
 
 vi.mock("../src/service/asset/AssetService.js");
 vi.mock("../src/service/shoppinglist/ShoppingListService.js");
+vi.mock("../src/service/recipe/RecipeService.js");
 vi.mock("../src/service/user/UserService.js");
 vi.mock("../src/service/data/DataService.js");
 vi.mock("../src/service/action/ActionService.js");

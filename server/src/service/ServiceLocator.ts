@@ -3,6 +3,7 @@ import type AssetService from "./asset/AssetService.ts";
 import type DataService from "./data/DataService.ts";
 import type IntegrationService from "./integration/IntegrationService.ts";
 import type PushApiService from "./pushapi/PushApiService.ts";
+import type RecipeService from "./recipe/RecipeService.ts";
 import type ServiceBase from "./ServiceBase.ts";
 import type ShoppingListService from "./shoppinglist/ShoppingListService.ts";
 import type SystemService from "./system/SystemService.ts";
@@ -61,6 +62,10 @@ export default class ServiceLocator {
 
 	getShoppingListService(): ShoppingListService {
 		return this.get("ShoppingListService") as ShoppingListService;
+	}
+
+	getRecipeService(): RecipeService {
+		return this.get("RecipeService") as RecipeService;
 	}
 
 	getSystemService(): SystemService {

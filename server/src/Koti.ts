@@ -3,6 +3,7 @@ import logger from "./util/logger.ts";
 import ServiceLocator from "./service/ServiceLocator.ts";
 import AssetService from "./service/asset/AssetService.ts";
 import ShoppingListService from "./service/shoppinglist/ShoppingListService.ts";
+import RecipeService from "./service/recipe/RecipeService.ts";
 import UserService from "./service/user/UserService.ts";
 import DataService from "./service/data/DataService.ts";
 import ActionService from "./service/action/ActionService.ts";
@@ -42,6 +43,10 @@ export default class Koti {
 		services.set(
 			ShoppingListService.name,
 			new ShoppingListService(services, config.ShoppingListService)
+		);
+		services.set(
+			RecipeService.name,
+			new RecipeService(services, config.RecipeService)
 		);
 		services.set(
 			UserService.name,

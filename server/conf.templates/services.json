@@ -18,6 +18,9 @@
 	"ShoppingListService": {
 		"file": "./conf/shoppinglist.json"
 	},
+	"RecipeService": {
+		"file": "./conf/recipes.json"
+	},
 	"UserService": {
 		"file": "./conf/users.json",
 		"secret": "...",
