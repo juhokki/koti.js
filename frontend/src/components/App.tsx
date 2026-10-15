@@ -25,6 +25,7 @@ import DeviceHistory from "./assets/device/DeviceHistory";
 import ShoppingList from "./shoppinglist/ShoppingListView";
 import Alarms from "./alarms/Alarms";
 import System from "./system/System";
+import PullToRefresh from "./PullToRefresh";
 
 const theme = createTheme({
 	palette: {
@@ -108,6 +109,7 @@ export default function App() {
 						<ValuesContextProvider>
 							<ShoppingListContextProvider>
 								<AlarmsContextProvider>
+									<PullToRefresh />
 									{getHeader()}
 									<Routes>
 										<Route path="/" element={<Home />} />

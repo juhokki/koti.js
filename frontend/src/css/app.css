@@ -9,6 +9,28 @@
 	padding: var(--spacing);
 }
 
+.pull-to-refresh {
+	position: fixed;
+	top: env(safe-area-inset-top);
+	left: 0;
+	right: 0;
+	display: flex;
+	justify-content: center;
+	pointer-events: none;
+	z-index: 1300;
+	color: var(--highlight-color);
+}
+
+.pull-to-refresh.refreshing svg {
+	animation: pull-to-refresh-spin 1s linear infinite;
+}
+
+@keyframes pull-to-refresh-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 .header {
 	margin: 0;
 	padding: var(--spacing);
