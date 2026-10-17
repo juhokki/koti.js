@@ -24,18 +24,7 @@ export default class DataService extends ServiceBase {
 
 	override async start() {
 		await this.database.start();
-
-		const values = await this.database.readLatestValues();
-
-		this.latestValueCache = new ValueCache();
-
-		values.forEach((value) => {
-			this.latestValueCache.set(
-				value.deviceId,
-				value.measurementId,
-				value
-			);
-		});
+		this.latestValueCache = await this.initializeCache();
 	}
 
 	override async stop() {
@@ -47,6 +36,17 @@ export default class DataService extends ServiceBase {
 		const database = factory.create();
 
 		return database;
+	}
+
+	async initializeCache(): Promise<ValueCache> {
+		const cache = new ValueCache();
+		const values = await this.database.readLatestValues();
+
+		values.forEach((value) => {
+			cache.set(value.deviceId, value.measurementId, value);
+		});
+
+		return cache;
 	}
 
 	readLatestValues() {

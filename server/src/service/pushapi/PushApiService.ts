@@ -25,10 +25,13 @@ export default class PushApiService extends ServiceBase {
 			.getUserService()
 			.getUsers()
 			.map((user) => {
-				return user.subscriptions.map(subscription => ({
-					username: user.username,
-					subscription: subscription
-				} satisfies UserSubscription));
+				return user.subscriptions.map(
+					(subscription) =>
+						({
+							username: user.username,
+							subscription: subscription
+						}) satisfies UserSubscription
+				);
 			})
 			.flat();
 	}
@@ -79,7 +82,10 @@ export default class PushApiService extends ServiceBase {
 		for (const userSubscription of this.subscriptions) {
 			try {
 				const payload = JSON.stringify({ title, body });
-				await webpush.sendNotification(userSubscription.subscription, payload);
+				await webpush.sendNotification(
+					userSubscription.subscription,
+					payload
+				);
 			} catch (e) {
 				// Remove subscription if it is no longer valid (HTTP 410 Gone)
 				if (e instanceof WebPushError && e.statusCode === 410) {
@@ -90,12 +96,14 @@ export default class PushApiService extends ServiceBase {
 			}
 		}
 	}
-	
+
 	removeStaleSubscription(userSubscription: UserSubscription) {
-		this.services.getUserService().deleteUserSubscription(
-			userSubscription.username,
-			userSubscription.subscription
-		);
+		this.services
+			.getUserService()
+			.deleteUserSubscription(
+				userSubscription.username,
+				userSubscription.subscription
+			);
 	}
 
 	addSubscription(username: string, subscription: PushSubscription) {
@@ -104,7 +112,9 @@ export default class PushApiService extends ServiceBase {
 
 	removeSubscription(username: string, subscription: PushSubscription) {
 		this.subscriptions = this.subscriptions.filter(
-			(s) => s.username === username && JSON.stringify(s.subscription) !== JSON.stringify(subscription)
+			(s) =>
+				s.username === username &&
+				JSON.stringify(s.subscription) !== JSON.stringify(subscription)
 		);
 	}
 }
