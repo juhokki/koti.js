@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import Checkbox from "@mui/material/Checkbox";
 import RecipesApi from "../../api/RecipesApi";
 import ShoppingListApi from "../../api/ShoppingListApi";
 import { Recipe } from "../../interface/Recipe";
@@ -12,6 +13,7 @@ export default function RecipeShoppingList() {
 	const [recipe, setRecipe] = useState<Recipe | null>(null);
 	const [selected, setSelected] = useState<Set<number>>(new Set());
 	const [error, setError] = useState(false);
+	const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
 
 	const goBack = () => {
 		Promise.resolve(navigate(`/recipes/${recipeId ?? ""}`)).catch(
@@ -57,7 +59,13 @@ export default function RecipeShoppingList() {
 				`${i.amount} ${i.unit} ${i.name}`.replace(/\s+/g, " ").trim()
 			);
 
-		ShoppingListApi.appendItems(items).then(goBack).catch(console.log);
+		setStatus("loading");
+		ShoppingListApi.appendItems(items)
+			.then(goBack)
+			.catch((e: unknown) => {
+				console.log(e);
+				setStatus("error");
+			});
 	};
 
 	return (
@@ -87,13 +95,17 @@ export default function RecipeShoppingList() {
 					)}
 					{recipe && (
 						<>
+							{status === "error" && (
+								<div className="message error">
+									Lisääminen epäonnistui.
+								</div>
+							)}
 							<div className="recipe-box">
 								<ul className="ingredient-select">
 									{recipe.ingredients.map((ingredient, i) => (
 										<li key={i}>
 											<label>
-												<input
-													type="checkbox"
+												<Checkbox
 													checked={selected.has(i)}
 													onChange={() => {
 														toggle(i);
@@ -107,10 +119,18 @@ export default function RecipeShoppingList() {
 									))}
 								</ul>
 							</div>
+							{status === "loading" && (
+								<div className="loader-container">
+									<div className="loader"></div>
+								</div>
+							)}
 							<div className="buttons">
 								<button
 									type="button"
-									disabled={selected.size === 0}
+									disabled={
+										selected.size === 0 ||
+										status === "loading"
+									}
 									onClick={add}
 								>
 									<span>Lisää</span>

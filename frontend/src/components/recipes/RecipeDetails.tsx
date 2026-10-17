@@ -84,19 +84,6 @@ export default function RecipeDetails() {
 										</li>
 									))}
 								</ul>
-								<div className="buttons">
-									<button
-										type="button"
-										onClick={() => {
-											go(
-												`/recipes/${recipe.id}/shoppinglist`
-											);
-										}}
-									>
-										<AddShoppingCartIcon />
-										<span>Lisää ostoslistaan</span>
-									</button>
-								</div>
 							</div>
 							<div className="recipe-box">
 								<h3 className="centered underline">
@@ -108,27 +95,42 @@ export default function RecipeDetails() {
 									))}
 								</ol>
 							</div>
-							{user?.username === recipe.owner && (
-								<div className="buttons">
-									<button
-										type="button"
-										onClick={() => {
-											go(`/recipes/${recipe.id}/edit`);
-										}}
-									>
-										<EditIcon />
-										<span>Muokkaa</span>
-									</button>
-									<button
-										type="button"
-										className="danger"
-										onClick={remove}
-									>
-										<DeleteIcon />
-										<span>Poista</span>
-									</button>
-								</div>
-							)}
+							<div className="buttons">
+								<button
+									type="button"
+									onClick={() => {
+										go(
+											`/recipes/${recipe.id}/shoppinglist`
+										);
+									}}
+								>
+									<AddShoppingCartIcon />
+									<span>Lisää ostoslistaan</span>
+								</button>
+								{user?.username === recipe.owner && (
+									<>
+										<button
+											type="button"
+											onClick={() => {
+												go(
+													`/recipes/${recipe.id}/edit`
+												);
+											}}
+										>
+											<EditIcon />
+											<span>Muokkaa</span>
+										</button>
+										<button
+											type="button"
+											className="danger"
+											onClick={remove}
+										>
+											<DeleteIcon />
+											<span>Poista</span>
+										</button>
+									</>
+								)}
+							</div>
 						</>
 					)}
 				</div>

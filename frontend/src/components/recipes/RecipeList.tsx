@@ -17,7 +17,11 @@ export default function RecipeList() {
 
 	useEffect(() => {
 		RecipesApi.getRecipes()
-			.then(setRecipes)
+			.then((r) => {
+				setRecipes(
+					[...r].sort((a, b) => a.title.localeCompare(b.title, "fi"))
+				);
+			})
 			.catch(() => {
 				setError(true);
 			});
@@ -60,7 +64,10 @@ export default function RecipeList() {
 										go(`/recipes/${recipe.id}`);
 									}}
 								>
-									{recipe.title} ({recipe.owner})
+									<span>{recipe.title}</span>
+									<span className="recipe-owner">
+										{recipe.owner}
+									</span>
 								</li>
 							))}
 						</ul>

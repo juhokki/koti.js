@@ -66,6 +66,16 @@ it("Sends only selected ingredients", async () => {
 	expect(await screen.findByText("details")).toBeTruthy();
 });
 
+it("Shows an error message when adding fails", async () => {
+	mockAppendItems.mockRejectedValue(new Error("fail"));
+	renderPage();
+
+	await screen.findByText("2 dl flour");
+	fireEvent.click(screen.getByText("Lisää"));
+
+	expect(await screen.findByText("Lisääminen epäonnistui.")).toBeTruthy();
+});
+
 it("Cancel adds nothing and returns to the recipe", async () => {
 	renderPage();
 

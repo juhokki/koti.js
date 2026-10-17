@@ -33,7 +33,8 @@ it("Renders recipe list with new recipe button", async () => {
 		</MemoryRouter>
 	);
 
-	expect(await screen.findByText("Pancakes (alice)")).toBeTruthy();
+	expect(await screen.findByText("Pancakes")).toBeTruthy();
+	expect(screen.getByText("alice")).toBeTruthy();
 	expect(screen.getByText("Uusi resepti")).toBeTruthy();
 });
 

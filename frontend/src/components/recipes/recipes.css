@@ -21,6 +21,12 @@
 	box-sizing: border-box;
 }
 
+.recipes .recipe-owner {
+	margin-left: auto;
+	font-style: italic;
+	color: var(--background-color);
+}
+
 .recipes .recipe-box {
 	display: block; /* global "form div" rule makes divs flex rows */
 	background: var(--box-background-color);
