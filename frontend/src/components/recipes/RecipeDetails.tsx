@@ -32,18 +32,6 @@ export default function RecipeDetails() {
 			});
 	}, [recipeId]);
 
-	const remove = () => {
-		if (!recipe || !window.confirm("Poistetaanko resepti?")) {
-			return;
-		}
-
-		RecipesApi.deleteRecipe(recipe.id)
-			.then(() => {
-				go("/recipes");
-			})
-			.catch(console.log);
-	};
-
 	return (
 		<section>
 			<section className="header">
@@ -123,7 +111,9 @@ export default function RecipeDetails() {
 										<button
 											type="button"
 											className="danger"
-											onClick={remove}
+											onClick={() => {
+												go(`/recipes/${recipe.id}/delete`);
+											}}
 										>
 											<DeleteIcon />
 											<span>Poista</span>
