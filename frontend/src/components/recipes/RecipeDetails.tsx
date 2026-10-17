@@ -4,6 +4,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import RecipesApi from "../../api/RecipesApi";
 import { Recipe } from "../../interface/Recipe";
 import { UserContext } from "../../context/UserContext";
@@ -83,6 +84,19 @@ export default function RecipeDetails() {
 										</li>
 									))}
 								</ul>
+								<div className="buttons">
+									<button
+										type="button"
+										onClick={() => {
+											go(
+												`/recipes/${recipe.id}/shoppinglist`
+											);
+										}}
+									>
+										<AddShoppingCartIcon />
+										<span>Lisää ostoslistaan</span>
+									</button>
+								</div>
 							</div>
 							<div className="recipe-box">
 								<h3 className="centered underline">

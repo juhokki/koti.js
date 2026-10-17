@@ -33,6 +33,7 @@ vi.mock("express", () => {
 			use: vi.fn(),
 			get: vi.fn(),
 			put: vi.fn(),
+			patch: vi.fn(),
 			post: vi.fn(),
 			delete: vi.fn()
 		}))

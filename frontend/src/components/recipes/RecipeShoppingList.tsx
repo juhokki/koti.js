@@ -1,0 +1,132 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import RecipesApi from "../../api/RecipesApi";
+import ShoppingListApi from "../../api/ShoppingListApi";
+import { Recipe } from "../../interface/Recipe";
+
+export default function RecipeShoppingList() {
+	const navigate = useNavigate();
+	const { recipeId } = useParams();
+	const [recipe, setRecipe] = useState<Recipe | null>(null);
+	const [selected, setSelected] = useState<Set<number>>(new Set());
+	const [error, setError] = useState(false);
+
+	const goBack = () => {
+		Promise.resolve(navigate(`/recipes/${recipeId ?? ""}`)).catch(
+			console.log
+		);
+	};
+
+	useEffect(() => {
+		if (!recipeId) {
+			return;
+		}
+
+		RecipesApi.getRecipe(recipeId)
+			.then((r) => {
+				setRecipe(r);
+				setSelected(new Set(r.ingredients.map((_, i) => i)));
+			})
+			.catch(() => {
+				setError(true);
+			});
+	}, [recipeId]);
+
+	const toggle = (index: number) => {
+		setSelected((prev) => {
+			const next = new Set(prev);
+
+			if (!next.delete(index)) {
+				next.add(index);
+			}
+
+			return next;
+		});
+	};
+
+	const add = () => {
+		if (!recipe) {
+			return;
+		}
+
+		const items = recipe.ingredients
+			.filter((_, i) => selected.has(i))
+			.map((i) =>
+				`${i.amount} ${i.unit} ${i.name}`.replace(/\s+/g, " ").trim()
+			);
+
+		ShoppingListApi.appendItems(items).then(goBack).catch(console.log);
+	};
+
+	return (
+		<section>
+			<section className="header">
+				<h2>
+					<div className="left">
+						<ChevronLeftIcon
+							className="clickable"
+							onClick={goBack}
+						/>
+					</div>
+					<div>
+						<AddShoppingCartIcon />
+						<span>Lisää ostoslistaan</span>
+					</div>
+					<div className="right"></div>
+				</h2>
+			</section>
+			<section className="content">
+				<div className="recipes">
+					{error && <p>Reseptiä ei löytynyt.</p>}
+					{!recipe && !error && (
+						<div className="loader-container">
+							<div className="loader"></div>
+						</div>
+					)}
+					{recipe && (
+						<>
+							<div className="recipe-box">
+								<ul className="ingredient-select">
+									{recipe.ingredients.map((ingredient, i) => (
+										<li key={i}>
+											<label>
+												<input
+													type="checkbox"
+													checked={selected.has(i)}
+													onChange={() => {
+														toggle(i);
+													}}
+												/>
+												<span>
+													{`${ingredient.amount} ${ingredient.unit} ${ingredient.name}`}
+												</span>
+											</label>
+										</li>
+									))}
+								</ul>
+							</div>
+							<div className="buttons">
+								<button
+									type="button"
+									disabled={selected.size === 0}
+									onClick={add}
+								>
+									<span>Lisää</span>
+								</button>
+								<button
+									type="button"
+									className="danger"
+									onClick={goBack}
+								>
+									<span>Peruuta</span>
+								</button>
+							</div>
+						</>
+					)}
+				</div>
+			</section>
+		</section>
+	);
+}

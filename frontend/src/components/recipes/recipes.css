@@ -51,6 +51,18 @@
 	margin-bottom: var(--spacing);
 }
 
+.recipes .ingredient-select {
+	list-style: none;
+	padding: 0;
+}
+
+.recipes .ingredient-select label {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing);
+	margin-bottom: var(--spacing);
+}
+
 .recipes form {
 	max-width: 100%;
 	padding: 0;
@@ -97,13 +109,13 @@
 }
 
 .recipes .buttons button {
-    margin-top: 0;
+	margin-top: 0;
 }
 
 .recipes .buttons button:last-child {
-    margin-right: 0;
+	margin-right: 0;
 }
 
 .recipes .buttons svg {
-    margin-right: 0;
+	margin-right: 0;
 }

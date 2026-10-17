@@ -155,7 +155,9 @@ export default function RecipeEdit() {
 								}}
 							/>
 							<div className="recipe-box">
-								<h3 className="centered underline">Ainesosat</h3>
+								<h3 className="centered underline">
+									Ainesosat
+								</h3>
 								{ingredients.map((ingredient, i) => (
 									<div key={i} className="row ingredient-row">
 										<input
@@ -195,7 +197,9 @@ export default function RecipeEdit() {
 												);
 											}}
 										>
-											<MenuItem value={DEFAULT_UNIT}>-</MenuItem>
+											<MenuItem value={DEFAULT_UNIT}>
+												-
+											</MenuItem>
 											{UNITS.map((unit) => (
 												<MenuItem
 													key={unit}
@@ -243,7 +247,9 @@ export default function RecipeEdit() {
 								</button>
 							</div>
 							<div className="recipe-box">
-								<h3 className="centered underline">Valmistus</h3>
+								<h3 className="centered underline">
+									Valmistus
+								</h3>
 								{steps.map((step, i) => (
 									<div key={i} className="row">
 										<input

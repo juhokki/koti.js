@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import ServiceBase from "../ServiceBase.ts";
 import * as Messages from "../../constants/Messages.ts";
 import ShoppingList from "../../model/ShoppingList.ts";
@@ -55,13 +56,28 @@ export default class ShoppingListService extends ServiceBase {
 		const updateKey = this.shoppingList.update;
 
 		if (shoppingList.update === updateKey) {
-			shoppingList.update = Date.now().toString();
+			shoppingList.update = this.generateUpdateKey();
 			this.shoppingList = shoppingList;
 			this.hasUpdates = true;
 			this.queueUpdate();
 		} else {
 			throw new Error("Invalid update key");
 		}
+
+		this.emit(Messages.SHOPPINGLIST, this.shoppingList);
+	}
+
+	addItems(texts: string[]) {
+		const items = texts.map(
+			(text) => new ShoppingListItem(randomUUID(), text, false)
+		);
+
+		this.shoppingList = new ShoppingList(this.generateUpdateKey(), [
+			...this.shoppingList.items,
+			...items
+		]);
+		this.hasUpdates = true;
+		this.queueUpdate();
 
 		this.emit(Messages.SHOPPINGLIST, this.shoppingList);
 	}
@@ -92,5 +108,9 @@ export default class ShoppingListService extends ServiceBase {
 		} catch (e) {
 			logger.error(e, "Failed to synchronize shoppinglist");
 		}
+	}
+
+	generateUpdateKey(): string {
+		return Date.now().toString();
 	}
 }

@@ -275,3 +275,32 @@ test("Shopping list file is written only once", async () => {
 
 	await service.stop();
 });
+
+test("addItems appends items with a new update key and emits", async () => {
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify({
+			update: "1",
+			items: [{ id: "1", text: "item-1", crossed: true }]
+		})
+	);
+
+	const service = new ShoppingListService(services, settings);
+	const mockEmitShoppingList = vi.fn();
+
+	service.on(Messages.SHOPPINGLIST, mockEmitShoppingList);
+	service.addItems(["item-2", "item-3"]);
+
+	const list = service.getShoppingList();
+
+	expect(list.update).toBe(String(now));
+	expect(list.items.map((i) => i.text)).toStrictEqual([
+		"item-1",
+		"item-2",
+		"item-3"
+	]);
+	expect(list.items[2]?.crossed).toBe(false);
+	expect(list.items[2]?.id).toBeTruthy();
+	expect(mockEmitShoppingList).toHaveBeenCalledWith(list);
+
+	await service.stop();
+});

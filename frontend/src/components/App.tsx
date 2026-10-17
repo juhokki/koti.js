@@ -26,6 +26,7 @@ import DeviceHistory from "./assets/device/DeviceHistory";
 import ShoppingList from "./shoppinglist/ShoppingListView";
 import RecipeList from "./recipes/RecipeList";
 import RecipeDetails from "./recipes/RecipeDetails";
+import RecipeShoppingList from "./recipes/RecipeShoppingList";
 import RecipeEdit from "./recipes/RecipeEdit";
 import Alarms from "./alarms/Alarms";
 import System from "./system/System";
@@ -120,6 +121,10 @@ export default function App() {
 										<Route
 											path="recipes/:recipeId"
 											element={<RecipeDetails />}
+										/>
+										<Route
+											path="recipes/:recipeId/shoppinglist"
+											element={<RecipeShoppingList />}
 										/>
 										<Route
 											path="recipes/:recipeId/edit"
