@@ -23,4 +23,8 @@ export default class SystemService extends ServiceBase {
 
 		return new Disk(diskSpace.size, diskSpace.free);
 	}
+
+	getUptime() {
+		return process.uptime();
+	}
 }

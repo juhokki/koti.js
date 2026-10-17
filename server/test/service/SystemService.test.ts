@@ -29,3 +29,9 @@ test("Returns disk info", async () => {
 	expect(disk.size > 0).toBe(true);
 	expect(disk.free > 0).toBe(true);
 });
+
+test("Returns process uptime", () => {
+	const service = new SystemService(services, settings);
+
+	expect(service.getUptime()).toBeGreaterThan(0);
+});

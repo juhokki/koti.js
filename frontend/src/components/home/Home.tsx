@@ -63,7 +63,7 @@ export default function Home() {
 			<div className="grid-item">
 				<h3 onClick={goToSystem} className="centered clickable">
 					<SettingsIcon />
-					<span>Asetukset</span>
+					<span>Järjestelmä</span>
 				</h3>
 			</div>
 		</div>

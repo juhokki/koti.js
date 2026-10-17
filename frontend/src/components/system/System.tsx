@@ -4,9 +4,23 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import FeedIcon from "@mui/icons-material/Feed";
 import SettingsIcon from "@mui/icons-material/Settings";
 import StorageIcon from "@mui/icons-material/Storage";
+import TimerIcon from "@mui/icons-material/Timer";
 import prettyBytes from "pretty-bytes";
 import SystemApi from "../../api/SystemApi";
 import { SystemDiskState } from "../../interface/SystemDiskState";
+
+function formatUptime(uptime: number): string {
+	const totalSeconds = Math.floor(uptime);
+	const days = Math.floor(totalSeconds / 86400);
+	const hours = Math.floor((totalSeconds % 86400) / 3600);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const seconds = totalSeconds % 60;
+	const time = [hours, minutes, seconds]
+		.map((value) => String(value).padStart(2, "0"))
+		.join(":");
+
+	return days > 0 ? `${String(days)} pv ${time}` : time;
+}
 
 export default function System() {
 	const navigate = useNavigate();
@@ -17,12 +31,14 @@ export default function System() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
 	const [stats, setStats] = useState<SystemDiskState>();
+	const [uptime, setUptime] = useState<number>();
 
 	useEffect(() => {
 		SystemApi.getSystemStats()
 			.then((stats) => {
 				setLoading(false);
 				setStats(stats);
+				setUptime(stats.uptime);
 			})
 			.catch((e: unknown) => {
 				setLoading(false);
@@ -30,6 +46,20 @@ export default function System() {
 				console.log(e);
 			});
 	}, []);
+
+	useEffect(() => {
+		if (stats === undefined) {
+			return;
+		}
+
+		const interval = window.setInterval(() => {
+			setUptime((current) => (current ?? stats.uptime) + 1);
+		}, 1000);
+
+		return () => {
+			window.clearInterval(interval);
+		};
+	}, [stats]);
 
 	if (loading) {
 		return (
@@ -52,7 +82,7 @@ export default function System() {
 						</div>
 						<div>
 							<SettingsIcon />
-							<span>Asetukset</span>
+							<span>Järjestelmä</span>
 						</div>
 						<div className="right"></div>
 					</h2>
@@ -78,13 +108,33 @@ export default function System() {
 					</div>
 					<div>
 						<SettingsIcon />
-						<span>Asetukset</span>
+						<span>Järjestelmä</span>
 					</div>
 					<div className="right"></div>
 				</h2>
 			</section>
 			<section className="content">
 				<div className="grid">
+					<div className="grid-item">
+						<h3 className="centered underline">
+							<TimerIcon />
+							<span>Palvelin</span>
+						</h3>
+						<table className="table-2-col margin-top">
+							<tbody>
+								<tr>
+									<th className="centered">
+										<span>Käynnissä</span>
+									</th>
+									<td className="centered">
+										<span>
+											{formatUptime(uptime ?? stats.uptime)}
+										</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 					<div className="grid-item">
 						<h3 className="centered underline">
 							<StorageIcon />

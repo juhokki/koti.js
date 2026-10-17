@@ -10,7 +10,8 @@ export default function (services: ServiceLocator) {
 	router.get("/system", async (req: Request, res: Response) => {
 		try {
 			const disk = await systemService.getDisk();
-			res.send({ disk });
+			const uptime = systemService.getUptime();
+			res.send({ disk, uptime });
 		} catch (e) {
 			logger.error(e, "Failed to get system info.");
 			res.sendStatus(HTTP_INTERNAL_SERVER_ERROR);
