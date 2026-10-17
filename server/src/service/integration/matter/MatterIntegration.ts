@@ -125,11 +125,17 @@ export default class MatterIntegration extends IntegrationBase {
 		const pairedNode = await commissioningController.getNode(nodeId);
 		const devices = pairedNode.getDevices();
 
-		pairedNode.events.stateChanged.on((info) => {
+		const updateState = (info: NodeStates) =>
 			this.onNodeStateChanged(info, devices).catch((e: unknown) => {
 				logger.error(e, "Failed to handle node state change.");
 			});
+		pairedNode.events.stateChanged.on((info) => {
+			void updateState(info);
 		});
+
+		if (pairedNode.connectionState === NodeStates.Connected) {
+			await updateState(NodeStates.Connected);
+		}
 
 		pairedNode.connect();
 
@@ -240,9 +246,19 @@ export default class MatterIntegration extends IntegrationBase {
 	}
 
 	async onNodeStateChanged(info: NodeStates, devices: Endpoint[]) {
+		const configuredDeviceIds = new Set(
+			this.services
+				.getAssetService()
+				.getDevicesWithType(DeviceType.MatterIntegration)
+				.map((device) => device.id)
+		);
+		const configuredDevices = devices.filter((matterDevice) =>
+			configuredDeviceIds.has(String(matterDevice.number))
+		);
+
 		switch (info) {
 			case NodeStates.Connected:
-				for (const matterDevice of devices) {
+				for (const matterDevice of configuredDevices) {
 					const deviceIdString = String(matterDevice.number);
 					this.services
 						.getAssetService()
@@ -264,7 +280,7 @@ export default class MatterIntegration extends IntegrationBase {
 			case NodeStates.Disconnected:
 			case NodeStates.Reconnecting:
 			case NodeStates.WaitingForDeviceDiscovery:
-				for (const matterDevice of devices) {
+				for (const matterDevice of configuredDevices) {
 					const deviceIdString = String(matterDevice.number);
 					this.services
 						.getAssetService()

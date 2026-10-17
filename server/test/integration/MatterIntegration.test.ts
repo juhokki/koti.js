@@ -1,6 +1,8 @@
 import { LevelControl, OnOff } from "@matter/main/clusters";
+import { NodeId } from "@matter/main/types";
 import { EndpointNumber } from "@matter/types";
 import { NodeStates, Endpoint } from "@project-chip/matter.js/device";
+import type { CommissioningController } from "@project-chip/matter.js";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import DeviceOnlineStatus from "../../src/constants/DeviceOnlineStatus.ts";
 import DeviceType from "../../src/constants/DeviceType.ts";
@@ -175,6 +177,61 @@ test("Sets device state to false and connects to matter node and writes initial 
 	expect(mockWrite).toHaveBeenCalledTimes(1);
 });
 
+test("Marks configured devices online when node is already connected", async () => {
+	const integration = new MatterIntegration(services, options);
+	const device = new Device(
+		"2",
+		DeviceType.MatterIntegration,
+		"test",
+		"icon"
+	);
+	const matterDevices = [
+		{
+			number: EndpointNumber(99),
+			getClusterClient: vi.fn()
+		},
+		{
+			number: EndpointNumber(Number(device.id)),
+			getClusterClient: vi.fn()
+		}
+	] as unknown as Endpoint[];
+	const pairedNode = {
+		connect: vi.fn(),
+		connectionState: NodeStates.Connected,
+		getDevices: () => matterDevices,
+		events: {
+			stateChanged: {
+				on: vi.fn()
+			}
+		}
+	};
+	const commissioningController = {
+		getNode: vi.fn().mockResolvedValue(pairedNode)
+	} as unknown as CommissioningController;
+
+	mockSetDeviceOnlineStatus.mockClear();
+	mockGetDevicesWithType.mockReturnValueOnce([device]);
+	mockGetDevice.mockImplementation((id: string) => {
+		if (id === device.id) {
+			return device;
+		}
+
+		throw new Error(`Device "${id}" not found.`);
+	});
+
+	await integration.connectNode(
+		commissioningController,
+		NodeId("1732304842286")
+	);
+
+	expect(mockSetDeviceOnlineStatus).toHaveBeenCalledWith(
+		device.id,
+		DeviceOnlineStatus.ONLINE
+	);
+	expect(pairedNode.events.stateChanged.on).toHaveBeenCalledOnce();
+	expect(pairedNode.connect).toHaveBeenCalledOnce();
+});
+
 test("Node state changes online status and restores previous state on connected", async () => {
 	const integration = new MatterIntegration(services, options);
 	const device = new Device(
@@ -204,6 +261,7 @@ test("Node state changes online status and restores previous state on connected"
 			})
 		}
 	] as unknown as Endpoint[];
+	mockGetDevicesWithType.mockReturnValue([device]);
 
 	await integration.onNodeStateChanged(
 		NodeStates.Disconnected,
