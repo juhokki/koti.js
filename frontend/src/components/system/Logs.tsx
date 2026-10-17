@@ -33,7 +33,7 @@ export default function Logs() {
 		Promise.resolve(navigate("/system")).catch(console.log);
 	};
 
-	const [level, setLevel] = useState<LogLevelName>("warn");
+	const [level, setLevel] = useState<LogLevelName>("info");
 	const [date, setDate] = useState(new Date());
 	const [entries, setEntries] = useState<LogEntry[]>([]);
 	const [loading, setLoading] = useState(true);

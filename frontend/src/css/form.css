@@ -44,6 +44,18 @@ input:focus {
 	outline: 3px solid var(--highlight-color);
 }
 
+.buttons {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: var(--spacing);
+	flex-wrap: wrap;
+}
+
+.buttons button {
+	margin-right: 0;
+	margin-left: calc(var(--spacing) * 2);
+}
+
 button {
 	font-family: var(--font-family);
 	font-size: var(--font-size);
@@ -55,6 +67,7 @@ button {
 	box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
 	border-radius: var(--border-radius);
 	cursor: pointer;
+	white-space: nowrap;
 }
 
 button.danger {

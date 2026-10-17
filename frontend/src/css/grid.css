@@ -17,11 +17,6 @@
 	max-width: 350px;
 }
 
-.grid table {
-	width: 100%;
-	border-collapse: collapse;
-}
-
 .grid th,
 .grid td {
 	padding: var(--spacing);
@@ -41,9 +36,4 @@
 .grid th .MuiIcon-root {
 	width: 60px;
 	flex-shrink: 0;
-}
-
-.grid table.table-2-col th,
-.grid table.table-2-col td {
-	width: 50%;
 }

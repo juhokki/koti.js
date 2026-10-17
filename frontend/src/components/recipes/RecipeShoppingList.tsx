@@ -20,6 +20,9 @@ export default function RecipeShoppingList() {
 			console.log
 		);
 	};
+	const goToShoppingList = () => {
+		Promise.resolve(navigate("/shoppinglist/")).catch(console.log);
+	};
 
 	useEffect(() => {
 		if (!recipeId) {
@@ -61,7 +64,7 @@ export default function RecipeShoppingList() {
 
 		setStatus("loading");
 		ShoppingListApi.appendItems(items)
-			.then(goBack)
+			.then(goToShoppingList)
 			.catch((e: unknown) => {
 				console.log(e);
 				setStatus("error");

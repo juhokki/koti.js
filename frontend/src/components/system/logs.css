@@ -1,0 +1,16 @@
+.logs td.log-time {
+	width: 5.5em;
+	white-space: nowrap;
+	padding-right: calc(var(--spacing) * 1.5);
+}
+
+.logs td.log-level {
+	width: 4.5em;
+	white-space: nowrap;
+	padding-right: var(--spacing);
+}
+
+table.table-2-col th,
+table.table-2-col td {
+	width: 50%;
+}

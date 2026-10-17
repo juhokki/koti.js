@@ -1,28 +1,24 @@
-.content > table {
+.content table {
 	width: 100%;
 }
 
-.content > table th {
+.content table th {
 	text-align: left;
 }
 
-.content > table.logs {
-	table-layout: fixed;
+.content table {
+	border-collapse: collapse;
 }
 
-.logs td {
+.content table tr + tr {
+	border-top: 1px dashed var(--box-background-color);
+}
+
+.content .grid-item table tr + tr {
+	border-top: 1px dashed var(--background-color);
+}
+
+.content table td {
 	vertical-align: top;
 	word-break: break-word;
-}
-
-.logs td.log-time {
-	width: 5.5em;
-	white-space: nowrap;
-	padding-right: calc(var(--spacing) * 1.5);
-}
-
-.logs td.log-level {
-	width: 4.5em;
-	white-space: nowrap;
-	padding-right: var(--spacing);
 }

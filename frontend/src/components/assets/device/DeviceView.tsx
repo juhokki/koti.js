@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Icon from "@mui/material/Icon";
 import MeasurementRow from "./rows/MeasurementRow";
 import DeviceLastUpdatedRow from "./rows/DeviceLastUpdatedRow";
@@ -14,14 +14,15 @@ interface DeviceViewProps {
 
 export default function DeviceView(props: DeviceViewProps) {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const asset = props.asset;
 	const device = props.device;
 	const offline = device.onlineStatus === DeviceOnlineStatus.OFFLINE;
 	const measurements = device.measurements;
 	const openMeasurementHistory = () => {
-		Promise.resolve(navigate(`/assets/${asset.id}/${device.id}`)).catch(
-			console.log
-		);
+		Promise.resolve(
+			navigate(`/assets/${asset.id}/${device.id}${location.search}`)
+		).catch(console.log);
 	};
 
 	const hasActions = !!device.measurements.find(

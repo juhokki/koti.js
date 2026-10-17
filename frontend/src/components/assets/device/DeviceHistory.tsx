@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Icon from "@mui/material/Icon";
@@ -16,6 +16,7 @@ import { Measurement } from "../../../interface/Asset";
 
 export default function DeviceHistory() {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const assets = useContext(AssetsContext).assets;
 	const params = useParams();
 	const assetId = params.assetId;
@@ -83,7 +84,9 @@ export default function DeviceHistory() {
 
 	const goBack = () => {
 		if (assetId) {
-			Promise.resolve(navigate(`/assets/${assetId}`)).catch(console.log);
+			Promise.resolve(
+				navigate(`/assets/${assetId}${location.search}`)
+			).catch(console.log);
 		}
 	};
 	const getMeasurement = (measurementId: string): Measurement => {

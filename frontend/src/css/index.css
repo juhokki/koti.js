@@ -8,6 +8,7 @@
 @import "./util.css";
 @import "../components/shoppinglist/shoppinglist.css";
 @import "../components/recipes/recipes.css";
+@import "../components/system/logs.css";
 
 :root {
 	--background-color: #1e1e2f;

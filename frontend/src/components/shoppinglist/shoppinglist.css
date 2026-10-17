@@ -5,7 +5,7 @@
 
 .shoppinglist ul {
 	margin: 0;
-	padding: var(--spacing) 0;
+	padding: var(--spacing) 0 0;
 }
 
 .shoppinglist li {
@@ -25,7 +25,7 @@
 }
 
 .shoppinglist form {
-	margin: var(--spacing) 0 0;
+	margin: 0;
 	max-width: 100%;
 	padding: 0;
 }
@@ -36,47 +36,7 @@
 	border-radius: var(--border-radius);
 }
 
-.shoppinglist .buttons {
-	display: flex;
-	justify-content: flex-end;
-	margin-top: calc(2 * var(--spacing));
-}
-
-.shoppinglist .buttons button:first-child {
-	margin-left: 0;
-}
-
-.shoppinglist .buttons button:last-child {
-	margin-right: 0;
-}
-
 .shoppinglist .crossed {
 	text-decoration: line-through;
 	text-decoration-color: var(--font-color);
-}
-
-.shoppinglist .fade-enter {
-	max-height: 0;
-	opacity: 0;
-}
-
-.shoppinglist .fade-enter-active {
-	max-height: 40px;
-	opacity: 1;
-	transition:
-		max-height,
-		opacity 200ms;
-}
-
-.shoppinglist .fade-exit {
-	max-height: 40px;
-	opacity: 1;
-}
-
-.shoppinglist .fade-exit-active {
-	max-height: 0;
-	opacity: 0;
-	transition:
-		max-height,
-		opacity 200ms;
 }
