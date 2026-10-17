@@ -23,8 +23,32 @@ export default class DataService extends ServiceBase {
 	}
 
 	override async start() {
+		const startupStartedAt = Date.now();
+		const databaseName = this.database.constructor.name;
+		const databaseStartedAt = Date.now();
+
+		logger.debug({ database: databaseName }, "Starting database.");
+
 		await this.database.start();
+
+		logger.debug(
+			{
+				database: databaseName,
+				durationMs: Date.now() - databaseStartedAt
+			},
+			"Database started."
+		);
+
+		const cacheStartedAt = Date.now();
 		this.latestValueCache = await this.initializeCache();
+
+		logger.debug(
+			{
+				durationMs: Date.now() - cacheStartedAt,
+				totalDurationMs: Date.now() - startupStartedAt
+			},
+			"Data service startup complete."
+		);
 	}
 
 	override async stop() {
@@ -40,11 +64,29 @@ export default class DataService extends ServiceBase {
 
 	async initializeCache(): Promise<ValueCache> {
 		const cache = new ValueCache();
+		const readStartedAt = Date.now();
 		const values = await this.database.readLatestValues();
 
+		logger.debug(
+			{
+				durationMs: Date.now() - readStartedAt,
+				valueCount: values.length
+			},
+			"Read latest values for cache."
+		);
+
+		const cacheStartedAt = Date.now();
 		values.forEach((value) => {
 			cache.set(value.deviceId, value.measurementId, value);
 		});
+		
+		logger.debug(
+			{
+				durationMs: Date.now() - cacheStartedAt,
+				valueCount: values.length
+			},
+			"Populated latest-value cache."
+		);
 
 		return cache;
 	}
