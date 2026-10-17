@@ -11,7 +11,7 @@ import RecipesApi from "../../api/RecipesApi";
 import { RecipeIngredient } from "../../interface/Recipe";
 
 const UNITS = ["g", "kg", "dl", "l", "tl", "rkl", "%", "kpl", "prk"] as const;
-const DEFAULT_UNIT: string = UNITS[0];
+const DEFAULT_UNIT = "";
 
 interface IngredientDraft {
 	amount: string;
@@ -155,7 +155,7 @@ export default function RecipeEdit() {
 								}}
 							/>
 							<div className="recipe-box">
-								<h3>Ainesosat</h3>
+								<h3 className="centered underline">Ainesosat</h3>
 								{ingredients.map((ingredient, i) => (
 									<div key={i} className="row ingredient-row">
 										<input
@@ -173,6 +173,7 @@ export default function RecipeEdit() {
 										<Select
 											className="unit-select"
 											size="small"
+											displayEmpty
 											value={ingredient.unit}
 											sx={{
 												"& .MuiSelect-select": {
@@ -194,6 +195,7 @@ export default function RecipeEdit() {
 												);
 											}}
 										>
+											<MenuItem value={DEFAULT_UNIT}>-</MenuItem>
 											{UNITS.map((unit) => (
 												<MenuItem
 													key={unit}
@@ -241,7 +243,7 @@ export default function RecipeEdit() {
 								</button>
 							</div>
 							<div className="recipe-box">
-								<h3>Valmistus</h3>
+								<h3 className="centered underline">Valmistus</h3>
 								{steps.map((step, i) => (
 									<div key={i} className="row">
 										<input

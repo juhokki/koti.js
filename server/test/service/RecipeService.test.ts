@@ -18,7 +18,8 @@ const existing = {
 	id: "1",
 	title: "Pancakes",
 	ingredients: [{ amount: "2", unit: "dl", name: "flour" }],
-	steps: ["Mix", "Fry"]
+	steps: ["Mix", "Fry"],
+	owner: "alice"
 };
 
 function createService() {
@@ -39,11 +40,14 @@ test("Recipes are read from file", () => {
 
 test("Recipe is created and written to file", () => {
 	const service = createService();
-	const recipe = service.create({
-		title: "Soup",
-		ingredients: [],
-		steps: ["Boil"]
-	});
+	const recipe = service.create(
+		{
+			title: "Soup",
+			ingredients: [],
+			steps: ["Boil"]
+		},
+		"alice"
+	);
 
 	expect(recipe.id).toBeTruthy();
 	expect(service.getAll()).toHaveLength(2);
@@ -65,7 +69,8 @@ test("Recipe is updated", () => {
 		id: "1",
 		title: "Crepes",
 		ingredients: [],
-		steps: []
+		steps: [],
+		owner: "alice"
 	});
 	expect(
 		service.update("missing", { title: "x", ingredients: [], steps: [] })

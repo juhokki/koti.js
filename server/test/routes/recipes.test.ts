@@ -45,6 +45,7 @@ const validRecipe = {
 	ingredients: [{ amount: "1", unit: "l", name: "water" }],
 	steps: ["Boil"]
 };
+const storedRecipe = { id: "1", ...validRecipe, owner: "test" };
 
 function agent() {
 	const app = express();
@@ -83,7 +84,7 @@ test("GET /api/recipes/:id returns 404 when missing", async () => {
 });
 
 test("POST /api/recipes creates a recipe", async () => {
-	mockCreate.mockReturnValue({ id: "1", ...validRecipe });
+	mockCreate.mockReturnValue(storedRecipe);
 
 	const response = await agent()
 		.post("/api/recipes")
@@ -91,7 +92,7 @@ test("POST /api/recipes creates a recipe", async () => {
 		.send(validRecipe);
 
 	expect(response.status).toBe(201);
-	expect(mockCreate).toHaveBeenCalledWith(validRecipe);
+	expect(mockCreate).toHaveBeenCalledWith(validRecipe, "test");
 });
 
 test("POST /api/recipes rejects invalid recipe", async () => {
@@ -105,8 +106,8 @@ test("POST /api/recipes rejects invalid recipe", async () => {
 });
 
 test("PUT /api/recipes/:id updates or returns 404", async () => {
-	mockUpdate.mockReturnValueOnce({ id: "1", ...validRecipe });
-	mockUpdate.mockReturnValueOnce(undefined);
+	mockGet.mockReturnValueOnce(storedRecipe).mockReturnValueOnce(undefined);
+	mockUpdate.mockReturnValue(storedRecipe);
 
 	const ok = await agent()
 		.put("/api/recipes/1")
@@ -121,7 +122,20 @@ test("PUT /api/recipes/:id updates or returns 404", async () => {
 	expect(missing.status).toBe(404);
 });
 
+test("PUT /api/recipes/:id rejects non-owners", async () => {
+	mockGet.mockReturnValue({ ...storedRecipe, owner: "other" });
+
+	const response = await agent()
+		.put("/api/recipes/1")
+		.set("Authorization", auth)
+		.send(validRecipe);
+
+	expect(response.status).toBe(403);
+	expect(mockUpdate).not.toHaveBeenCalled();
+});
+
 test("DELETE /api/recipes/:id deletes or returns 404", async () => {
+	mockGet.mockReturnValueOnce(storedRecipe).mockReturnValueOnce(undefined);
 	mockDelete.mockReturnValueOnce(true);
 	mockDelete.mockReturnValueOnce(false);
 
@@ -134,4 +148,15 @@ test("DELETE /api/recipes/:id deletes or returns 404", async () => {
 
 	expect(ok.status).toBe(204);
 	expect(missing.status).toBe(404);
+});
+
+test("DELETE /api/recipes/:id rejects non-owners", async () => {
+	mockGet.mockReturnValue({ ...storedRecipe, owner: "other" });
+
+	const response = await agent()
+		.delete("/api/recipes/1")
+		.set("Authorization", auth);
+
+	expect(response.status).toBe(403);
+	expect(mockDelete).not.toHaveBeenCalled();
 });

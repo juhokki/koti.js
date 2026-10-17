@@ -12,4 +12,5 @@ export interface RecipeInput {
 
 export interface Recipe extends RecipeInput {
 	id: string;
+	owner: string;
 }

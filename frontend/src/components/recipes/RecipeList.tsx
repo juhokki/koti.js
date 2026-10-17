@@ -60,7 +60,7 @@ export default function RecipeList() {
 										go(`/recipes/${recipe.id}`);
 									}}
 								>
-									{recipe.title}
+									{recipe.title} ({recipe.owner})
 								</li>
 							))}
 						</ul>

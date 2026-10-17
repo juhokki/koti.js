@@ -8,7 +8,7 @@ import type RecipeConfig from "./RecipeConfig.ts";
 import { readConfigFile, writeConfigFile } from "../../util/FileUtil.ts";
 import logger from "../../util/logger.ts";
 
-export type RecipeInput = Omit<Recipe, "id">;
+export type RecipeInput = Omit<Recipe, "id" | "owner">;
 
 export default class RecipeService extends ServiceBase {
 	options: RecipeServiceSettings;
@@ -32,7 +32,8 @@ export default class RecipeService extends ServiceBase {
 					recipe.ingredients.map(
 						(i) => new RecipeIngredient(i.amount, i.unit, i.name)
 					),
-					recipe.steps
+					recipe.steps,
+					recipe.owner
 				)
 		);
 	}
@@ -45,12 +46,13 @@ export default class RecipeService extends ServiceBase {
 		return this.recipes.find((recipe) => recipe.id === id);
 	}
 
-	create(input: RecipeInput): Recipe {
+	create(input: RecipeInput, owner: string): Recipe {
 		const recipe = new Recipe(
 			randomUUID(),
 			input.title,
 			input.ingredients,
-			input.steps
+			input.steps,
+			owner
 		);
 
 		this.recipes.push(recipe);
@@ -65,12 +67,18 @@ export default class RecipeService extends ServiceBase {
 		if (index === -1) {
 			return undefined;
 		}
+		const existing = this.recipes[index];
+
+		if (!existing) {
+			return undefined;
+		}
 
 		const recipe = new Recipe(
 			id,
 			input.title,
 			input.ingredients,
-			input.steps
+			input.steps,
+			existing.owner
 		);
 
 		this.recipes[index] = recipe;

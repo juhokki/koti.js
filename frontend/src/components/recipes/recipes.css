@@ -33,6 +33,7 @@
 
 .recipes .recipe-box h3 {
 	margin-top: 0;
+	margin-bottom: var(--spacing);
 }
 
 .recipes .recipe-box ul,
@@ -45,6 +46,7 @@
 	padding-left: calc(2 * var(--spacing));
 }
 
+.recipes .ingredients li,
 .recipes .steps li {
 	margin-bottom: var(--spacing);
 }
@@ -92,5 +94,16 @@
 .recipes .buttons {
 	display: flex;
 	justify-content: flex-end;
-	margin-top: calc(2 * var(--spacing));
+}
+
+.recipes .buttons button {
+    margin-top: 0;
+}
+
+.recipes .buttons button:last-child {
+    margin-right: 0;
+}
+
+.recipes .buttons svg {
+    margin-right: 0;
 }

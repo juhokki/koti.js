@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
@@ -6,9 +6,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RecipesApi from "../../api/RecipesApi";
 import { Recipe } from "../../interface/Recipe";
+import { UserContext } from "../../context/UserContext";
 
 export default function RecipeDetails() {
 	const navigate = useNavigate();
+	const user = useContext(UserContext).user;
 	const { recipeId } = useParams();
 	const [recipe, setRecipe] = useState<Recipe | null>(null);
 	const [error, setError] = useState(false);
@@ -71,7 +73,9 @@ export default function RecipeDetails() {
 					{recipe && (
 						<>
 							<div className="recipe-box">
-								<h3>Ainesosat</h3>
+								<h3 className="centered underline">
+									Ainesosat
+								</h3>
 								<ul className="ingredients">
 									{recipe.ingredients.map((ingredient, i) => (
 										<li key={i}>
@@ -81,32 +85,36 @@ export default function RecipeDetails() {
 								</ul>
 							</div>
 							<div className="recipe-box">
-								<h3>Valmistus</h3>
+								<h3 className="centered underline">
+									Valmistus
+								</h3>
 								<ol className="steps">
 									{recipe.steps.map((step, i) => (
 										<li key={i}>{step}</li>
 									))}
 								</ol>
 							</div>
-							<div className="buttons">
-								<button
-									type="button"
-									onClick={() => {
-										go(`/recipes/${recipe.id}/edit`);
-									}}
-								>
-									<EditIcon />
-									<span>Muokkaa</span>
-								</button>
-								<button
-									type="button"
-									className="danger"
-									onClick={remove}
-								>
-									<DeleteIcon />
-									<span>Poista</span>
-								</button>
-							</div>
+							{user?.username === recipe.owner && (
+								<div className="buttons">
+									<button
+										type="button"
+										onClick={() => {
+											go(`/recipes/${recipe.id}/edit`);
+										}}
+									>
+										<EditIcon />
+										<span>Muokkaa</span>
+									</button>
+									<button
+										type="button"
+										className="danger"
+										onClick={remove}
+									>
+										<DeleteIcon />
+										<span>Poista</span>
+									</button>
+								</div>
+							)}
 						</>
 					)}
 				</div>

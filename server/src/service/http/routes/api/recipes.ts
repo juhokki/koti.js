@@ -1,12 +1,30 @@
 import { Router, type Request, type Response } from "express";
 import type ServiceLocator from "../../../ServiceLocator.ts";
 import type { RecipeInput } from "../../../recipe/RecipeService.ts";
+import type { AuthenticatedRequest } from "../../requests/AuthenticatedRequest.ts";
 import {
 	HTTP_BAD_REQUEST,
 	HTTP_CREATED,
+	HTTP_FORBIDDEN,
 	HTTP_NO_CONTENT,
-	HTTP_NOT_FOUND
+	HTTP_NOT_FOUND,
+	HTTP_UNAUTHORIZED
 } from "../../../../constants/Http.ts";
+
+type RecipeBodyRequest = AuthenticatedRequest<
+	object,
+	object,
+	unknown,
+	object,
+	Record<string, unknown>
+>;
+type RecipeIdBodyRequest = AuthenticatedRequest<
+	{ id: string },
+	object,
+	unknown,
+	object,
+	Record<string, unknown>
+>;
 
 function isString(value: unknown): value is string {
 	return typeof value === "string";
@@ -63,18 +81,21 @@ export default function (services: ServiceLocator) {
 		res.json(recipeService.getAll());
 	});
 
-	router.get("/recipes/:id", (req: Request<{ id: string }>, res: Response) => {
-		const recipe = recipeService.get(req.params.id);
+	router.get(
+		"/recipes/:id",
+		(req: Request<{ id: string }>, res: Response) => {
+			const recipe = recipeService.get(req.params.id);
 
-		if (!recipe) {
-			res.sendStatus(HTTP_NOT_FOUND);
-			return;
+			if (!recipe) {
+				res.sendStatus(HTTP_NOT_FOUND);
+				return;
+			}
+
+			res.json(recipe);
 		}
+	);
 
-		res.json(recipe);
-	});
-
-	router.post("/recipes", (req: Request, res: Response) => {
+	router.post("/recipes", (req: RecipeBodyRequest, res: Response) => {
 		const input = parseRecipe(req.body);
 
 		if (!input) {
@@ -82,10 +103,29 @@ export default function (services: ServiceLocator) {
 			return;
 		}
 
-		res.status(HTTP_CREATED).json(recipeService.create(input));
+		const owner = req.user?.username;
+
+		if (!owner) {
+			res.sendStatus(HTTP_UNAUTHORIZED);
+			return;
+		}
+
+		res.status(HTTP_CREATED).json(recipeService.create(input, owner));
 	});
 
-	router.put("/recipes/:id", (req: Request<{ id: string }>, res: Response) => {
+	router.put("/recipes/:id", (req: RecipeIdBodyRequest, res: Response) => {
+		const existing = recipeService.get(req.params.id);
+
+		if (!existing) {
+			res.sendStatus(HTTP_NOT_FOUND);
+			return;
+		}
+
+		if (existing.owner !== req.user?.username) {
+			res.sendStatus(HTTP_FORBIDDEN);
+			return;
+		}
+
 		const input = parseRecipe(req.body);
 
 		if (!input) {
@@ -103,17 +143,26 @@ export default function (services: ServiceLocator) {
 		res.json(recipe);
 	});
 
-	router.delete(
-		"/recipes/:id",
-		(req: Request<{ id: string }>, res: Response) => {
-			if (!recipeService.delete(req.params.id)) {
-				res.sendStatus(HTTP_NOT_FOUND);
-				return;
-			}
+	router.delete("/recipes/:id", (req: RecipeIdBodyRequest, res: Response) => {
+		const existing = recipeService.get(req.params.id);
 
-			res.sendStatus(HTTP_NO_CONTENT);
+		if (!existing) {
+			res.sendStatus(HTTP_NOT_FOUND);
+			return;
 		}
-	);
+
+		if (existing.owner !== req.user?.username) {
+			res.sendStatus(HTTP_FORBIDDEN);
+			return;
+		}
+
+		if (!recipeService.delete(req.params.id)) {
+			res.sendStatus(HTTP_NOT_FOUND);
+			return;
+		}
+
+		res.sendStatus(HTTP_NO_CONTENT);
+	});
 
 	return router;
 }

@@ -9,6 +9,7 @@ export interface RecipeItemConfig {
 	title: string;
 	ingredients: RecipeIngredientConfig[];
 	steps: string[];
+	owner: string;
 }
 
 export default interface RecipeConfig {
