@@ -11,7 +11,7 @@ vi.mock("../../src/util/LogUtil.js", async (importOriginal) => ({
 	readLogs: mockReadLogs
 }));
 
-const page = { total: 0, start: 0, limit: 100, entries: [] };
+const page = { entries: [] };
 
 beforeEach(() => {
 	mockReadLogs.mockReset();
@@ -24,45 +24,52 @@ function createApp() {
 	return app;
 }
 
-test("Uses default paging and level", async () => {
+test("Passes start, end and default level", async () => {
 	// eslint-disable-next-line
-	const response = await (request(createApp()) as TestAgent).get("/logs");
+	const response = await (request(createApp()) as TestAgent).get(
+		"/logs?start=5&end=10"
+	);
 
 	expect(response.status).toBe(200);
 	expect(response.body).toStrictEqual(page);
 	expect(mockReadLogs).toHaveBeenCalledWith({
-		start: 0,
-		limit: 100,
+		start: 5,
+		end: 10,
 		minLevel: 10
 	});
 });
 
-test("Passes start, limit and level", async () => {
+test("Passes level", async () => {
 	// eslint-disable-next-line
 	const response = await (request(createApp()) as TestAgent).get(
-		"/logs?start=5&limit=10&level=warn"
+		"/logs?start=5&end=10&level=warn"
 	);
 
 	expect(response.status).toBe(200);
 	expect(mockReadLogs).toHaveBeenCalledWith({
 		start: 5,
-		limit: 10,
+		end: 10,
 		minLevel: 40
 	});
 });
 
-test.each(["start=-1", "start=abc", "limit=0", "limit=1001", "level=loud"])(
-	"Responds with 400 for invalid query %s",
-	async (query) => {
-		// eslint-disable-next-line
-		const response = await (request(createApp()) as TestAgent).get(
-			`/logs?${query}`
-		);
+test.each([
+	"",
+	"start=5",
+	"end=5",
+	"start=-1&end=5",
+	"start=abc&end=5",
+	"start=10&end=5",
+	"start=1&end=5&level=loud"
+])("Responds with 400 for invalid query %s", async (query) => {
+	// eslint-disable-next-line
+	const response = await (request(createApp()) as TestAgent).get(
+		`/logs?${query}`
+	);
 
-		expect(response.status).toBe(400);
-		expect(mockReadLogs).not.toHaveBeenCalled();
-	}
-);
+	expect(response.status).toBe(400);
+	expect(mockReadLogs).not.toHaveBeenCalled();
+});
 
 test("Responds with 500 when reading fails", async () => {
 	mockReadLogs.mockImplementation(() => {
@@ -70,7 +77,9 @@ test("Responds with 500 when reading fails", async () => {
 	});
 
 	// eslint-disable-next-line
-	const response = await (request(createApp()) as TestAgent).get("/logs");
+	const response = await (request(createApp()) as TestAgent).get(
+		"/logs?start=1&end=2"
+	);
 
 	expect(response.status).toBe(500);
 });

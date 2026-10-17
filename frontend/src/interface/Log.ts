@@ -9,8 +9,5 @@ export interface LogEntry {
 }
 
 export interface LogPage {
-	total: number;
-	start: number;
-	limit: number;
 	entries: LogEntry[];
 }

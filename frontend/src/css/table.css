@@ -5,3 +5,24 @@
 .content > table th {
 	text-align: left;
 }
+
+.content > table.logs {
+	table-layout: fixed;
+}
+
+.logs td {
+	vertical-align: top;
+	word-break: break-word;
+}
+
+.logs td.log-time {
+	width: 5.5em;
+	white-space: nowrap;
+	padding-right: calc(var(--spacing) * 1.5);
+}
+
+.logs td.log-level {
+	width: 4.5em;
+	white-space: nowrap;
+	padding-right: var(--spacing);
+}

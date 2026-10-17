@@ -20,14 +20,11 @@ export interface LogEntry {
 
 export interface LogQuery {
 	start: number;
-	limit: number;
+	end: number;
 	minLevel: number;
 }
 
 export interface LogPage {
-	total: number;
-	start: number;
-	limit: number;
 	entries: LogEntry[];
 }
 
@@ -35,14 +32,14 @@ export function readLogs(
 	query: LogQuery,
 	buffer: LogBuffer = logBuffer
 ): LogPage {
-	const matching = buffer.getAll().filter((e) => e.level >= query.minLevel);
+	const entries = buffer
+		.getAll()
+		.filter(
+			(e) =>
+				e.level >= query.minLevel &&
+				e.time >= query.start &&
+				e.time <= query.end
+		);
 
-	matching.reverse();
-
-	return {
-		total: matching.length,
-		start: query.start,
-		limit: query.limit,
-		entries: matching.slice(query.start, query.start + query.limit)
-	};
+	return { entries: entries.reverse() };
 }

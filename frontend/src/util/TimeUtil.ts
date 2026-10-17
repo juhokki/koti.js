@@ -31,6 +31,26 @@ export function shortDate(date: Date) {
 	return `${day.toString()}.${month.toString()}.`;
 }
 
+export function getStartOfDay(date: Date) {
+	const startOfDay = new Date(date.getTime());
+	startOfDay.setHours(0, 0, 0, 0);
+
+	return startOfDay;
+}
+
+export function getEndOfDay(date: Date) {
+	const endOfDay = new Date(date.getTime());
+	endOfDay.setHours(23, 59, 59, 999);
+
+	return endOfDay;
+}
+
+export function formatTime(timestamp: number) {
+	return new Date(timestamp).toLocaleTimeString("fi-FI", {
+		hour12: false
+	});
+}
+
 export function getStartOfMonth(date: Date) {
 	const startOfMonth = new Date(date.getTime());
 	startOfMonth.setDate(1);

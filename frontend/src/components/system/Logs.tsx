@@ -1,13 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FeedIcon from "@mui/icons-material/Feed";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import LogsApi from "../../api/LogsApi";
 import { LogEntry, LogLevelName } from "../../interface/Log";
-
-const PAGE_SIZE = 100;
+import {
+	formatTime,
+	getEndOfDay,
+	getStartOfDay,
+	shortDate
+} from "../../util/TimeUtil";
 
 const LEVELS: { name: LogLevelName; value: number }[] = [
 	{ name: "trace", value: 10 },
@@ -28,38 +33,41 @@ export default function Logs() {
 		Promise.resolve(navigate("/system")).catch(console.log);
 	};
 
-	const [level, setLevel] = useState<LogLevelName>("info");
+	const [level, setLevel] = useState<LogLevelName>("warn");
+	const [date, setDate] = useState(new Date());
 	const [entries, setEntries] = useState<LogEntry[]>([]);
-	const [total, setTotal] = useState(0);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
 
-	const load = useCallback(
-		(start: number, reset: boolean) => {
-			setLoading(true);
-			setError(false);
-
-			LogsApi.getLogs(start, PAGE_SIZE, level)
-				.then((page) => {
-					setTotal(page.total);
-					setEntries((prev) =>
-						reset ? page.entries : [...prev, ...page.entries]
-					);
-				})
-				.catch((e: unknown) => {
-					setError(true);
-					console.log(e);
-				})
-				.finally(() => {
-					setLoading(false);
-				});
-		},
-		[level]
-	);
+	const startDate = getStartOfDay(date);
+	const endDate = getEndOfDay(date);
+	const start = startDate.getTime();
+	const end = endDate.getTime();
+	const isToday = start === getStartOfDay(new Date()).getTime();
 
 	useEffect(() => {
-		load(0, true);
-	}, [load]);
+		setLoading(true);
+		setError(false);
+
+		LogsApi.getLogs(start, end, level)
+			.then((page) => {
+				setEntries(page.entries);
+			})
+			.catch((e: unknown) => {
+				setEntries([]);
+				setError(true);
+				console.log(e);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
+	}, [start, end, level]);
+
+	const changeDay = (change: number) => {
+		const newDate = new Date(date.getTime());
+		newDate.setDate(newDate.getDate() + change);
+		setDate(newDate);
+	};
 
 	return (
 		<section>
@@ -76,6 +84,29 @@ export default function Logs() {
 						<span>Loki</span>
 					</div>
 					<div className="right"></div>
+				</h2>
+			</section>
+			<section className="header">
+				<h2>
+					<div className="left">
+						<ChevronLeftIcon
+							className="clickable"
+							onClick={() => {
+								changeDay(-1);
+							}}
+						/>
+					</div>
+					<div>{shortDate(date)}</div>
+					<div className="right">
+						{!isToday && (
+							<ChevronRightIcon
+								className="clickable"
+								onClick={() => {
+									changeDay(1);
+								}}
+							/>
+						)}
+					</div>
 				</h2>
 			</section>
 			<section className="content">
@@ -99,12 +130,16 @@ export default function Logs() {
 						Tietojen hakeminen ei onnistunut.
 					</div>
 				)}
-				<table>
+				<table className="logs">
 					<tbody>
 						{entries.map((entry, i) => (
 							<tr key={i}>
-								<td>{new Date(entry.time).toLocaleString()}</td>
-								<td>{levelName(entry.level)}</td>
+								<td className="log-time">
+									{formatTime(entry.time)}
+								</td>
+								<td className="log-level">
+									{levelName(entry.level)}
+								</td>
 								<td>{entry.msg}</td>
 							</tr>
 						))}
@@ -116,17 +151,8 @@ export default function Logs() {
 					</div>
 				)}
 				{!loading && !error && entries.length === 0 && (
-					<div className="centered">Ei lokimerkintöjä.</div>
-				)}
-				{!loading && entries.length < total && (
 					<div className="centered">
-						<button
-							onClick={() => {
-								load(entries.length, false);
-							}}
-						>
-							Lataa lisää
-						</button>
+						Lokimerkintöjä ei löytynyt valitulta päivältä.
 					</div>
 				)}
 			</section>

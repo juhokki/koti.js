@@ -4,12 +4,12 @@ import AuthUtil from "../util/AuthUtil";
 class LogsApi {
 	async getLogs(
 		start: number,
-		limit: number,
+		end: number,
 		level: LogLevelName
 	): Promise<LogPage> {
 		const params = new URLSearchParams({
 			start: String(start),
-			limit: String(limit),
+			end: String(end),
 			level
 		});
 		const url = `/api/logs?${params.toString()}`;
