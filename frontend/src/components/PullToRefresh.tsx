@@ -19,7 +19,9 @@ export default function PullToRefresh() {
 
 		const onTouchStart = (event: TouchEvent) => {
 			startY.current =
-				window.scrollY <= 0 ? (event.touches[0]?.clientY ?? null) : null;
+				window.scrollY <= 0
+					? (event.touches[0]?.clientY ?? null)
+					: null;
 		};
 
 		const onTouchMove = (event: TouchEvent) => {
