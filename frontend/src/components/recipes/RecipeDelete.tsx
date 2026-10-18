@@ -62,10 +62,10 @@ export default function RecipeDelete() {
 						<ChevronLeftIcon
 							className="clickable"
 							onClick={() => {
-							if (recipeId) {
-								go(`/recipes/${recipeId}`);
-							}
-						}}
+								if (recipeId) {
+									go(`/recipes/${recipeId}`);
+								}
+							}}
 						/>
 					</div>
 					<div>
@@ -90,7 +90,8 @@ export default function RecipeDelete() {
 									Vahvista poisto
 								</h3>
 								<p>
-									Haluatko varmasti poistaa reseptin {recipe.title}?
+									Haluatko varmasti poistaa reseptin{" "}
+									{recipe.title}?
 								</p>
 							</div>
 							{deleteError && (

@@ -1,9 +1,10 @@
-import { SubmitEvent, useEffect, useState } from "react";
+import { PointerEvent, SubmitEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import SaveIcon from "@mui/icons-material/Save";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -33,6 +34,7 @@ export default function RecipeEdit() {
 		emptyIngredient
 	]);
 	const [steps, setSteps] = useState<string[]>([""]);
+	const [dragIndex, setDragIndex] = useState<number | null>(null);
 	const [loading, setLoading] = useState(Boolean(recipeId));
 	const [error, setError] = useState(false);
 
@@ -76,6 +78,38 @@ export default function RecipeEdit() {
 				i === index ? { ...item, [field]: value } : item
 			)
 		);
+	};
+
+	const moveStep = (from: number, to: number) => {
+		setSteps((current) => {
+			const next = [...current];
+			const moved = next.splice(from, 1);
+
+			next.splice(to, 0, ...moved);
+
+			return next;
+		});
+	};
+
+	const dragStep = (event: PointerEvent<SVGSVGElement>) => {
+		if (dragIndex === null) {
+			return;
+		}
+
+		const row = document
+			.elementFromPoint(event.clientX, event.clientY)
+			?.closest("[data-step-index]");
+
+		if (!row) {
+			return;
+		}
+
+		const target = Number(row.getAttribute("data-step-index"));
+
+		if (target !== dragIndex) {
+			moveStep(dragIndex, target);
+			setDragIndex(target);
+		}
 	};
 
 	const save = (event: SubmitEvent) => {
@@ -251,7 +285,27 @@ export default function RecipeEdit() {
 									Valmistus
 								</h3>
 								{steps.map((step, i) => (
-									<div key={i} className="row">
+									<div
+										key={i}
+										data-step-index={i}
+										className={`row ${dragIndex === i ? "dragging" : ""}`}
+									>
+										<DragIndicatorIcon
+											className="drag-handle clickable"
+											onPointerDown={(e) => {
+												e.currentTarget.setPointerCapture(
+													e.pointerId
+												);
+												setDragIndex(i);
+											}}
+											onPointerMove={dragStep}
+											onPointerUp={() => {
+												setDragIndex(null);
+											}}
+											onPointerCancel={() => {
+												setDragIndex(null);
+											}}
+										/>
 										<input
 											type="text"
 											placeholder="Vaihe"
@@ -292,6 +346,19 @@ export default function RecipeEdit() {
 								<button type="submit">
 									<SaveIcon />
 									<span>Tallenna</span>
+								</button>
+								<button
+									type="button"
+									className="danger"
+									onClick={() => {
+										go(
+											recipeId
+												? `/recipes/${recipeId}`
+												: "/recipes"
+										);
+									}}
+								>
+									<span>Peruuta</span>
 								</button>
 							</div>
 						</form>

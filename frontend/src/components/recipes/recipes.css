@@ -108,3 +108,13 @@
 .recipes .ingredient-row input:nth-child(3) {
 	flex: 2;
 }
+
+.recipes .drag-handle {
+	cursor: grab;
+	touch-action: none;
+	flex: 0 0 auto;
+}
+
+.recipes .row.dragging {
+	opacity: 0.6;
+}

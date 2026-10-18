@@ -112,7 +112,9 @@ export default function RecipeDetails() {
 											type="button"
 											className="danger"
 											onClick={() => {
-												go(`/recipes/${recipe.id}/delete`);
+												go(
+													`/recipes/${recipe.id}/delete`
+												);
 											}}
 										>
 											<DeleteIcon />
