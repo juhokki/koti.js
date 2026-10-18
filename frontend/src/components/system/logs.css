@@ -1,13 +1,22 @@
-.logs td.log-time {
-	width: 5.5em;
-	white-space: nowrap;
-	padding-right: calc(var(--spacing) * 1.5);
+.logs .log-item {
+	background: var(--box-background-color);
+	border-radius: var(--border-radius);
+	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.1);
+	padding: var(--spacing);
+	margin-bottom: var(--spacing);
+	box-sizing: border-box;
 }
 
-.logs td.log-level {
-	width: 4.5em;
-	white-space: nowrap;
-	padding-right: var(--spacing);
+.logs .log-header {
+	display: flex;
+	justify-content: space-between;
+	padding-bottom: calc(var(--spacing) / 2);
+	border-bottom: 1px dashed var(--background-color);
+}
+
+.logs .log-message {
+	margin-top: calc(var(--spacing) / 2);
+	word-break: break-word;
 }
 
 table.table-2-col th,

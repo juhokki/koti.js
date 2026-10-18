@@ -130,21 +130,17 @@ export default function Logs() {
 						Tietojen hakeminen ei onnistunut.
 					</div>
 				)}
-				<table className="logs">
-					<tbody>
-						{entries.map((entry, i) => (
-							<tr key={i}>
-								<td className="log-time">
-									{formatTime(entry.time)}
-								</td>
-								<td className="log-level">
-									{levelName(entry.level)}
-								</td>
-								<td>{entry.msg}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+				<div className="logs">
+					{entries.map((entry, i) => (
+						<div className="log-item" key={i}>
+							<div className="log-header">
+								<span>{formatTime(entry.time)}</span>
+								<span>{levelName(entry.level)}</span>
+							</div>
+							<div className="log-message">{entry.msg}</div>
+						</div>
+					))}
+				</div>
 				{loading && (
 					<div className="loader-container">
 						<div className="loader"></div>

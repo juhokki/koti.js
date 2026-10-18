@@ -128,7 +128,9 @@ export default function System() {
 									</th>
 									<td className="centered">
 										<span>
-											{formatUptime(uptime ?? stats.uptime)}
+											{formatUptime(
+												uptime ?? stats.uptime
+											)}
 										</span>
 									</td>
 								</tr>
