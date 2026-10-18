@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
-import { LogBuffer } from "../src/util/LogBuffer.js";
+import { LogBuffer, logBuffer } from "../src/util/LogBuffer.js";
 import { readLogs } from "../src/util/LogUtil.js";
+import logger from "../src/util/logger.js";
 
 function createBuffer() {
 	const buffer = new LogBuffer(10);
@@ -76,4 +77,13 @@ test("Parses NDJSON written by pino and ignores invalid chunks", () => {
 	buffer.write("not json");
 
 	expect(buffer.getAll()).toHaveLength(1);
+});
+
+test("Captures debug logs in the log buffer", () => {
+	logBuffer.clear();
+	logger.debug({ marker: "debug-buffer-test" }, "Debug log test.");
+
+	expect(
+		logBuffer.getAll().some((entry) => entry.marker === "debug-buffer-test")
+	).toBe(true);
 });
