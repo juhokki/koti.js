@@ -7,6 +7,7 @@ import type TimescaleValueRow from "./TimescaleValueRow.ts";
 import type ValueType from "../../../../types/ValueType.ts";
 
 export const TABLE_VALUES = "values";
+const INDEX_VALUES_DEVICE_MEASUREMENT_TIME = "values_device_measurement_time_idx";
 
 export default class TimescaleDatabase implements Database {
 	client: pg.Client;
@@ -57,6 +58,15 @@ export default class TimescaleDatabase implements Database {
 				false
 			)`,
 			TABLE_VALUES
+		);
+
+		// Add index for faster queries for readLatestValues
+		await this.client.query(
+			format(
+				`CREATE INDEX IF NOT EXISTS %I ON %I (device_id, measurement_id, time DESC)`,
+				INDEX_VALUES_DEVICE_MEASUREMENT_TIME,
+				TABLE_VALUES
+			)
 		);
 
 		await this.client.query(htQuery);
