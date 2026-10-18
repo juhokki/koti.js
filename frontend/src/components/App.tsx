@@ -23,6 +23,7 @@ import Login from "./login/Login";
 import Assets from "./assets/Assets";
 import AssetDetails from "./assets/AssetDetails";
 import DeviceHistory from "./assets/device/DeviceHistory";
+import DeviceAlarms from "./assets/device/DeviceAlarms";
 import ShoppingList from "./shoppinglist/ShoppingListView";
 import RecipeList from "./recipes/RecipeList";
 import RecipeDetails from "./recipes/RecipeDetails";
@@ -106,6 +107,10 @@ export default function App() {
 										<Route
 											path="assets/:assetId/:deviceId"
 											element={<DeviceHistory />}
+										/>
+										<Route
+											path="assets/:assetId/:deviceId/alarms"
+											element={<DeviceAlarms />}
 										/>
 										<Route
 											path="shoppinglist"
