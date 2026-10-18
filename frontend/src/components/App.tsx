@@ -25,6 +25,7 @@ import AssetDetails from "./assets/AssetDetails";
 import DeviceHistory from "./assets/device/DeviceHistory";
 import DeviceAlarms from "./assets/device/DeviceAlarms";
 import DeviceSchedules from "./assets/device/DeviceSchedules";
+import DeviceActions from "./assets/device/DeviceActions";
 import ShoppingList from "./shoppinglist/ShoppingListView";
 import RecipeList from "./recipes/RecipeList";
 import RecipeDetails from "./recipes/RecipeDetails";
@@ -116,6 +117,10 @@ export default function App() {
 										<Route
 											path="assets/:assetId/:deviceId/schedules"
 											element={<DeviceSchedules />}
+										/>
+										<Route
+											path="assets/:assetId/:deviceId/actions"
+											element={<DeviceActions />}
 										/>
 										<Route
 											path="shoppinglist"
