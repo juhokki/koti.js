@@ -13,9 +13,9 @@ export default function Alarms() {
 		Promise.resolve(navigate("/")).catch(console.log);
 	};
 	const goToAsset = (assetId: string) => {
-		Promise.resolve(
-			navigate(`/assets/${assetId}?from=alarms`)
-		).catch(console.log);
+		Promise.resolve(navigate(`/assets/${assetId}?from=alarms`)).catch(
+			console.log
+		);
 	};
 
 	if (alarms === null) {

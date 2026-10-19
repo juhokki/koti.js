@@ -79,7 +79,7 @@ export default class DataService extends ServiceBase {
 		values.forEach((value) => {
 			cache.set(value.deviceId, value.measurementId, value);
 		});
-		
+
 		logger.debug(
 			{
 				durationMs: Date.now() - cacheStartedAt,

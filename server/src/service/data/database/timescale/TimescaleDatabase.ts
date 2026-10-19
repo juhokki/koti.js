@@ -7,7 +7,8 @@ import type TimescaleValueRow from "./TimescaleValueRow.ts";
 import type ValueType from "../../../../types/ValueType.ts";
 
 export const TABLE_VALUES = "values";
-const INDEX_VALUES_DEVICE_MEASUREMENT_TIME = "values_device_measurement_time_idx";
+const INDEX_VALUES_DEVICE_MEASUREMENT_TIME =
+	"values_device_measurement_time_idx";
 
 export default class TimescaleDatabase implements Database {
 	client: pg.Client;
