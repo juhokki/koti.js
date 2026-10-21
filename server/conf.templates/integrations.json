@@ -26,25 +26,8 @@
 		"stateUpdateInterval": 1800000
 	},
 	{
-		"name": "VaasanSahkoIntegration",
-		"enabled": true,
-		"deviceId": "sahko",
-		"measurementId": "kwh",
-		"schedule": "0 8 * * *",
-		"username": "...",
-		"password": "..."
-	},
-	{
 		"name": "MatterIntegration",
 		"enabled": true,
 		"serverUrl": "ws://localhost:5580/ws"
-	},
-	{
-		"name": "WizIntegration",
-		"enabled": true,
-		"address": "...",
-		"interface": null,
-		"discoverInterval": 60000,
-		"heartbeatInterval": 30000
 	}
 ]
