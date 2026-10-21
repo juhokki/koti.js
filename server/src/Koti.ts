@@ -26,7 +26,18 @@ export default class Koti {
 		const configPath = path.join(configDir, SERVICES_CONFIG_FILE_NAME);
 		const config = readConfigFile<ServicesConfig>(configPath);
 
+		this.redirectConsole();
 		this.services = this.buildServices(config);
+	}
+
+	// Ensures console output from dependencies is redirected to the logger
+	redirectConsole() {
+		/* eslint-disable no-console */
+		console.debug = (...args: Parameters<typeof logger.debug>) => { logger.debug(...args); };
+		console.log = console.info = (...args: Parameters<typeof logger.info>) => { logger.info(...args); };
+		console.warn = (...args: Parameters<typeof logger.warn>) => { logger.warn(...args); };
+		console.error = (...args: Parameters<typeof logger.error>) => { logger.error(...args); };
+		/* eslint-enable no-console */
 	}
 
 	buildServices(config: ServicesConfig): ServiceLocator {

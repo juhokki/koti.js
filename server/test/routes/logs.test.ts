@@ -35,21 +35,21 @@ test("Passes start, end and default level", async () => {
 	expect(mockReadLogs).toHaveBeenCalledWith({
 		start: 5,
 		end: 10,
-		minLevel: 10
+		levels: [10]
 	});
 });
 
-test("Passes level", async () => {
+test("Passes multiple levels", async () => {
 	// eslint-disable-next-line
 	const response = await (request(createApp()) as TestAgent).get(
-		"/logs?start=5&end=10&level=warn"
+		"/logs?start=5&end=10&level=info&level=warn&level=error"
 	);
 
 	expect(response.status).toBe(200);
 	expect(mockReadLogs).toHaveBeenCalledWith({
 		start: 5,
 		end: 10,
-		minLevel: 40
+		levels: [30, 40, 50]
 	});
 });
 
@@ -60,7 +60,8 @@ test.each([
 	"start=-1&end=5",
 	"start=abc&end=5",
 	"start=10&end=5",
-	"start=1&end=5&level=loud"
+	"start=1&end=5&level=loud",
+	"start=1&end=5&level=info&level=loud"
 ])("Responds with 400 for invalid query %s", async (query) => {
 	// eslint-disable-next-line
 	const response = await (request(createApp()) as TestAgent).get(

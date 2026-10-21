@@ -5,12 +5,14 @@ class LogsApi {
 	async getLogs(
 		start: number,
 		end: number,
-		level: LogLevelName
+		levels: LogLevelName[]
 	): Promise<LogPage> {
 		const params = new URLSearchParams({
 			start: String(start),
-			end: String(end),
-			level
+			end: String(end)
+		});
+		levels.forEach((level) => {
+			params.append("level", level);
 		});
 		const url = `/api/logs?${params.toString()}`;
 		const options = {

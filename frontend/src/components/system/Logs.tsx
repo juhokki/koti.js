@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FeedIcon from "@mui/icons-material/Feed";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import LogsApi from "../../api/LogsApi";
 import { LogEntry, LogLevelName } from "../../interface/Log";
 import {
@@ -14,17 +14,18 @@ import {
 	shortDate
 } from "../../util/TimeUtil";
 
-const LEVELS: { name: LogLevelName; value: number }[] = [
-	{ name: "trace", value: 10 },
-	{ name: "debug", value: 20 },
-	{ name: "info", value: 30 },
-	{ name: "warn", value: 40 },
-	{ name: "error", value: 50 },
-	{ name: "fatal", value: 60 }
-];
+const LEVEL_NAMES: Record<number, string> = {
+	10: "trace",
+	20: "debug",
+	30: "info",
+	40: "warn",
+	50: "error",
+	60: "fatal"
+};
+const LEVELS: LogLevelName[] = ["debug", "info", "warn", "error"];
 
 function levelName(level: number): string {
-	return LEVELS.find((l) => l.value === level)?.name ?? String(level);
+	return LEVEL_NAMES[level] ?? String(level);
 }
 
 export default function Logs() {
@@ -33,7 +34,11 @@ export default function Logs() {
 		Promise.resolve(navigate("/system")).catch(console.log);
 	};
 
-	const [level, setLevel] = useState<LogLevelName>("info");
+	const [levels, setLevels] = useState<LogLevelName[]>([
+		"info",
+		"warn",
+		"error"
+	]);
 	const [date, setDate] = useState(new Date());
 	const [entries, setEntries] = useState<LogEntry[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -46,10 +51,15 @@ export default function Logs() {
 	const isToday = start === getStartOfDay(new Date()).getTime();
 
 	useEffect(() => {
-		setLoading(true);
 		setError(false);
+		if (levels.length === 0) {
+			setEntries([]);
+			setLoading(false);
+			return;
+		}
+		setLoading(true);
 
-		LogsApi.getLogs(start, end, level)
+		LogsApi.getLogs(start, end, levels)
 			.then((page) => {
 				setEntries(page.entries);
 			})
@@ -61,7 +71,7 @@ export default function Logs() {
 			.finally(() => {
 				setLoading(false);
 			});
-	}, [start, end, level]);
+	}, [start, end, levels]);
 
 	const changeDay = (change: number) => {
 		const newDate = new Date(date.getTime());
@@ -111,19 +121,20 @@ export default function Logs() {
 			</section>
 			<section className="content">
 				<div className="centered margin-bottom">
-					<Select
+					<ToggleButtonGroup
+						aria-label="Log level filters"
 						size="small"
-						value={level}
-						onChange={(e) => {
-							setLevel(e.target.value);
+						value={levels}
+						onChange={(_event, nextLevels: LogLevelName[]) => {
+							setLevels(nextLevels);
 						}}
 					>
-						{LEVELS.map((l) => (
-							<MenuItem key={l.name} value={l.name}>
-								{l.name}
-							</MenuItem>
+						{LEVELS.map((levelName) => (
+							<ToggleButton key={levelName} value={levelName}>
+								{levelName}
+							</ToggleButton>
 						))}
-					</Select>
+					</ToggleButtonGroup>
 				</div>
 				{error && (
 					<div className="centered">
@@ -146,9 +157,17 @@ export default function Logs() {
 						<div className="loader"></div>
 					</div>
 				)}
-				{!loading && !error && entries.length === 0 && (
+				{!loading &&
+					!error &&
+					entries.length === 0 &&
+					levels.length > 0 && (
+						<div className="centered">
+							Lokimerkintöjä ei löytynyt valitulta päivältä.
+						</div>
+					)}
+				{!loading && !error && levels.length === 0 && (
 					<div className="centered">
-						Lokimerkintöjä ei löytynyt valitulta päivältä.
+						Valitse vähintään yksi lokitaso.
 					</div>
 				)}
 			</section>

@@ -21,7 +21,7 @@ export interface LogEntry {
 export interface LogQuery {
 	start: number;
 	end: number;
-	minLevel: number;
+	levels: number[];
 }
 
 export interface LogPage {
@@ -36,7 +36,7 @@ export function readLogs(
 		.getAll()
 		.filter(
 			(e) =>
-				e.level >= query.minLevel &&
+				query.levels.includes(e.level) &&
 				e.time >= query.start &&
 				e.time <= query.end
 		);
