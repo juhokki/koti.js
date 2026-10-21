@@ -37,9 +37,7 @@
 	{
 		"name": "MatterIntegration",
 		"enabled": true,
-		"storageLocation": "conf/.matter",
-		"controllerId": "...",
-		"pairing": {}
+		"serverUrl": "ws://localhost:5580/ws"
 	},
 	{
 		"name": "WizIntegration",
