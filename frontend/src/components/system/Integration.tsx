@@ -5,6 +5,21 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SystemApi from "../../api/SystemApi";
 import { IntegrationInfo } from "../../interface/IntegrationInfo";
 
+const getParameterUrl = (value: string | number) => {
+	if (typeof value !== "string") {
+		return undefined;
+	}
+
+	try {
+		const url = new URL(value);
+		return ["http:", "https:", "ws:", "wss:"].includes(url.protocol)
+			? value
+			: undefined;
+	} catch {
+		return undefined;
+	}
+};
+
 export default function Integration() {
 	const navigate = useNavigate();
 	const { name } = useParams();
@@ -54,7 +69,7 @@ export default function Integration() {
 						/>
 					</div>
 					<div>
-						<span>{name.replace(/([a-z])([A-Z])/g, '$1 $2')}</span>
+						<span>{name?.replace(/([a-z])([A-Z])/g, '$1 $2')}</span>
 					</div>
 					<div className="right"></div>
 				</h2>
@@ -78,18 +93,31 @@ export default function Integration() {
 							) : (
 								<table className="margin-top">
 									<tbody>
-										{info.parameters.map((parameter) => (
-											<tr key={parameter.name}>
+											{info.parameters.map((parameter) => {
+												const url = getParameterUrl(parameter.value);
+												return (
+													<tr key={parameter.name}>
 												<th className="centered">
 													<span>{parameter.name}</span>
 												</th>
 												<td className="centered">
 													<span>
-														{String(parameter.value)}
+															{url ? (
+																<a
+																	href={url}
+																	target="_blank"
+																	rel="noopener noreferrer"
+																>
+																	{url}
+																</a>
+															) : (
+																String(parameter.value)
+															)}
 													</span>
 												</td>
 											</tr>
-										))}
+												);
+											})}
 									</tbody>
 								</table>
 							)}

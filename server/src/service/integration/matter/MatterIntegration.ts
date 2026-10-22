@@ -12,6 +12,7 @@ import type ServiceLocator from "../../ServiceLocator.ts";
 import IntegrationBase from "../IntegrationBase.ts";
 import type MatterIntegrationSettings from "./MatterIntegrationConfig.ts";
 import logger from "../../../util/logger.ts";
+import type IntegrationParameter from "../IntegrationParameter.ts";
 
 const ON_OFF_CLUSTER_ID = 6;
 const LEVEL_CONTROL_CLUSTER_ID = 8;
@@ -45,9 +46,21 @@ export default class MatterIntegration extends IntegrationBase {
 
 		this.options = options;
 		this.client = new MatterClient(
-			options.serverUrl,
+			options.websocketUrl,
 			(url) => new WebSocket(url) as unknown as WebSocketLike
 		);
+	}
+
+	override getParameters(): IntegrationParameter[] {
+		return [
+			{ name: "Server URL", value: this.options.serverUrl },
+			{
+				name: "Connected nodes count",
+				value: Object.values(this.client.nodes).filter(
+					(node) => node.available
+				).length
+			}
+		];
 	}
 
 	override async start() {

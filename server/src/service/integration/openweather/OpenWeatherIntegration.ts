@@ -4,6 +4,7 @@ import Value from "../../../model/Value.ts";
 import type OpenWeatherIntegrationSettings from "./OpenWeatherIntegrationConfig.ts";
 import type ServiceLocator from "../../ServiceLocator.ts";
 import logger from "../../../util/logger.ts";
+import type IntegrationParameter from "../IntegrationParameter.ts";
 
 export interface OpenWeatherMainResponse {
 	temp: number;
@@ -19,6 +20,7 @@ export interface OpenWeatherResponse {
 export default class OpenWeatherIntegration extends IntegrationBase {
 	options: OpenWeatherIntegrationSettings;
 	interval: NodeJS.Timeout | undefined;
+	lastUpdated: string | undefined;
 
 	constructor(
 		services: ServiceLocator,
@@ -27,6 +29,17 @@ export default class OpenWeatherIntegration extends IntegrationBase {
 		super(services);
 
 		this.options = options;
+	}
+
+	override getParameters(): IntegrationParameter[] {
+		return [
+			{ name: "Location", value: this.options.location },
+			{ name: "Last updated", value: this.lastUpdated ?? "Never" },
+			{
+				name: "Update interval (minutes)",
+				value: this.options.updateInterval / 60_000
+			}
+		];
 	}
 
 	override async start() {
@@ -71,5 +84,6 @@ export default class OpenWeatherIntegration extends IntegrationBase {
 		];
 
 		await this.services.getDataService().write(values);
+		this.lastUpdated = new Date().toISOString();
 	}
 }

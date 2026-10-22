@@ -28,6 +28,7 @@
 	{
 		"name": "MatterIntegration",
 		"enabled": true,
-		"serverUrl": "ws://localhost:5580/ws"
+		"serverUrl": "http://localhost:5580",
+		"websocketUrl": "ws://localhost:5580/ws"
 	}
 ]

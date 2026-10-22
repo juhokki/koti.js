@@ -11,6 +11,7 @@ import ShellyButton2Handler from "./devices/ShellyButton2Handler.ts";
 import ShellyPlugSHandler from "./devices/ShellyPlugSHandler.ts";
 import type ShellyDeviceHandler from "./devices/ShellyDeviceHandler.ts";
 import logger from "../../../util/logger.ts";
+import type IntegrationParameter from "../IntegrationParameter.ts";
 
 export const ShellyDeviceTypeButton2 = "SHBTN-2";
 export const ShellyDeviceTypePlugS = "SHPLG-S";
@@ -24,6 +25,12 @@ export default class ShellyIntegration extends IntegrationBase {
 
 		this.options = options;
 		this.deviceHandlers = new Map();
+	}
+
+	override getParameters(): IntegrationParameter[] {
+		return [
+			{ name: "Discovered devices count", value: this.deviceHandlers.size }
+		];
 	}
 
 	override start() {

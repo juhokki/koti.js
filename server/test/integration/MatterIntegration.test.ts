@@ -162,6 +162,19 @@ afterEach(() => {
 	vi.useRealTimers();
 });
 
+test("exposes server URL and connected node count", () => {
+	const { services } = createServices([]);
+	const integration = new MatterIntegration(services, settings());
+	const client = getClient();
+	client.nodes["123"] = makeNode(123, true, {});
+	client.nodes["456"] = makeNode(456, false, {});
+
+	expect(integration.getParameters()).toEqual([
+		{ name: "Server URL", value: settings().serverUrl },
+		{ name: "Connected nodes count", value: 1 }
+	]);
+});
+
 test("connects and initializes values from node-ID devices", async () => {
 	const device = createDevice("123");
 	const {

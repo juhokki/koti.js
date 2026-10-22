@@ -78,6 +78,11 @@ test("OpenWeatherIntegration updates on start", async () => {
 		new Value(settings.deviceId, "humidity", 50),
 		new Value(settings.deviceId, "pressure", 100)
 	]);
+	expect(integration.getParameters()).toEqual([
+		{ name: "Location", value: settings.location },
+		{ name: "Last updated", value: new Date(now).toISOString() },
+		{ name: "Update interval (minutes)", value: 15 }
+	]);
 
 	await integration.stop();
 });

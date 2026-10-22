@@ -179,6 +179,9 @@ test("Discovered device writes initial values and changed values", () => {
 	mockWrite.mockReturnValue(Promise.resolve());
 
 	integration.onDeviceDiscovered(mockShellyDevice);
+	expect(integration.getParameters()).toEqual([
+		{ name: "Discovered devices count", value: 1 }
+	]);
 
 	expect(mockWrite).toHaveBeenCalledTimes(2);
 	expect(mockWrite).toHaveBeenNthCalledWith(1, [
