@@ -38,6 +38,7 @@ function renderPage() {
 					element={<RecipeShoppingList />}
 				/>
 				<Route path="/recipes/:recipeId" element={<p>details</p>} />
+				<Route path="/shoppinglist/" element={<p>shopping list</p>} />
 			</Routes>
 		</MemoryRouter>
 	);
@@ -59,11 +60,11 @@ it("Sends only selected ingredients", async () => {
 	renderPage();
 
 	await screen.findByText("2 dl flour");
-	fireEvent.click(screen.getAllByRole("checkbox")[1] as HTMLElement);
+	fireEvent.click(screen.getByRole("checkbox", { name: "1 kpl egg" }));
 	fireEvent.click(screen.getByText("Lisää"));
 
 	expect(mockAppendItems).toHaveBeenCalledWith(["2 dl flour"]);
-	expect(await screen.findByText("details")).toBeTruthy();
+	expect(await screen.findByText("shopping list")).toBeTruthy();
 });
 
 it("Shows an error message when adding fails", async () => {

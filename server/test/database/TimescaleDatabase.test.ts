@@ -45,7 +45,7 @@ test("TimescaleDatabase is started and stopped", async () => {
 	await database.start();
 
 	expect(mockConnect).toHaveBeenCalled();
-	expect(mockQuery).toHaveBeenCalledTimes(2);
+	expect(mockQuery).toHaveBeenCalledTimes(3);
 
 	await database.stop();
 
