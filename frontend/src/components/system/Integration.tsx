@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import SettingsIcon from "@mui/icons-material/Settings";
-import ExtensionIcon from "@mui/icons-material/Extension";
 import SystemApi from "../../api/SystemApi";
 import { IntegrationInfo } from "../../interface/IntegrationInfo";
 
@@ -55,8 +54,7 @@ export default function Integration() {
 						/>
 					</div>
 					<div>
-						<SettingsIcon />
-						<span>{name}</span>
+						<span>{name.replace(/([a-z])([A-Z])/g, '$1 $2')}</span>
 					</div>
 					<div className="right"></div>
 				</h2>
@@ -70,15 +68,15 @@ export default function Integration() {
 					<div className="grid">
 						<div className="grid-item">
 							<h3 className="centered underline">
-								<ExtensionIcon />
-								<span>{info.name}</span>
+						        <SettingsIcon />
+								<span>Parametrit</span>
 							</h3>
 							{info.parameters.length === 0 ? (
 								<div className="centered margin-top">
 									Ei parametreja
 								</div>
 							) : (
-								<table className="table-2-col margin-top">
+								<table className="margin-top">
 									<tbody>
 										{info.parameters.map((parameter) => (
 											<tr key={parameter.name}>

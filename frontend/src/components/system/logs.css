@@ -22,8 +22,3 @@
 	margin-top: calc(var(--spacing) / 2);
 	word-break: break-word;
 }
-
-table.table-2-col th,
-table.table-2-col td {
-	width: 50%;
-}

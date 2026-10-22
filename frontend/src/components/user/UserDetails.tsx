@@ -147,7 +147,7 @@ export default function User() {
 							<NotificationsIcon />
 							<span>Ilmoitukset</span>
 						</h3>
-						<table className="table-2-col margin-top">
+						<table className="margin-top">
 							<tbody>
 								<tr>
 									<th>
@@ -177,7 +177,7 @@ export default function User() {
 							<AccountCircleOutlinedIcon />
 							<span>Käyttäjä</span>
 						</h3>
-						<table className="table-2-col margin-top">
+						<table className="margin-top">
 							<tbody>
 								<tr>
 									<th>

@@ -36,6 +36,7 @@
 	padding: var(--spacing);
 	overflow: auto;
 	border-bottom: 2px dashed var(--box-background-color);
+	overflow: hidden;
 }
 
 .header h2 {

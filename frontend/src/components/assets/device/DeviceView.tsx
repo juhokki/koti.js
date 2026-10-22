@@ -44,7 +44,7 @@ export default function DeviceView(props: DeviceViewProps) {
 				<Icon>{device.icon}</Icon>
 				<span>{device.name}</span>
 			</h3>
-			<table className="table-2-col margin-top">
+			<table className="margin-top">
 				<tbody>
 					{measurements.map((measurement) => (
 						<MeasurementRow

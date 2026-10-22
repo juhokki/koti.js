@@ -121,7 +121,7 @@ export default function System() {
 							<TimerIcon />
 							<span>Palvelin</span>
 						</h3>
-						<table className="table-2-col margin-top">
+						<table className="margin-top">
 							<tbody>
 								<tr>
 									<th className="centered">
@@ -143,7 +143,7 @@ export default function System() {
 							<StorageIcon />
 							<span>Levy</span>
 						</h3>
-						<table className="table-2-col margin-top">
+						<table className="margin-top">
 							<tbody>
 								<tr>
 									<th className="centered">
@@ -173,7 +173,7 @@ export default function System() {
 							<FeedIcon />
 							<span>Loki</span>
 						</h3>
-						<table className="table-2-col margin-top">
+						<table className="margin-top">
 							<tbody>
 								<tr>
 									<th className="centered">
@@ -200,12 +200,12 @@ export default function System() {
 							<ExtensionIcon />
 							<span>Integraatiot</span>
 						</h3>
-						<table className="table-2-col margin-top">
+						<table className="margin-top">
 							<tbody>
 								{stats.integrations.map((name) => (
 									<tr key={name}>
 										<th className="centered">
-											<span>{name}</span>
+											<span>{name.replace(/([a-z])([A-Z])/g, '$1 $2')}</span>
 										</th>
 										<td className="centered">
 											<button
