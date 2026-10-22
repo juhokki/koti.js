@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FeedIcon from "@mui/icons-material/Feed";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import LogsApi from "../../api/LogsApi";
 import { LogEntry, LogLevelName } from "../../interface/Log";
 import {
@@ -120,21 +118,31 @@ export default function Logs() {
 				</h2>
 			</section>
 			<section className="content">
-				<div className="centered margin-bottom">
-					<ToggleButtonGroup
-						aria-label="Log level filters"
-						size="small"
-						value={levels}
-						onChange={(_event, nextLevels: LogLevelName[]) => {
-							setLevels(nextLevels);
-						}}
-					>
-						{LEVELS.map((levelName) => (
-							<ToggleButton key={levelName} value={levelName}>
+				<div className="centered margin-bottom log-level-filters">
+					{LEVELS.map((levelName) => {
+						const enabled = levels.includes(levelName);
+
+						return (
+							<button
+								key={levelName}
+								type="button"
+								aria-pressed={enabled}
+								aria-label={`${levelName} logs`}
+								onClick={() => {
+									setLevels((currentLevels) =>
+										enabled
+											? currentLevels.filter(
+													(level) =>
+														level !== levelName
+												)
+											: [...currentLevels, levelName]
+									);
+								}}
+							>
 								{levelName}
-							</ToggleButton>
-						))}
-					</ToggleButtonGroup>
+							</button>
+						);
+					})}
 				</div>
 				{error && (
 					<div className="centered">

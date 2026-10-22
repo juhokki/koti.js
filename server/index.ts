@@ -1,6 +1,9 @@
 import path from "path";
 import logger from "./src/util/logger.ts";
 import Koti from "./src/Koti.ts";
+import { redirectConsole } from "./src/util/LogUtil.ts";
+
+redirectConsole();
 
 const configDir = path.resolve("conf");
 const koti = new Koti(configDir);

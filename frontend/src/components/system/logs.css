@@ -1,3 +1,7 @@
+.log-level-filters button[aria-pressed="false"] {
+	background-color: var(--box-background-color);
+}
+
 .logs .log-item {
 	background: var(--box-background-color);
 	border-radius: var(--border-radius);
