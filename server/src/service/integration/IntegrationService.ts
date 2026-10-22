@@ -4,6 +4,7 @@ import ServiceBase from "../ServiceBase.ts";
 import type ServiceLocator from "../ServiceLocator.ts";
 import type IntegrationBase from "./IntegrationBase.ts";
 import type IntegrationConfig from "./IntegrationConfig.ts";
+import type IntegrationParameter from "./IntegrationParameter.ts";
 import type IntegrationServiceSettings from "./IntegrationServiceSettings.ts";
 import MatterIntegration from "./matter/MatterIntegration.ts";
 import type MatterIntegrationConfig from "./matter/MatterIntegrationConfig.ts";
@@ -102,6 +103,14 @@ export default class IntegrationService extends ServiceBase {
 		const config = readConfigFile<IntegrationConfig[]>(this.options.file);
 
 		return config.filter((integrationConfig) => integrationConfig.enabled);
+	}
+
+	getEnabledIntegrations(): string[] {
+		return Array.from(this.integrations.keys());
+	}
+
+	getIntegrationParameters(name: string): IntegrationParameter[] {
+		return this.get(name).getParameters();
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters

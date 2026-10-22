@@ -16,6 +16,8 @@ import type UserService from "../../src/service/user/UserService.js";
 const mockGetDisk = vi.fn();
 const mockWrite = vi.fn();
 const mockControl = vi.fn();
+const mockGetEnabledIntegrations = vi.fn();
+const mockGetIntegrationParameters = vi.fn();
 
 const services = new ServiceLocator(
 	new Map([
@@ -31,7 +33,8 @@ const services = new ServiceLocator(
 		[
 			"SystemService",
 			{
-				getDisk: mockGetDisk
+				getDisk: mockGetDisk,
+				getUptime: () => 1
 			} as unknown as SystemService
 		],
 		[
@@ -39,7 +42,9 @@ const services = new ServiceLocator(
 			{
 				get: () => ({
 					write: mockWrite
-				})
+				}),
+				getEnabledIntegrations: mockGetEnabledIntegrations,
+				getIntegrationParameters: mockGetIntegrationParameters
 			} as unknown as SystemService
 		]
 	] as [string, ServiceBase][])
@@ -53,6 +58,7 @@ test("Gets system info", async () => {
 	app.use(getApiRouter(services));
 
 	mockGetDisk.mockReturnValueOnce(Promise.resolve(disk));
+	mockGetEnabledIntegrations.mockReturnValueOnce(["RestApiIntegration"]);
 
 	// eslint-disable-next-line
 	const response = await (request(app) as TestAgent).get("/system");
@@ -60,12 +66,53 @@ test("Gets system info", async () => {
 	expect(response.status).toBe(200);
 	expect(response.body).toStrictEqual(
 		expect.objectContaining({
+			integrations: ["RestApiIntegration"],
 			disk: {
 				size: disk.getSize(),
 				free: disk.getFree()
 			}
 		})
 	);
+});
+
+test("Gets integration parameters", async () => {
+	const app = express();
+
+	app.use(getApiRouter(services));
+
+	mockGetEnabledIntegrations.mockReturnValue(["RestApiIntegration"]);
+	mockGetIntegrationParameters.mockReturnValueOnce([
+		{ name: "Count", value: 1 }
+	]);
+
+	// eslint-disable-next-line
+	const response = await (request(app) as TestAgent).get(
+		"/system/integration?name=RestApiIntegration"
+	);
+
+	expect(response.status).toBe(200);
+	expect(response.body).toStrictEqual({
+		name: "RestApiIntegration",
+		parameters: [{ name: "Count", value: 1 }]
+	});
+});
+
+test("Integration info requires name and enabled integration", async () => {
+	const app = express();
+
+	app.use(getApiRouter(services));
+
+	mockGetEnabledIntegrations.mockReturnValue(["RestApiIntegration"]);
+
+	// eslint-disable-next-line
+	const missing = await (request(app) as TestAgent).get("/system/integration");
+	// eslint-disable-next-line
+	const unknown = await (request(app) as TestAgent).get(
+		"/system/integration?name=Nope"
+	);
+
+	expect(missing.status).toBe(400);
+	expect(unknown.status).toBe(404);
 });
 
 test("Writes new value", async () => {

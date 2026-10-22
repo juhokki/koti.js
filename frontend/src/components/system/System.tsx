@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import FeedIcon from "@mui/icons-material/Feed";
+import ExtensionIcon from "@mui/icons-material/Extension";
 import SettingsIcon from "@mui/icons-material/Settings";
 import StorageIcon from "@mui/icons-material/Storage";
 import TimerIcon from "@mui/icons-material/Timer";
 import prettyBytes from "pretty-bytes";
 import SystemApi from "../../api/SystemApi";
-import { SystemDiskState } from "../../interface/SystemDiskState";
+import { SystemState } from "../../interface/SystemState";
 
 function formatUptime(uptime: number): string {
 	const totalSeconds = Math.floor(uptime);
@@ -30,7 +31,7 @@ export default function System() {
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
-	const [stats, setStats] = useState<SystemDiskState>();
+	const [stats, setStats] = useState<SystemState>();
 	const [uptime, setUptime] = useState<number>();
 
 	useEffect(() => {
@@ -191,6 +192,37 @@ export default function System() {
 										</button>
 									</td>
 								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div className="grid-item">
+						<h3 className="centered underline">
+							<ExtensionIcon />
+							<span>Integraatiot</span>
+						</h3>
+						<table className="table-2-col margin-top">
+							<tbody>
+								{stats.integrations.map((name) => (
+									<tr key={name}>
+										<th className="centered">
+											<span>{name}</span>
+										</th>
+										<td className="centered">
+											<button
+												style={{ margin: 0 }}
+												onClick={() => {
+													Promise.resolve(
+														navigate(
+															`/system/integrations/${encodeURIComponent(name)}`
+														)
+													).catch(console.log);
+												}}
+											>
+												Avaa
+											</button>
+										</td>
+									</tr>
+								))}
 							</tbody>
 						</table>
 					</div>

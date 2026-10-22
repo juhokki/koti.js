@@ -1,5 +1,6 @@
 import type Value from "../../model/Value.ts";
 import ServiceLocator from "../ServiceLocator.ts";
+import type IntegrationParameter from "./IntegrationParameter.ts";
 
 export default class IntegrationBase {
 	services: ServiceLocator;
@@ -14,6 +15,10 @@ export default class IntegrationBase {
 
 	stop(): Promise<void> {
 		return Promise.resolve();
+	}
+
+	getParameters(): IntegrationParameter[] {
+		return [];
 	}
 
 	control(

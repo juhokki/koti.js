@@ -35,6 +35,7 @@ import RecipeEdit from "./recipes/RecipeEdit";
 import Alarms from "./alarms/Alarms";
 import System from "./system/System";
 import Logs from "./system/Logs";
+import Integration from "./system/Integration";
 import PullToRefresh from "./PullToRefresh";
 
 export default function App() {
@@ -161,6 +162,10 @@ export default function App() {
 										<Route
 											path="system/logs"
 											element={<Logs />}
+										/>
+										<Route
+											path="system/integrations/:name"
+											element={<Integration />}
 										/>
 									</Routes>
 									<Outlet />
