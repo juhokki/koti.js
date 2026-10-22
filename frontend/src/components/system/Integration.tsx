@@ -103,13 +103,18 @@ export default function Integration() {
 												<td className="centered">
 													<span>
 															{url ? (
-																<a
-																	href={url}
-																	target="_blank"
-																	rel="noopener noreferrer"
+										<button
+											type="button"
+											onClick={() =>
+												window.open(
+													url,
+													"_blank",
+													"noopener,noreferrer"
+												)
+											}
 																>
-																	{url}
-																</a>
+																			Avaa
+										</button>
 															) : (
 																String(parameter.value)
 															)}
