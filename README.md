@@ -38,7 +38,7 @@ cd server && npm run start
 
 4. Add optional bridges on devices (Raspberry Pi or similar):
 
-- `ruuvi-sensor`
+- `ruuvi-sensor` (or `python-ruuvi-sensor`)
 - `rtl433-doorbell-relay`
 - `sonoff-rf-bridge-r2`
 
@@ -47,6 +47,7 @@ cd server && npm run start
 - `server/`: API and core automation logic
 - `frontend/`: browser UI
 - `ruuvi-sensor/`: Bluetooth sensor ingestion client
+- `python-ruuvi-sensor/`: Python port of `ruuvi-sensor`
 - `rtl433-doorbell-relay/`: 433 MHz doorbell event relay
 - `sonoff-rf-bridge-r2/`: Sonoff RF Bridge configuration
 

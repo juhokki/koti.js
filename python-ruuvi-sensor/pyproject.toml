@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "python-ruuvi-sensor"
+version = "0.1.0"
+description = "Reads Ruuvi tag BLE advertisements and sends the values to koti.js server."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["bleak>=0.22"]
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[project.scripts]
+ruuvi-sensor = "python_ruuvi_sensor.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/python_ruuvi_sensor"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
