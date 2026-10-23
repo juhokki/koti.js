@@ -52,6 +52,49 @@ test("IntegrationService is created", () => {
 	expect(service).not.toBe(null);
 });
 
+test("Creates each configured integration type", () => {
+	const integrationNames = [
+		"RestApiIntegration",
+		"OpenWeatherIntegration",
+		"ShellyIntegration",
+		"ToshibaAcIntegration",
+		"MatterIntegration"
+	];
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify(
+			integrationNames.map((name) => ({
+				name,
+				enabled: true,
+				deviceId: "device-1",
+				updateInterval: 1000,
+				apiKey: "key",
+				location: "location",
+				username: "user",
+				password: "password",
+				sasToken: "token",
+				energyConsumptionUpdateInterval: 1000,
+				stateUpdateInterval: 1000,
+				serverUrl: "http://localhost",
+				websocketUrl: "ws://localhost"
+			}))
+		)
+	);
+
+	const service = new IntegrationService(services, settings);
+
+	expect(service.getEnabledIntegrations()).toStrictEqual(integrationNames);
+});
+
+test("Rejects integrations without an implementation", () => {
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([{ name: "UnknownIntegration", enabled: true }])
+	);
+
+	expect(() => new IntegrationService(services, settings)).toThrow(
+		"Implementation for integration UnknownIntegration not found"
+	);
+});
+
 test("Controllable value is sent to integration", async () => {
 	const measurement = new Measurement(
 		"device-1",
@@ -89,6 +132,30 @@ test("Controllable value is sent to integration", async () => {
 	await service.onValueControlled(device.id, measurement.id, value);
 
 	expect(mockControl).toHaveBeenCalledWith(device.id, measurement.id, value);
+});
+
+test("Rejects control of a non-controllable measurement", async () => {
+	const measurement = new Measurement(
+		"device-1",
+		"meas-1",
+		"Test",
+		MeasurementType.Number,
+		"",
+		"icon",
+		false
+	);
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockGetMeasurement.mockReturnValueOnce(measurement);
+	const service = new IntegrationService(services, settings);
+
+	await expect(
+		service.onValueControlled(
+			"device-1",
+			"meas-1",
+			new Value("device-1", "meas-1", 10)
+		)
+	).rejects.toThrow("is not controllable");
+	expect(mockGetDevice).not.toHaveBeenCalled();
 });
 
 test("Enabled integrations are loaded, started and stopped with the service", async () => {

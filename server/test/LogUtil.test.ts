@@ -1,7 +1,32 @@
-import { expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
 import { LogBuffer, logBuffer } from "../src/util/LogBuffer.js";
-import { readLogs } from "../src/util/LogUtil.js";
+import {
+	readLogs,
+	redirectConsole,
+	toPinoArguments
+} from "../src/util/LogUtil.js";
 import logger from "../src/util/logger.js";
+
+/* eslint-disable no-console */
+const originalConsole = {
+	log: console.log,
+	info: console.info,
+	trace: console.trace,
+	debug: console.debug,
+	warn: console.warn,
+	error: console.error
+};
+
+afterEach(() => {
+	console.log = originalConsole.log;
+	console.info = originalConsole.info;
+	console.trace = originalConsole.trace;
+	console.debug = originalConsole.debug;
+	console.warn = originalConsole.warn;
+	console.error = originalConsole.error;
+	vi.restoreAllMocks();
+});
+/* eslint-enable no-console */
 
 function createBuffer() {
 	const buffer = new LogBuffer(10);
@@ -87,4 +112,43 @@ test("Captures debug logs in the log buffer", () => {
 	expect(
 		logBuffer.getAll().some((entry) => entry.marker === "debug-buffer-test")
 	).toBe(true);
+});
+
+test("Formats log arguments and preserves error objects", () => {
+	const error = new Error("request failed");
+
+	expect(toPinoArguments(["value: %s", "ready"])).toStrictEqual([
+		"value: ready"
+	]);
+	expect(toPinoArguments(["request failed", error])).toStrictEqual([
+		error,
+		"request failed"
+	]);
+	expect(toPinoArguments([error])).toStrictEqual([error, error.message]);
+});
+
+test("Redirects console methods to matching logger levels", () => {
+	const info = vi.spyOn(logger, "info").mockImplementation(() => logger);
+	const trace = vi.spyOn(logger, "trace").mockImplementation(() => logger);
+	const debug = vi.spyOn(logger, "debug").mockImplementation(() => logger);
+	const warn = vi.spyOn(logger, "warn").mockImplementation(() => logger);
+	const errorLogger = vi
+		.spyOn(logger, "error")
+		.mockImplementation(() => logger);
+	const error = new Error("console failure");
+
+	redirectConsole();
+	/* eslint-disable no-console */
+	console.log("value: %s", "ready");
+	console.trace("trace message");
+	console.debug("debug message");
+	console.warn("warning message");
+	console.error(error);
+	/* eslint-enable no-console */
+
+	expect(info).toHaveBeenCalledWith("value: ready");
+	expect(trace).toHaveBeenCalledWith("trace message");
+	expect(debug).toHaveBeenCalledWith("debug message");
+	expect(warn).toHaveBeenCalledWith("warning message");
+	expect(errorLogger).toHaveBeenCalledWith(error, error.message);
 });

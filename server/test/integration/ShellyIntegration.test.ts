@@ -1,4 +1,8 @@
-import type { ShellyDevice, ShellyDevicePlugS } from "shellies";
+import type {
+	ShellyDevice,
+	ShellyDeviceButton2,
+	ShellyDevicePlugS
+} from "shellies";
 import { expect, test, vi } from "vitest";
 import DeviceType from "../../src/constants/DeviceType.ts";
 import MeasurementType from "../../src/constants/MeasurementType.ts";
@@ -211,6 +215,91 @@ test("Discovered device writes initial values and changed values", () => {
 			value: 11
 		})
 	]);
+});
+
+test("Ignores discovered devices that are not configured", () => {
+	const integration = new ShellyIntegration(services, settings);
+	mockGetDevice.mockImplementationOnce(() => {
+		throw new Error("Device not configured");
+	});
+	const device = {
+		id: "unconfigured-device",
+		type: "SHPLG-S"
+	} as ShellyDevice;
+
+	integration.onDeviceDiscovered(device);
+
+	expect(integration.deviceHandlers.size).toBe(0);
+});
+
+test("Rejects configured devices with an unsupported type", () => {
+	const integration = new ShellyIntegration(services, settings);
+	mockGetDevice.mockReturnValue(new Device("device-1", "unknown" as DeviceType, "", "", []));
+
+	expect(() => {
+		integration.onDeviceDiscovered({
+			id: "device-1",
+			type: "SHSW-1"
+		} as ShellyDevice);
+	}).toThrow("No handler implemented for Shelly device type SHSW-1");
+});
+
+test("Routes Button 2 discovery and rejects control for missing handlers", () => {
+	const integration = new ShellyIntegration(services, settings);
+	const button: ShellyDeviceButton2 = {
+		id: "button-1",
+		type: "SHBTN-2",
+		inputEventCounter0: 1,
+		battery: 90,
+		on: () => {
+			/* Do nothing */
+		}
+	};
+	mockGetDevice.mockReturnValue(
+		new Device(
+			"button-1",
+			DeviceType.ShellyIntegration,
+			"Button",
+			"icon",
+			[
+				new Measurement(
+					"button-1",
+					"inputEventCounter0",
+					"Input events",
+					MeasurementType.Counter,
+					"",
+					"icon"
+				),
+				new Measurement(
+					"button-1",
+					"battery",
+					"Battery",
+					MeasurementType.Number,
+					"%",
+					"icon"
+				)
+			]
+		)
+	);
+	mockWrite.mockResolvedValue(Promise.resolve());
+
+	integration.onDeviceDiscovered(button);
+
+	expect(integration.deviceHandlers.has(button.id)).toBe(true);
+	expect(() =>
+		integration.control(
+			button.id,
+			"inputEventCounter0",
+			new Value(button.id, "inputEventCounter0", 1)
+		)
+	).toThrow("handler does implement control");
+	expect(() =>
+		integration.control(
+			"missing-device",
+			"relay0",
+			new Value("missing-device", "relay0", true)
+		)
+	).toThrow("not discovered");
 });
 
 test("ShellyIntegration controls device", async () => {

@@ -18,6 +18,7 @@ const mockWrite = vi.fn();
 const mockControl = vi.fn();
 const mockGetEnabledIntegrations = vi.fn();
 const mockGetIntegrationParameters = vi.fn();
+const mockReadDeviceValues = vi.fn();
 
 const services = new ServiceLocator(
 	new Map([
@@ -27,7 +28,8 @@ const services = new ServiceLocator(
 		[
 			"DataService",
 			{
-				control: mockControl
+				control: mockControl,
+				readDeviceValues: mockReadDeviceValues
 			} as unknown as DataService
 		],
 		[
@@ -135,6 +137,59 @@ test("Writes new value", async () => {
 	expect(mockWrite).toHaveBeenCalledWith(values);
 });
 
+test("Returns a device value range", async () => {
+	const values = [new Value("device-1", "meas-1", 10, Date.now())];
+	const app = express();
+
+	app.use(getApiRouter(services));
+	mockReadDeviceValues.mockResolvedValueOnce(values);
+
+	// eslint-disable-next-line
+	const response = await (request(app) as TestAgent).get(
+		"/values/device-1?startTime=100&endTime=200"
+	);
+
+	expect(response.status).toBe(200);
+	expect(response.body).toStrictEqual(
+		values.map(({ deviceId, measurementId, value, time }) => ({
+			deviceId,
+			measurementId,
+			value,
+			time
+		}))
+	);
+	expect(mockReadDeviceValues).toHaveBeenCalledWith("device-1", 100, 200);
+});
+
+test("Returns an error when reading a device value range fails", async () => {
+	const app = express();
+	app.use(getApiRouter(services));
+	mockReadDeviceValues.mockRejectedValueOnce(new Error("Database unavailable"));
+
+	// eslint-disable-next-line
+	const response = await (request(app) as TestAgent).get(
+		"/values/device-1?startTime=100&endTime=200"
+	);
+
+	expect(response.status).toBe(500);
+	expect(response.text).toBe("Failed to read values.");
+});
+
+test("Returns an error when writing values fails", async () => {
+	const app = express();
+	app.use(bodyParser.json());
+	app.use(getApiRouter(services));
+	mockWrite.mockRejectedValueOnce(new Error("Integration unavailable"));
+
+	// eslint-disable-next-line
+	const response = await (request(app) as TestAgent)
+		.post("/values")
+		.send([]);
+
+	expect(response.status).toBe(500);
+	expect(response.text).toBe("Failed to write values.");
+});
+
 test("Controls value", async () => {
 	const value = new Value("device-1", "meas-1", 10, Date.now());
 	const app = express();
@@ -156,4 +211,19 @@ test("Controls value", async () => {
 			time: value.time
 		})
 	);
+});
+
+test("Returns an error when controlling a value fails", async () => {
+	const app = express();
+	app.use(bodyParser.json());
+	app.use(getApiRouter(services));
+	mockControl.mockRejectedValueOnce(new Error("Device unavailable"));
+
+	// eslint-disable-next-line
+	const response = await (request(app) as TestAgent)
+		.put("/values")
+		.send(new Value("device-1", "meas-1", 10, Date.now()));
+
+	expect(response.status).toBe(500);
+	expect(response.text).toBe("Failed to control value.");
 });

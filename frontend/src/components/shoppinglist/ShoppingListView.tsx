@@ -73,10 +73,10 @@ export default function ShoppingListView() {
 		if (typeof index !== "undefined" && index !== -1) {
 			const updated = update(shoppingListItems, {
 				[index]: {
-					$apply: (item) => {
-						item.crossed = !item.crossed;
-						return item;
-					}
+					$apply: (item) => ({
+						...item,
+						crossed: !item.crossed
+					})
 				}
 			});
 

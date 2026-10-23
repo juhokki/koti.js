@@ -1,5 +1,5 @@
 import { expect, test, vi } from "vitest";
-import type { PushSubscription } from "web-push";
+import { WebPushError, type PushSubscription } from "web-push";
 import AlarmType from "../../src/constants/AlarmType.ts";
 import Alarm from "../../src/model/Alarm.js";
 import type AlarmService from "../../src/service/alarm/AlarmService.js";
@@ -12,6 +12,17 @@ import type UserService from "../../src/service/user/UserService.js";
 const mockGetUsers = vi.hoisted(() => vi.fn());
 const mockOnAlarm = vi.hoisted(() => vi.fn());
 const mockSendNotification = vi.hoisted(() => vi.fn());
+const MockWebPushError = vi.hoisted(
+	() =>
+		class extends Error {
+			statusCode: number;
+
+			constructor(message: string, statusCode: number) {
+				super(message);
+				this.statusCode = statusCode;
+			}
+		}
+);
 
 vi.mock("web-push", () => ({
 	default: {
@@ -19,15 +30,18 @@ vi.mock("web-push", () => ({
 			/* Do nothing */
 		},
 		sendNotification: mockSendNotification
-	}
+	},
+	WebPushError: MockWebPushError
 }));
 
+const mockDeleteUserSubscription = vi.hoisted(() => vi.fn());
 const services = new ServiceLocator(
 	new Map([
 		[
 			"UserService",
 			{
-				getUsers: mockGetUsers
+				getUsers: mockGetUsers,
+				deleteUserSubscription: mockDeleteUserSubscription
 			}
 		] as unknown as UserService,
 		[
@@ -102,6 +116,80 @@ test("PushApiService sends alarm notification", async () => {
 		"test",
 		JSON.stringify({ title: "asset-name/meas-name", body: "name" })
 	);
+});
+
+test("Sends only newer alarms and advances the alarm cursor", async () => {
+	mockGetUsers.mockReturnValueOnce([]);
+	const service = new PushApiService(services, settings);
+	service.alarmsLastSent = 10;
+	const oldAlarm = new Alarm(
+		"asset-1",
+		"asset-name",
+		"device-1",
+		"device-name",
+		"meas-1",
+		"meas-name",
+		"old",
+		10,
+		AlarmType.Stale
+	);
+	const newAlarm = new Alarm(
+		"asset-1",
+		"asset-name",
+		"device-1",
+		"device-name",
+		"meas-1",
+		"meas-name",
+		"new",
+		20,
+		AlarmType.Stale
+	);
+
+	await service.onAlarmsChanged([oldAlarm, newAlarm]);
+
+	expect(mockSendNotification).toHaveBeenCalledTimes(0);
+	expect(service.alarmsLastSent).toBe(20);
+});
+
+test("Advances the alarm cursor when no new alarms are present", async () => {
+	mockGetUsers.mockReturnValueOnce([]);
+	const service = new PushApiService(services, settings);
+	service.alarmsLastSent = Date.now() + 1000;
+
+	await service.onAlarmsChanged([]);
+
+	expect(service.alarmsLastSent).toBeLessThanOrEqual(Date.now());
+	expect(mockSendNotification).not.toHaveBeenCalled();
+});
+
+test("Removes subscriptions after a push endpoint returns 410", async () => {
+	mockGetUsers.mockReturnValueOnce([]);
+	const service = new PushApiService(services, settings);
+	const subscription = { endpoint: "https://push.example" } as PushSubscription;
+	service.addSubscription("test", subscription);
+	mockSendNotification.mockRejectedValueOnce(
+		new WebPushError("Subscription expired", 410, {}, "", subscription.endpoint)
+	);
+
+	await service.sendToSubscribedUsers("title", "body");
+
+	expect(mockDeleteUserSubscription).toHaveBeenCalledWith(
+		"test",
+		subscription
+	);
+});
+
+test("Keeps subscriptions after non-410 notification failures", async () => {
+	mockGetUsers.mockReturnValueOnce([]);
+	const service = new PushApiService(services, settings);
+	const subscription = { endpoint: "https://push.example" } as PushSubscription;
+	service.addSubscription("test", subscription);
+	mockSendNotification.mockRejectedValueOnce(new Error("Temporary failure"));
+
+	await service.sendToSubscribedUsers("title", "body");
+
+	expect(mockDeleteUserSubscription).not.toHaveBeenCalled();
+	expect(service.subscriptions).toHaveLength(1);
 });
 
 test("PushApiService adds and removes subscriptions", async () => {

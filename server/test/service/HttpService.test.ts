@@ -6,6 +6,7 @@ import type AssetService from "../../src/service/asset/AssetService.js";
 import type DataService from "../../src/service/data/DataService.js";
 import HttpService from "../../src/service/http/HttpService.js";
 import type HttpServiceSettings from "../../src/service/http/HttpServiceSettings.js";
+import type ShoppingList from "../../src/model/ShoppingList.js";
 import type ServiceBase from "../../src/service/ServiceBase.js";
 import ServiceLocator from "../../src/service/ServiceLocator.js";
 import type ShoppingListService from "../../src/service/shoppinglist/ShoppingListService.js";
@@ -15,6 +16,10 @@ const mockCreateServer = vi.hoisted(() => vi.fn());
 const mockServerListen = vi.hoisted(() => vi.fn());
 const mockServerClose = vi.hoisted(() => vi.fn());
 const mockSocketsClose = vi.hoisted(() => vi.fn());
+const mockGetUser = vi.hoisted(() =>
+	vi.fn((username: string): { username: string } | null => ({ username }))
+);
+const mockSetShoppingList = vi.hoisted(() => vi.fn());
 
 vi.mock("express", () => {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -80,7 +85,7 @@ const services = new ServiceLocator(
 			{
 				getSecret: () => "test-secret",
 				getUsers: () => [{ username: "test" }],
-				getUser: (username: string) => ({ username })
+				getUser: mockGetUser
 			}
 		] as unknown as UserService,
 		[
@@ -116,7 +121,8 @@ const services = new ServiceLocator(
 				on: () => {
 					/* Do nothing */
 				},
-				getShoppingList: () => ({ items: [{ id: "item-1" }] })
+				getShoppingList: () => ({ items: [{ id: "item-1" }] }),
+				setShoppingList: mockSetShoppingList
 			} as unknown as ShoppingListService
 		],
 		["SystemService", {}],
@@ -168,6 +174,15 @@ test("Verifies user on socket authentication", () => {
 	expect(user.username).toBe("test");
 });
 
+test("Rejects socket authentication for an unknown user", () => {
+	const service = new HttpService(services, settings);
+	mockGetUser.mockReturnValueOnce(null);
+
+	expect(() =>
+		service.onSocketAuthentication({ username: "missing", locale: "fi" })
+	).toThrow();
+});
+
 test("Emits initial state on socket connection", () => {
 	const service = new HttpService(services, settings);
 	const mockEmit = vi.fn();
@@ -205,3 +220,37 @@ test("Emits initial state on socket connection", () => {
 		expect.any(Function)
 	);
 });
+
+test.each([
+	{ shouldFail: false, expectedStatus: 200 },
+	{ shouldFail: true, expectedStatus: 500 }
+])(
+	"Socket shopping-list handler returns $expectedStatus",
+	({ shouldFail, expectedStatus }) => {
+		const service = new HttpService(services, settings);
+		const mockOn = vi.fn();
+		const mockSocket = {
+			emit: vi.fn(),
+			on: mockOn,
+			decodedToken: { username: "test" }
+		} as unknown as Socket;
+		const shoppingList = { items: [{ id: "item-2" }] } as ShoppingList;
+		const mockCallback = vi.fn();
+
+		if (shouldFail) {
+			mockSetShoppingList.mockImplementationOnce(() => {
+				throw new Error("Invalid shopping list");
+			});
+		}
+
+		service.onSocketConnected(mockSocket);
+		const handler = mockOn.mock.calls[0]?.[1] as (
+			shoppingList: ShoppingList,
+			callback: (status: number) => void
+		) => void;
+		handler(shoppingList, mockCallback);
+
+		expect(mockSetShoppingList).toHaveBeenCalledWith(shoppingList);
+		expect(mockCallback).toHaveBeenCalledWith(expectedStatus);
+	}
+);

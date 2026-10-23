@@ -88,6 +88,31 @@ test("Authenticates user", async () => {
 	expect(token).not.toBe(null);
 });
 
+test("Rejects missing and invalid credentials", () => {
+	const password = "password";
+	const hash = UserService.prototype.createPasswordHash(
+		password,
+		settings.secret
+	);
+	mockReadFileSync.mockReturnValue(
+		JSON.stringify([{ username: "test", hash, locale: "fi" }])
+	);
+	const service = new UserService(services, settings);
+
+	expect(() => service.authenticate("", password)).toThrow(
+		"Missing credentials."
+	);
+	expect(() => service.authenticate("test", "")).toThrow(
+		"Missing credentials."
+	);
+	expect(() => service.authenticate("missing", password)).toThrow(
+		"Authentication failed."
+	);
+	expect(() => service.authenticate("test", "wrong-password")).toThrow(
+		"Authentication failed."
+	);
+});
+
 test("Verifies JWT token", async () => {
 	const username = "test";
 	const password = "password";
@@ -116,6 +141,25 @@ test("Verifies JWT token", async () => {
 	expect(user.username).toBe(username);
 });
 
+test("Rejects a valid JWT after its user is removed", () => {
+	const username = "test";
+	const password = "password";
+	const hash = UserService.prototype.createPasswordHash(
+		password,
+		settings.secret
+	);
+	mockReadFileSync.mockReturnValue(
+		JSON.stringify([{ username, hash, locale: "fi" }])
+	);
+	const service = new UserService(services, settings);
+	const token = service.authenticate(username, password);
+	service.users = [];
+
+	expect(() => service.verifyJWT(token)).toThrow(
+		`Token was verified, but user ${username} does not exist.`
+	);
+});
+
 test("Verifies basic auth token", async () => {
 	const username = "test";
 	const password = "password";
@@ -141,6 +185,24 @@ test("Verifies basic auth token", async () => {
 
 	expect(user).not.toBe(null);
 	expect(user.username).toBe(username);
+});
+
+test("Rejects invalid basic credentials", () => {
+	const hash = UserService.prototype.createPasswordHash(
+		"password",
+		settings.secret
+	);
+	mockReadFileSync.mockReturnValue(
+		JSON.stringify([{ username: "test", hash, locale: "fi" }])
+	);
+	const service = new UserService(services, settings);
+
+	expect(() => service.verifyBasic("missing", "password")).toThrow(
+		"Not able to verify user missing"
+	);
+	expect(() => service.verifyBasic("test", "wrong-password")).toThrow(
+		"Not able to verify user test"
+	);
 });
 
 test("Fetches user subscription status", async () => {
@@ -256,4 +318,44 @@ test("Remove user subscription", async () => {
 		settings.file,
 		JSON.stringify(service.getUsers(), null, "\t")
 	);
+});
+
+test("Rejects subscription changes for unknown users", () => {
+	mockReadFileSync.mockReturnValue(JSON.stringify([]));
+	const service = new UserService(services, settings);
+	const subscription = "test" as unknown as PushSubscription;
+
+	expect(() => {
+		service.addUserSubscription("missing", subscription);
+	}).toThrow("User not found");
+	expect(() => {
+		service.deleteUserSubscription("missing", subscription);
+	}).toThrow("User not found");
+});
+
+test("Does not save when the subscription to delete is absent", () => {
+	mockReadFileSync.mockReturnValue(
+		JSON.stringify([{ username: "test", subscriptions: ["other"] }])
+	);
+	const service = new UserService(services, settings);
+
+	service.deleteUserSubscription(
+		"test",
+		"missing" as unknown as PushSubscription
+	);
+
+	expect(mockRemoveSubscription).not.toHaveBeenCalled();
+	expect(mockWriteFileSync).not.toHaveBeenCalled();
+});
+
+test("Handles failures while saving user changes", () => {
+	mockReadFileSync.mockReturnValue(JSON.stringify([]));
+	mockWriteFileSync.mockImplementationOnce(() => {
+		throw new Error("Disk is full");
+	});
+	const service = new UserService(services, settings);
+
+	expect(() => {
+		service.saveUserChanges();
+	}).not.toThrow();
 });
