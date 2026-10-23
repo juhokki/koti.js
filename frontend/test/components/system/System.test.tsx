@@ -116,12 +116,30 @@ test("Logs displays fetched entries and refetches when a level changes", async (
 	const entry = {
 		level: 50,
 		time: new Date(2024, 0, 1, 12).getTime(),
-		msg: "sensor unavailable"
+		msg: "sensor unavailable",
+		err: {
+			stack: [
+				"Error: sensor unavailable",
+				"    at readSensor (sensor.ts:12:3)"
+			].join("\n")
+		}
 	};
-	mockGetLogs.mockResolvedValue({ entries: [entry] });
-	renderRoutes("/system/logs");
+	const plainEntry = {
+		level: entry.level,
+		time: entry.time,
+		msg: "reading received"
+	};
+	mockGetLogs.mockResolvedValue({
+		entries: [entry, plainEntry]
+	});
+	const { container } = renderRoutes("/system/logs");
 
 	expect(await screen.findByText("sensor unavailable")).toBeTruthy();
+	expect(container.querySelector(".log-stack")?.textContent).toBe(
+		entry.err.stack
+	);
+	expect(container.querySelectorAll(".log-stack")).toHaveLength(1);
+	expect(screen.getByText("reading received")).toBeTruthy();
 	expect(mockGetLogs).toHaveBeenCalledTimes(1);
 	fireEvent.click(screen.getByRole("button", { name: "info logs" }));
 

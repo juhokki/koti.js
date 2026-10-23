@@ -5,6 +5,9 @@ export interface LogEntry {
 	level: number;
 	time: number;
 	msg?: string;
+	err?: {
+		stack?: string;
+	};
 	[key: string]: unknown;
 }
 

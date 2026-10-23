@@ -157,6 +157,9 @@ export default function Logs() {
 								<span>{levelName(entry.level)}</span>
 							</div>
 							<div className="log-message">{entry.msg}</div>
+							{entry.err?.stack && (
+								<div className="log-stack">{entry.err.stack}</div>
+							)}
 						</div>
 					))}
 				</div>

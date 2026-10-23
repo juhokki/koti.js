@@ -22,3 +22,13 @@
 	margin-top: calc(var(--spacing) / 2);
 	word-break: break-word;
 }
+
+.logs .log-stack {
+	margin-top: calc(var(--spacing) / 2);
+	padding: calc(var(--spacing) / 2);
+	border-radius: var(--border-radius);
+	background-color: var(--sub-box-background-color);
+	font-weight: 100;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
