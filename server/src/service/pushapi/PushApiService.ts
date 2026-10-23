@@ -10,14 +10,12 @@ import type { UserSubscription } from "./UserSubscription.ts";
 export default class PushApiService extends ServiceBase {
 	options: PushApiServiceSettings;
 	subscriptions: UserSubscription[];
-	alarmsLastSent: number;
 
 	constructor(services: ServiceLocator, options: PushApiServiceSettings) {
 		super(services);
 
 		this.options = options;
 		this.subscriptions = this.readSubscriptions();
-		this.alarmsLastSent = -1;
 	}
 
 	readSubscriptions(): UserSubscription[] {
@@ -45,33 +43,20 @@ export default class PushApiService extends ServiceBase {
 
 		this.services
 			.getAlarmService()
-			.on(Messages.ALARMS, (alarms: Alarm[]) => {
-				this.onAlarmsChanged(alarms).catch((e: unknown) => {
-					logger.error(e, "Failed to handle alarms changed event.");
+			.on(Messages.ALARM_TRIGGERED, (alarm: Alarm) => {
+				this.onAlarmTriggered(alarm).catch((e: unknown) => {
+					logger.error(e, "Failed to handle alarm triggered event.");
 				});
 			});
 
 		return Promise.resolve();
 	}
 
-	async onAlarmsChanged(alarms: Alarm[]) {
-		const newAlarms = alarms.filter((alarm) => {
-			return alarm.time > this.alarmsLastSent;
-		});
+	async onAlarmTriggered(alarm: Alarm) {
+		const title = `${alarm.assetName}/${alarm.measurementName}`;
+		const body = alarm.name;
 
-		if (newAlarms.length) {
-			for (const alarm of newAlarms) {
-				const title = `${alarm.assetName}/${alarm.measurementName}`;
-				const body = alarm.name;
-				await this.sendToSubscribedUsers(title, body);
-			}
-
-			this.alarmsLastSent = Math.max(
-				...newAlarms.map((alarm) => alarm.time)
-			);
-		} else {
-			this.alarmsLastSent = Date.now();
-		}
+		await this.sendToSubscribedUsers(title, body);
 	}
 
 	async sendToSubscribedUsers(title: string, body: string) {
@@ -113,7 +98,7 @@ export default class PushApiService extends ServiceBase {
 	removeSubscription(username: string, subscription: PushSubscription) {
 		this.subscriptions = this.subscriptions.filter(
 			(s) =>
-				s.username === username &&
+				s.username !== username ||
 				JSON.stringify(s.subscription) !== JSON.stringify(subscription)
 		);
 	}

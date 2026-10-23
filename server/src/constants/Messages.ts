@@ -6,3 +6,4 @@ export const VALUES = "values";
 export const VALUE_UPDATED = "value_updated";
 export const SHOPPINGLIST = "shoppinglist";
 export const ALARMS = "alarms";
+export const ALARM_TRIGGERED = "alarm_triggered";

@@ -110,7 +110,7 @@ test("PushApiService sends alarm notification", async () => {
 	const service = new PushApiService(services, settings);
 
 	await service.start();
-	await service.onAlarmsChanged([alarm]);
+	await service.onAlarmTriggered(alarm);
 
 	expect(mockSendNotification).toHaveBeenLastCalledWith(
 		"test",
@@ -118,22 +118,12 @@ test("PushApiService sends alarm notification", async () => {
 	);
 });
 
-test("Sends only newer alarms and advances the alarm cursor", async () => {
-	mockGetUsers.mockReturnValueOnce([]);
+test("Sends one notification per triggered alarm", async () => {
+	mockGetUsers.mockReturnValueOnce([
+		{ username: "test", subscriptions: ["test"] }
+	]);
 	const service = new PushApiService(services, settings);
-	service.alarmsLastSent = 10;
-	const oldAlarm = new Alarm(
-		"asset-1",
-		"asset-name",
-		"device-1",
-		"device-name",
-		"meas-1",
-		"meas-name",
-		"old",
-		10,
-		AlarmType.Stale
-	);
-	const newAlarm = new Alarm(
+	const alarm = new Alarm(
 		"asset-1",
 		"asset-name",
 		"device-1",
@@ -145,21 +135,9 @@ test("Sends only newer alarms and advances the alarm cursor", async () => {
 		AlarmType.Stale
 	);
 
-	await service.onAlarmsChanged([oldAlarm, newAlarm]);
+	await service.onAlarmTriggered(alarm);
 
-	expect(mockSendNotification).toHaveBeenCalledTimes(0);
-	expect(service.alarmsLastSent).toBe(20);
-});
-
-test("Advances the alarm cursor when no new alarms are present", async () => {
-	mockGetUsers.mockReturnValueOnce([]);
-	const service = new PushApiService(services, settings);
-	service.alarmsLastSent = Date.now() + 1000;
-
-	await service.onAlarmsChanged([]);
-
-	expect(service.alarmsLastSent).toBeLessThanOrEqual(Date.now());
-	expect(mockSendNotification).not.toHaveBeenCalled();
+	expect(mockSendNotification).toHaveBeenCalledTimes(1);
 });
 
 test("Removes subscriptions after a push endpoint returns 410", async () => {

@@ -45,9 +45,24 @@ export default class AlarmService extends ServiceBase {
 	buildAlarmCheckers() {
 		const measurements = this.services.getAssetService().getMeasurements();
 
-		this.buildStaleValueAlarmChecker(measurements);
-		this.buildValueUpperLimitAlarmChecker(measurements);
-		this.buildValueLowerLimitAlarmChecker(measurements);
+		this.alarmCheckers.push(this.buildAlarmChecker(StaleValueAlarmChecker, AlarmType.Stale, measurements));
+		this.alarmCheckers.push(this.buildAlarmChecker(ValueUpperLimitAlarmChecker, AlarmType.ValueUpperLimit, measurements));
+		this.alarmCheckers.push(this.buildAlarmChecker(ValueLowerLimitAlarmChecker, AlarmType.ValueLowerLimit, measurements));
+	}
+
+	buildAlarmChecker(alarmCheckerRef: new (services: ServiceLocator, options: AlarmCheckerOptions) => AlarmCheckerBase, alarmType: AlarmType, measurements: Measurement[]): AlarmCheckerBase {
+		return new alarmCheckerRef(this.services, {
+			type: alarmType,
+			measurements: measurements,
+			onChange: (alarm: Alarm | null, alarms: Alarm[]) => {
+				this.alarms.set(alarmType, alarms);
+                this.onAlarmsChanged();
+
+				if (alarm !== null) {
+					this.onAlarmTriggered(alarm);
+				}
+			}
+		});
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
@@ -63,43 +78,8 @@ export default class AlarmService extends ServiceBase {
 		return checker as T;
 	}
 
-	buildStaleValueAlarmChecker(measurements: Measurement[]) {
-		const checker = new StaleValueAlarmChecker(this.services, {
-			type: AlarmType.Stale,
-			measurements: measurements,
-			onChange: (alarms: Alarm[]) => {
-				this.alarms.set(AlarmType.Stale, alarms);
-				this.onAlarmsChanged();
-			}
-		} satisfies AlarmCheckerOptions);
-
-		this.alarmCheckers.push(checker);
-	}
-
-	buildValueUpperLimitAlarmChecker(measurements: Measurement[]) {
-		const checker = new ValueUpperLimitAlarmChecker(this.services, {
-			type: AlarmType.ValueUpperLimit,
-			measurements: measurements,
-			onChange: (alarms: Alarm[]) => {
-				this.alarms.set(AlarmType.ValueLowerLimit, alarms);
-				this.onAlarmsChanged();
-			}
-		} satisfies AlarmCheckerOptions);
-
-		this.alarmCheckers.push(checker);
-	}
-
-	buildValueLowerLimitAlarmChecker(measurements: Measurement[]) {
-		const checker = new ValueLowerLimitAlarmChecker(this.services, {
-			type: AlarmType.ValueLowerLimit,
-			measurements: measurements,
-			onChange: (alarms: Alarm[]) => {
-				this.alarms.set(AlarmType.ValueLowerLimit, alarms);
-				this.onAlarmsChanged();
-			}
-		} satisfies AlarmCheckerOptions);
-
-		this.alarmCheckers.push(checker);
+	onAlarmTriggered(alarm: Alarm) {
+		this.emit(Messages.ALARM_TRIGGERED, alarm);
 	}
 
 	onAlarmsChanged() {

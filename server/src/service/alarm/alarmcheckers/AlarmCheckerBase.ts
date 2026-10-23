@@ -9,7 +9,7 @@ import logger from "../../../util/logger.ts";
 
 export default class AlarmCheckerBase {
 	services: ServiceLocator;
-	onChange: (alarms: Alarm[]) => void;
+	onChange: (alarm: Alarm | null, alarms: Alarm[]) => void;
 	measurements: Measurement[];
 	type: AlarmType;
 	alarms: Map<string, Alarm>;
@@ -106,7 +106,7 @@ export default class AlarmCheckerBase {
 			logger.info(alarm, "Triggering alarm.");
 
 			this.alarms.set(key, alarm);
-			this.onChange(this.getAlarms());
+			this.onChange(alarm, this.getAlarms());
 		}
 	}
 
@@ -119,7 +119,7 @@ export default class AlarmCheckerBase {
 			logger.info(this.alarms.get(key), "Deleting alarm.");
 
 			this.alarms.delete(key);
-			this.onChange(this.getAlarms());
+			this.onChange(null, this.getAlarms());
 		}
 	}
 
