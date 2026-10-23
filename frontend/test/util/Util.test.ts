@@ -4,9 +4,9 @@ import CssUtil from "../../src/util/CssUtil";
 import {
 	formatTime,
 	getEndOfDay,
-	getEndOfMonth,
+	getEndOfWeek,
 	getStartOfDay,
-	getStartOfMonth,
+	getStartOfWeek,
 	shortDate,
 	timeElapsed
 } from "../../src/util/TimeUtil";
@@ -76,7 +76,13 @@ test("Returns day and month boundaries without mutating the input", () => {
 
 	expect(getStartOfDay(date)).toEqual(new Date(2024, 1, 15, 0, 0, 0, 0));
 	expect(getEndOfDay(date)).toEqual(new Date(2024, 1, 15, 23, 59, 59, 999));
-	expect(getStartOfMonth(date)).toEqual(new Date(2024, 1, 1, 0, 0, 0, 0));
-	expect(getEndOfMonth(date)).toEqual(new Date(2024, 1, 29, 23, 59, 59, 0));
 	expect(date).toEqual(new Date(2024, 1, 15, 12, 34, 56, 0));
+});
+
+test("Returns Monday-to-Sunday week boundaries without mutating the input", () => {
+	const date = new Date(2024, 1, 18, 12, 34, 56, 0);
+
+	expect(getStartOfWeek(date)).toEqual(new Date(2024, 1, 12, 0, 0, 0, 0));
+	expect(getEndOfWeek(date)).toEqual(new Date(2024, 1, 18, 23, 59, 59, 999));
+	expect(date).toEqual(new Date(2024, 1, 18, 12, 34, 56, 0));
 });

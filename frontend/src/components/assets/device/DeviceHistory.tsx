@@ -8,8 +8,8 @@ import ValuesApi from "../../../api/ValuesApi";
 import DeviceChart from "./DeviceChart";
 import { DeviceChartData } from "../../../interface/DeviceChartData";
 import {
-	getEndOfMonth,
-	getStartOfMonth,
+	getEndOfWeek,
+	getStartOfWeek,
 	shortDate
 } from "../../../util/TimeUtil";
 import { Measurement } from "../../../interface/Asset";
@@ -27,8 +27,8 @@ export default function DeviceHistory() {
 	const [error, setError] = useState(false);
 	const [data, setData] = useState<DeviceChartData[]>([]);
 	const [date, setDate] = useState(new Date());
-	const [startDate, setStartDate] = useState(getStartOfMonth(date));
-	const [endDate, setEndDate] = useState(getEndOfMonth(date));
+	const [startDate, setStartDate] = useState(getStartOfWeek(date));
+	const [endDate, setEndDate] = useState(getEndOfWeek(date));
 
 	useEffect(() => {
 		if (deviceId) {
@@ -104,32 +104,16 @@ export default function DeviceHistory() {
 			throw new Error("Missing device");
 		}
 	};
-	const changeMonth = (change: number) => {
+	const changeWeek = (change: number) => {
 		const newDate = new Date(date.getTime());
-		const month = newDate.getMonth();
-
-		if (change > 0) {
-			if (month === 11) {
-				newDate.setFullYear(newDate.getFullYear() + 1);
-				newDate.setMonth(0);
-			} else {
-				newDate.setMonth(month + 1);
-			}
-		} else {
-			if (month === 0) {
-				newDate.setFullYear(newDate.getFullYear() - 1);
-				newDate.setMonth(11);
-			} else {
-				newDate.setMonth(month - 1);
-			}
-		}
+		newDate.setDate(newDate.getDate() + change * 7);
 
 		setDate(newDate);
 		updateStartAndEndDate(newDate);
 	};
 	const updateStartAndEndDate = (date: Date) => {
-		setStartDate(getStartOfMonth(date));
-		setEndDate(getEndOfMonth(date));
+		setStartDate(getStartOfWeek(date));
+		setEndDate(getEndOfWeek(date));
 	};
 
 	if (loading || !device) {
@@ -163,7 +147,7 @@ export default function DeviceHistory() {
 						<ChevronLeftIcon
 							className="clickable"
 							onClick={() => {
-								changeMonth(-1);
+								changeWeek(-1);
 							}}
 						/>
 					</div>
@@ -174,7 +158,7 @@ export default function DeviceHistory() {
 						<ChevronRightIcon
 							className="clickable"
 							onClick={() => {
-								changeMonth(1);
+								changeWeek(1);
 							}}
 						/>
 					</div>

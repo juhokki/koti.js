@@ -209,7 +209,7 @@ test("Disables a controllable value when its device is offline", () => {
 	expect(screen.getByRole("switch").getAttribute("disabled")).not.toBeNull();
 });
 
-test("DeviceHistory groups values into charts and changes the month", async () => {
+test("DeviceHistory groups values into charts and changes the week", async () => {
 	mockGetDeviceValues.mockResolvedValue([
 		createValue("temperature", 18, 10),
 		createValue("temperature", 20, 20),
@@ -245,16 +245,22 @@ test("DeviceHistory groups values into charts and changes the month", async () =
 		expect.any(Number),
 		expect.any(Number)
 	);
+	const initialStart = mockGetDeviceValues.mock.calls[0]?.[1] as number;
+	expect(new Date(initialStart).getDay()).toBe(1);
+	const expectedPreviousStart = new Date(initialStart);
+	expectedPreviousStart.setDate(expectedPreviousStart.getDate() - 7);
 
-	const monthButtons = screen.getAllByTestId("ChevronLeftIcon");
-	const previousMonthButton = monthButtons[1];
-	expect(previousMonthButton).toBeDefined();
-	if (previousMonthButton) {
-		fireEvent.click(previousMonthButton);
+	const previousWeekButton = screen.getAllByTestId("ChevronLeftIcon")[1];
+	expect(previousWeekButton).toBeDefined();
+	if (previousWeekButton) {
+		fireEvent.click(previousWeekButton);
 	}
 	await waitFor(() => {
 		expect(mockGetDeviceValues).toHaveBeenCalledTimes(2);
 	});
+	expect(mockGetDeviceValues.mock.calls[1]?.[1]).toBe(
+		expectedPreviousStart.getTime()
+	);
 });
 
 test("DeviceHistory shows empty and failed fetch states", async () => {

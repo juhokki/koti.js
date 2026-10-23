@@ -45,29 +45,24 @@ export function getEndOfDay(date: Date) {
 	return endOfDay;
 }
 
+export function getStartOfWeek(date: Date) {
+	const startOfWeek = getStartOfDay(date);
+	const daysSinceMonday = (startOfWeek.getDay() + 6) % 7;
+	startOfWeek.setDate(startOfWeek.getDate() - daysSinceMonday);
+
+	return startOfWeek;
+}
+
+export function getEndOfWeek(date: Date) {
+	const endOfWeek = getStartOfWeek(date);
+	endOfWeek.setDate(endOfWeek.getDate() + 6);
+
+	return getEndOfDay(endOfWeek);
+}
+
 export function formatTime(timestamp: number) {
 	return new Date(timestamp).toLocaleTimeString("fi-FI", {
 		hour12: false
 	});
 }
 
-export function getStartOfMonth(date: Date) {
-	const startOfMonth = new Date(date.getTime());
-	startOfMonth.setDate(1);
-	startOfMonth.setHours(0);
-	startOfMonth.setMinutes(0);
-	startOfMonth.setSeconds(0);
-
-	return startOfMonth;
-}
-
-export function getEndOfMonth(date: Date) {
-	const endOfMonth = new Date(date.getTime());
-	endOfMonth.setMonth(endOfMonth.getMonth() + 1);
-	endOfMonth.setDate(0);
-	endOfMonth.setHours(23);
-	endOfMonth.setMinutes(59);
-	endOfMonth.setSeconds(59);
-
-	return endOfMonth;
-}
