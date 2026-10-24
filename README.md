@@ -9,11 +9,12 @@ It combines a Node.js backend, a React frontend, and multiple hardware bridges s
 - [Matter devices](server/src/service/integration/matter/MatterIntegration.ts)
 - [OpenWeather integration](server/src/service/integration/openweather/OpenWeatherIntegration.ts)
 - [REST API](server/src/service/integration/rest/RestApiIntegration.ts)
-- RuuviTag sensors
+- RuuviTag sensors through [ruuvi-sensor](ruuvi-sensor/) or [python-ruuvi-sensor](python-ruuvi-sensor/)
 - 433 MHz communication through [rtl433-doorbell-relay](rtl433-doorbell-relay/) and [sonoff-rf-bridge-r2](sonoff-rf-bridge-r2/)
 - [Shelly devices](server/src/service/integration/shelly/ShellyIntegration.ts)
 - [Toshiba heat pump integration](server/src/service/integration/toshiba/ToshibaAcIntegration.ts)
-- A shopping list with real-time WebSocket updates.
+- A shared multi-user shopping list with real-time WebSocket updates.
+- A recipe feature with integration to shopping list.
 
 ## Quick Start
 
