@@ -7,7 +7,29 @@ export default defineConfig(({ mode }) => {
 
 	return {
 		build: {
-			outDir: "dist"
+			outDir: "dist",
+			rolldownOptions: {
+				output: {
+					codeSplitting: {
+						groups: [
+							{
+								name: "react-vendor",
+								test: /node_modules[\\/]react/,
+								priority: 20
+							},
+							{
+								name: "vendor",
+								test: /node_modules/,
+								priority: 10
+							},
+							{
+								name: "app",
+								priority: 5
+							}
+						]
+					}
+				}
+			}
 		},
 		plugins: [react()],
 		server: {
