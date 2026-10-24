@@ -1,0 +1,23 @@
+{
+	"name": "@koti/matter-server",
+	"type": "module",
+	"version": "1.0.0",
+	"description": "Koti.js Matter server",
+	"main": "index.ts",
+	"engines": {
+		"node": ">=22.18.0"
+	},
+	"scripts": {
+		"start": "node index.ts"
+	},
+	"dependencies": {
+		"matter-server": "^1.5.5"
+	},
+	"allowScripts": {
+		"usb@2.19.1": true,
+		"@serialport/bindings-cpp@12.0.1": true,
+		"@stoprocent/bluetooth-hci-socket@2.3.0": true,
+		"@stoprocent/bleno@0.13.1": true,
+		"@stoprocent/noble@2.8.0": true
+	}
+}
