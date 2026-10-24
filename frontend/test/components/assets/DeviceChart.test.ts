@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	downsample,
+	getBooleanStateChanges,
 	getHighlightIndexes
 } from "../../../src/components/assets/device/DeviceChart";
 
@@ -41,6 +42,25 @@ describe("downsample", () => {
 	});
 });
 
+describe("getBooleanStateChanges", () => {
+	it("sorts points and keeps each state transition", () => {
+		const points = [
+			point(4, false),
+			point(1, false),
+			point(3, true),
+			point(2, false),
+			point(5, false)
+		];
+
+		expect(getBooleanStateChanges(points).map((item) => item.y)).toEqual([
+			false,
+			true,
+			false,
+			false
+		]);
+	});
+});
+
 describe("getHighlightIndexes", () => {
 	it("returns empty set for no points", () => {
 		expect(getHighlightIndexes([]).size).toBe(0);
@@ -62,5 +82,20 @@ describe("getHighlightIndexes", () => {
 		const result = getHighlightIndexes(points);
 
 		expect([...result].sort()).toEqual([0, 1, 2, 4, 5]);
+	});
+
+	it("highlights boolean state transitions", () => {
+		const points = [
+			point(0, 0),
+			point(1, 0),
+			point(2, 1),
+			point(3, 1),
+			point(4, 0),
+			point(5, 0)
+		];
+
+		expect([...getHighlightIndexes(points, true)].sort()).toEqual([
+			0, 2, 4, 5
+		]);
 	});
 });

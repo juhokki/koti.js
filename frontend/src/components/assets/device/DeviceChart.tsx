@@ -12,7 +12,7 @@ import {
 import "chartjs-adapter-luxon";
 import { UserContext } from "../../../context/UserContext";
 import CssUtil from "../../../util/CssUtil";
-import { Measurement } from "../../../interface/Asset";
+import { Measurement, MeasurementType } from "../../../interface/Asset";
 import {
 	DeviceChartDataObject,
 	DeviceChartDataPoint
@@ -98,9 +98,23 @@ export function downsample(
 	return sorted.filter((point) => kept.has(point));
 }
 
+export function getBooleanStateChanges(
+	points: DeviceChartDataPoint[]
+): DeviceChartDataPoint[] {
+	const sorted = [...points].sort((a, b) => a.x.getTime() - b.x.getTime());
+
+	return sorted.filter(
+		(point, index) =>
+			index === 0 ||
+			index === sorted.length - 1 ||
+			point.y !== sorted[index - 1]?.y
+	);
+}
+
 // Expects points sorted by time.
 export function getHighlightIndexes(
-	points: DeviceChartDataPoint[]
+	points: DeviceChartDataPoint[],
+	isBooleanMeasurement = false
 ): Set<number> {
 	const highlights = new Set<number>();
 
@@ -110,6 +124,15 @@ export function getHighlightIndexes(
 
 	highlights.add(0);
 	highlights.add(points.length - 1);
+
+	if (isBooleanMeasurement) {
+		points.forEach((point, index) => {
+			if (index > 0 && point.y !== points[index - 1]?.y) {
+				highlights.add(index);
+			}
+		});
+		return highlights;
+	}
 
 	if (!points.every((point) => typeof point.y === "number")) {
 		return highlights;
@@ -176,6 +199,7 @@ export function getHighlightIndexes(
 export default function DeviceChart(props: DeviceChartProps) {
 	const measurement = props.measurement;
 	const source = props.data;
+	const isBooleanMeasurement = measurement.type === MeasurementType.Boolean;
 
 	const spacing = CssUtil.getVarInt("--spacing");
 	const fontWeight = CssUtil.getVarInt("--font-weight");
@@ -193,13 +217,27 @@ export default function DeviceChart(props: DeviceChartProps) {
 	const context = useContext(UserContext);
 	const user = context.user;
 	const { data, highlightedPoints } = useMemo(() => {
-		const points = downsample(source.datasets[0].data);
+		const sourcePoints = isBooleanMeasurement
+			? getBooleanStateChanges(source.datasets[0].data)
+			: source.datasets[0].data;
+		const points = downsample(sourcePoints);
+		const chartPoints = isBooleanMeasurement
+			? points.map((point) => ({
+					...point,
+					y: point.y === true ? 1 : 0
+				}))
+			: points;
 
 		return {
-			data: { datasets: [{ ...source.datasets[0], data: points }] },
-			highlightedPoints: getHighlightIndexes(points)
+			data: {
+				datasets: [{ ...source.datasets[0], data: chartPoints }]
+			},
+			highlightedPoints: getHighlightIndexes(
+				chartPoints,
+				isBooleanMeasurement
+			)
 		};
-	}, [source]);
+	}, [source, isBooleanMeasurement]);
 
 	const options: ChartOptions<"line"> = {
 		locale: user?.locale,
@@ -207,6 +245,7 @@ export default function DeviceChart(props: DeviceChartProps) {
 		datasets: {
 			line: {
 				//lineTension: 0,
+				stepped: isBooleanMeasurement ? "before" : false,
 				borderWidth: 2,
 				borderColor: highlightColor,
 				pointBorderWidth: 0,
@@ -233,6 +272,10 @@ export default function DeviceChart(props: DeviceChartProps) {
 				usePointStyle: true,
 				callbacks: {
 					label: function (context) {
+						if (isBooleanMeasurement) {
+							return context.parsed.y === 1 ? "Päällä" : "Pois";
+						}
+
 						return `${context.parsed.y?.toFixed(1) ?? ""} ${measurement.unit}`;
 					}
 				}
@@ -243,8 +286,17 @@ export default function DeviceChart(props: DeviceChartProps) {
 				grid: {},
 				ticks: {
 					padding: spacing,
-					precision: 1,
+					...(isBooleanMeasurement
+						? { stepSize: 1 }
+						: { precision: 1 }),
 					callback: (value, index, ticks) => {
+						if (isBooleanMeasurement) {
+							if (Number(value) === 1) {
+								return "Päällä";
+							}
+							return Number(value) === 0 ? "Pois" : "";
+						}
+
 						return String(value) + ` ${measurement.unit}`;
 					}
 				}
