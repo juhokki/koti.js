@@ -235,12 +235,14 @@ test("Ignores discovered devices that are not configured", () => {
 test("Rejects configured devices with an unsupported type", () => {
 	const integration = new ShellyIntegration(services, settings);
 	mockGetDevice.mockReturnValue(new Device("device-1", "unknown" as DeviceType, "", "", []));
+	const unsupportedDevice = {
+		id: "device-1",
+		type: "SHSW-1",
+		host: "localhost"
+	} as unknown as ShellyDevice;
 
 	expect(() => {
-		integration.onDeviceDiscovered({
-			id: "device-1",
-			type: "SHSW-1"
-		} as ShellyDevice);
+		integration.onDeviceDiscovered(unsupportedDevice);
 	}).toThrow("No handler implemented for Shelly device type SHSW-1");
 });
 
@@ -249,6 +251,7 @@ test("Routes Button 2 discovery and rejects control for missing handlers", () =>
 	const button: ShellyDeviceButton2 = {
 		id: "button-1",
 		type: "SHBTN-2",
+		host: "localhost",
 		inputEventCounter0: 1,
 		battery: 90,
 		on: () => {
