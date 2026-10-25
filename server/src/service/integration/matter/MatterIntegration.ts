@@ -16,6 +16,8 @@ import type IntegrationParameter from "../IntegrationParameter.ts";
 
 const ON_OFF_CLUSTER_ID = 6;
 const LEVEL_CONTROL_CLUSTER_ID = 8;
+const COLOR_CONTROL_CLUSTER_ID = 768;
+const COLOR_TEMPERATURE_MIREDS_ATTRIBUTE_ID = 7;
 const RECONNECT_MAX_DELAY_MS = 30_000;
 
 interface MatterDeviceAddress {
@@ -261,6 +263,24 @@ export default class MatterIntegration extends IntegrationBase {
 					}
 				);
 				refreshedPaths.push(path);
+			} else if (
+				measurement.clusterId === COLOR_CONTROL_CLUSTER_ID &&
+				typeof storedValue.value === "number" &&
+				typeof currentValue === "number"
+			) {
+				await this.client.deviceCommand(
+					nodeIdValue,
+					measurement.endpointId,
+					COLOR_CONTROL_CLUSTER_ID,
+					"moveToColorTemperature",
+					{
+						colorTemperatureMireds: storedValue.value,
+						transitionTime: 0,
+						optionsMask: {},
+						optionsOverride: {}
+					}
+				);
+				refreshedPaths.push(path);
 			}
 		}
 
@@ -289,13 +309,14 @@ export default class MatterIntegration extends IntegrationBase {
 				values.push(
 					new Value(deviceId, measurement.measurementId, value)
 				);
-				this.setBrightnessDisabled(
+				this.setDimmablesDisabled(
 					deviceId,
-					`${String(measurement.endpointId)}-${String(LEVEL_CONTROL_CLUSTER_ID)}`,
+					measurement.endpointId,
 					!value
 				);
 			} else if (
-				measurement.clusterId === LEVEL_CONTROL_CLUSTER_ID &&
+				(measurement.clusterId === LEVEL_CONTROL_CLUSTER_ID ||
+					measurement.clusterId === COLOR_CONTROL_CLUSTER_ID) &&
 				typeof value === "number"
 			) {
 				values.push(
@@ -313,7 +334,12 @@ export default class MatterIntegration extends IntegrationBase {
 	) {
 		const [endpointPart, clusterPart, attributePart] =
 			attributeKey.split("/");
-		if (attributePart !== "0") {
+		const clusterNumber = Number(clusterPart);
+		const expectedAttribute =
+			clusterNumber === COLOR_CONTROL_CLUSTER_ID
+				? COLOR_TEMPERATURE_MIREDS_ATTRIBUTE_ID
+				: 0;
+		if (attributePart !== String(expectedAttribute)) {
 			return;
 		}
 
@@ -339,16 +365,13 @@ export default class MatterIntegration extends IntegrationBase {
 			if (typeof value !== "boolean") {
 				return;
 			}
-			this.setBrightnessDisabled(
-				mapping.deviceId,
-				`${String(endpointId)}-${String(LEVEL_CONTROL_CLUSTER_ID)}`,
-				!value
-			);
+			this.setDimmablesDisabled(mapping.deviceId, endpointId, !value);
 			await this.services
 				.getDataService()
 				.write([new Value(mapping.deviceId, measurementId, value)]);
 		} else if (
-			clusterId === LEVEL_CONTROL_CLUSTER_ID &&
+			(clusterId === LEVEL_CONTROL_CLUSTER_ID ||
+				clusterId === COLOR_CONTROL_CLUSTER_ID) &&
 			typeof value === "number"
 		) {
 			await this.services
@@ -384,6 +407,27 @@ export default class MatterIntegration extends IntegrationBase {
 				.setDeviceOnlineStatus(deviceId, status);
 		} catch (error) {
 			logger.warn(error, `Matter device ${deviceId} is not configured.`);
+		}
+	}
+
+	private setDimmablesDisabled(
+		deviceId: string,
+		endpointId: number,
+		disabled: boolean
+	) {
+		this.setBrightnessDisabled(
+			deviceId,
+			`${String(endpointId)}-${String(LEVEL_CONTROL_CLUSTER_ID)}`,
+			disabled
+		);
+		const colorId = `${String(endpointId)}-${String(COLOR_CONTROL_CLUSTER_ID)}`;
+		// Color control is optional, so skip devices that don't configure it.
+		if (
+			this.getMeasurementAddresses(deviceId).some(
+				(measurement) => measurement.measurementId === colorId
+			)
+		) {
+			this.setBrightnessDisabled(deviceId, colorId, disabled);
 		}
 	}
 
@@ -466,7 +510,11 @@ export default class MatterIntegration extends IntegrationBase {
 	}
 
 	private toAttributePath(measurement: MatterMeasurementAddress) {
-		return `${String(measurement.endpointId)}/${String(measurement.clusterId)}/0`;
+		const attributeId =
+			measurement.clusterId === COLOR_CONTROL_CLUSTER_ID
+				? COLOR_TEMPERATURE_MIREDS_ATTRIBUTE_ID
+				: 0;
+		return `${String(measurement.endpointId)}/${String(measurement.clusterId)}/${String(attributeId)}`;
 	}
 
 	private toMatterNodeId(nodeId: string): number | bigint {
@@ -527,6 +575,25 @@ export default class MatterIntegration extends IntegrationBase {
 					{
 						level: value.value,
 						transitionTime: null,
+						optionsMask: {},
+						optionsOverride: {}
+					}
+				);
+				return;
+			case COLOR_CONTROL_CLUSTER_ID:
+				if (typeof value.value !== "number") {
+					throw new Error(
+						`ColorControl value must be numeric for ${measurementId}`
+					);
+				}
+				await this.client.deviceCommand(
+					nodeId,
+					measurement.endpointId,
+					COLOR_CONTROL_CLUSTER_ID,
+					"moveToColorTemperature",
+					{
+						colorTemperatureMireds: value.value,
+						transitionTime: 0,
 						optionsMask: {},
 						optionsOverride: {}
 					}

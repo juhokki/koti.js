@@ -304,6 +304,69 @@ test("parses large node IDs and endpoint IDs from the device ID", async () => {
 	await integration.stop();
 });
 
+test("supports ColorControl color temperature", async () => {
+	const device = createDevice("123");
+	device.measurements.push(
+		new Measurement(
+			device.id,
+			"1-768",
+			"Color temperature",
+			MeasurementType.Number,
+			"",
+			"",
+			true
+		)
+	);
+	const { services, write } = createServices([device]);
+	const integration = new MatterIntegration(services, settings());
+	const client = getClient();
+	client.nodes["123"] = makeNode(123, true, {
+		"1/6/0": true,
+		"1/8/0": 55,
+		"1/768/7": 300
+	});
+
+	await integration.start();
+
+	expect(write.mock.calls[0]?.[0]).toContainEqual(
+		expect.objectContaining({ measurementId: "1-768", value: 300 })
+	);
+
+	client.nodes["123"] = makeNode(123, true, { "1/768/7": 400 });
+	emit(client, "nodes_changed", {
+		nodeId: 123,
+		reason: "attribute_updated",
+		attributeKey: "1/768/7"
+	} as unknown as NodesChangedDetail);
+	await vi.waitFor(() => {
+		expect(write.mock.calls.at(-1)?.[0]).toEqual([
+			expect.objectContaining({ measurementId: "1-768", value: 400 })
+		]);
+	});
+
+	await integration.control(
+		device.id,
+		"1-768",
+		new Value(device.id, "1-768", 250, now)
+	);
+	expect(client.deviceCommand.mock.calls.at(-1)).toEqual([
+		123,
+		1,
+		768,
+		"moveToColorTemperature",
+		expect.objectContaining({ colorTemperatureMireds: 250 })
+	]);
+	await expect(
+		integration.control(
+			device.id,
+			"1-768",
+			new Value(device.id, "1-768", true, now)
+		)
+	).rejects.toThrow("ColorControl value must be numeric");
+
+	await integration.stop();
+});
+
 test("ignores Matter devices with an invalid encoded ID", async () => {
 	const device = createDevice("not-a-matter-id");
 	const { services, write, setDeviceOnlineStatus } = createServices([device]);
