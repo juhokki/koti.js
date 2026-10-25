@@ -13,22 +13,18 @@ import IntegrationBase from "../IntegrationBase.ts";
 import type MatterIntegrationSettings from "./MatterIntegrationConfig.ts";
 import logger from "../../../util/logger.ts";
 import type IntegrationParameter from "../IntegrationParameter.ts";
+import MatterCluster, {
+	type MatterMeasurementAddress
+} from "./cluster/MatterCluster.ts";
+import OnOffCluster from "./cluster/OnOffCluster.ts";
+import LevelControlCluster from "./cluster/LevelControlCluster.ts";
+import ColorControlCluster from "./cluster/ColorControlCluster.ts";
 
-const ON_OFF_CLUSTER_ID = 6;
-const LEVEL_CONTROL_CLUSTER_ID = 8;
-const COLOR_CONTROL_CLUSTER_ID = 768;
-const COLOR_TEMPERATURE_MIREDS_ATTRIBUTE_ID = 7;
 const RECONNECT_MAX_DELAY_MS = 30_000;
 
 interface MatterDeviceAddress {
 	deviceId: string;
 	nodeId: string;
-}
-
-interface MatterMeasurementAddress {
-	measurementId: string;
-	endpointId: number;
-	clusterId: number;
 }
 
 export default class MatterIntegration extends IntegrationBase {
@@ -39,6 +35,11 @@ export default class MatterIntegration extends IntegrationBase {
 	private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 	private nodeAvailability = new Map<string, boolean>();
 	private matterDevices: MatterDeviceAddress[] = [];
+	private readonly clusters: MatterCluster[] = [
+		new OnOffCluster(),
+		new LevelControlCluster(),
+		new ColorControlCluster()
+	];
 	private unsubscribeNodesChanged: (() => void) | null = null;
 	private unsubscribeConnectionLost: (() => void) | null = null;
 	private unsubscribeServerShutdown: (() => void) | null = null;
@@ -224,6 +225,10 @@ export default class MatterIntegration extends IntegrationBase {
 		const nodeIdValue = this.toMatterNodeId(nodeId);
 		const refreshedPaths: string[] = [];
 		for (const measurement of this.getMeasurementAddresses(deviceId)) {
+			const cluster = this.getCluster(measurement.clusterId);
+			if (!cluster) {
+				continue;
+			}
 			const path = this.toAttributePath(measurement);
 			const storedValue = this.services
 				.getDataService()
@@ -234,52 +239,14 @@ export default class MatterIntegration extends IntegrationBase {
 			}
 
 			if (
-				measurement.clusterId === ON_OFF_CLUSTER_ID &&
-				typeof storedValue.value === "boolean" &&
-				typeof currentValue === "boolean"
-			) {
-				await this.client.deviceCommand(
+				await cluster.restorePreviousState(
+					this.client,
 					nodeIdValue,
-					measurement.endpointId,
-					ON_OFF_CLUSTER_ID,
-					storedValue.value ? "on" : "off"
-				);
-				refreshedPaths.push(path);
-			} else if (
-				measurement.clusterId === LEVEL_CONTROL_CLUSTER_ID &&
-				typeof storedValue.value === "number" &&
-				typeof currentValue === "number"
+					measurement,
+					storedValue.value,
+					currentValue
+				)
 			) {
-				await this.client.deviceCommand(
-					nodeIdValue,
-					measurement.endpointId,
-					LEVEL_CONTROL_CLUSTER_ID,
-					"moveToLevel",
-					{
-						level: storedValue.value,
-						transitionTime: null,
-						optionsMask: {},
-						optionsOverride: {}
-					}
-				);
-				refreshedPaths.push(path);
-			} else if (
-				measurement.clusterId === COLOR_CONTROL_CLUSTER_ID &&
-				typeof storedValue.value === "number" &&
-				typeof currentValue === "number"
-			) {
-				await this.client.deviceCommand(
-					nodeIdValue,
-					measurement.endpointId,
-					COLOR_CONTROL_CLUSTER_ID,
-					"moveToColorTemperature",
-					{
-						colorTemperatureMireds: storedValue.value,
-						transitionTime: 0,
-						optionsMask: {},
-						optionsOverride: {}
-					}
-				);
 				refreshedPaths.push(path);
 			}
 		}
@@ -301,28 +268,15 @@ export default class MatterIntegration extends IntegrationBase {
 	) {
 		const values: Value[] = [];
 		for (const measurement of this.getMeasurementAddresses(deviceId)) {
-			const value = attributes[this.toAttributePath(measurement)];
-			if (
-				measurement.clusterId === ON_OFF_CLUSTER_ID &&
-				typeof value === "boolean"
-			) {
-				values.push(
-					new Value(deviceId, measurement.measurementId, value)
-				);
-				this.setDimmablesDisabled(
-					deviceId,
-					measurement.endpointId,
-					!value
-				);
-			} else if (
-				(measurement.clusterId === LEVEL_CONTROL_CLUSTER_ID ||
-					measurement.clusterId === COLOR_CONTROL_CLUSTER_ID) &&
-				typeof value === "number"
-			) {
-				values.push(
-					new Value(deviceId, measurement.measurementId, value)
-				);
+			const cluster = this.getCluster(measurement.clusterId);
+			const value = cluster?.parseValue(
+				measurement.attributeId,
+				attributes[this.toAttributePath(measurement)]
+			);
+			if (value === undefined) {
+				continue;
 			}
+			values.push(new Value(deviceId, measurement.measurementId, value));
 		}
 
 		await this.services.getDataService().write(values);
@@ -332,52 +286,33 @@ export default class MatterIntegration extends IntegrationBase {
 		node: MatterNode,
 		attributeKey: string
 	) {
-		const [endpointPart, clusterPart, attributePart] =
-			attributeKey.split("/");
-		const clusterNumber = Number(clusterPart);
-		const expectedAttribute =
-			clusterNumber === COLOR_CONTROL_CLUSTER_ID
-				? COLOR_TEMPERATURE_MIREDS_ATTRIBUTE_ID
-				: 0;
-		if (attributePart !== String(expectedAttribute)) {
-			return;
-		}
-
-		const endpointId = Number(endpointPart);
-		const clusterId = Number(clusterPart);
 		const mapping = this.matterDevices.find(
 			(candidate) => candidate.nodeId === String(node.node_id)
 		);
 		if (!mapping || !node.available) {
 			return;
 		}
-		const measurementId = `${String(endpointId)}-${String(clusterId)}`;
-		if (
-			!this.getMeasurementAddresses(mapping.deviceId).some(
-				(measurement) => measurement.measurementId === measurementId
-			)
-		) {
+		const measurement = this.getMeasurementAddresses(mapping.deviceId).find(
+			(candidate) => this.toAttributePath(candidate) === attributeKey
+		);
+		if (!measurement) {
 			return;
 		}
 
-		const value = node.attributes[attributeKey];
-		if (clusterId === ON_OFF_CLUSTER_ID) {
-			if (typeof value !== "boolean") {
-				return;
-			}
-			this.setDimmablesDisabled(mapping.deviceId, endpointId, !value);
-			await this.services
-				.getDataService()
-				.write([new Value(mapping.deviceId, measurementId, value)]);
-		} else if (
-			(clusterId === LEVEL_CONTROL_CLUSTER_ID ||
-				clusterId === COLOR_CONTROL_CLUSTER_ID) &&
-			typeof value === "number"
-		) {
-			await this.services
-				.getDataService()
-				.write([new Value(mapping.deviceId, measurementId, value)]);
+		const cluster = this.getCluster(measurement.clusterId);
+		const value = cluster?.parseValue(
+			measurement.attributeId,
+			node.attributes[attributeKey]
+		);
+		if (value === undefined) {
+			return;
 		}
+		
+		await this.services
+			.getDataService()
+			.write([
+				new Value(mapping.deviceId, measurement.measurementId, value)
+			]);
 	}
 
 	private markConfiguredDevicesOffline() {
@@ -410,50 +345,12 @@ export default class MatterIntegration extends IntegrationBase {
 		}
 	}
 
-	private setDimmablesDisabled(
-		deviceId: string,
-		endpointId: number,
-		disabled: boolean
-	) {
-		this.setBrightnessDisabled(
-			deviceId,
-			`${String(endpointId)}-${String(LEVEL_CONTROL_CLUSTER_ID)}`,
-			disabled
-		);
-		const colorId = `${String(endpointId)}-${String(COLOR_CONTROL_CLUSTER_ID)}`;
-		// Color control is optional, so skip devices that don't configure it.
-		if (
-			this.getMeasurementAddresses(deviceId).some(
-				(measurement) => measurement.measurementId === colorId
-			)
-		) {
-			this.setBrightnessDisabled(deviceId, colorId, disabled);
-		}
-	}
-
-	private setBrightnessDisabled(
-		deviceId: string,
-		measurementId: string,
-		disabled: boolean
-	) {
-		try {
-			this.services
-				.getAssetService()
-				.setDeviceMeasurementDisabledStatus(
-					deviceId,
-					measurementId,
-					disabled
-				);
-		} catch (error) {
-			logger.warn(
-				error,
-				`Brightness measurement for Matter device ${deviceId} is not configured.`
-			);
-		}
-	}
-
 	private getNodeMappings(nodeId: string) {
 		return this.matterDevices.filter((device) => device.nodeId === nodeId);
+	}
+
+	private getCluster(clusterId: number) {
+		return this.clusters.find((cluster) => cluster.clusterId === clusterId);
 	}
 
 	private getConfiguredMatterDevices(): MatterDeviceAddress[] {
@@ -485,36 +382,42 @@ export default class MatterIntegration extends IntegrationBase {
 			.getAssetService()
 			.getDeviceMeasurements(deviceId)
 			.flatMap((measurement) => {
-				const match = /^(\d+)-(\d+)$/.exec(measurement.id);
+				const match = /^(\d+)-(\d+)-(\d+)$/.exec(measurement.id);
 				const endpointPart = match?.[1];
 				const clusterPart = match?.[2];
+				const attributePart = match?.[3];
 				const endpointId = Number(endpointPart);
 				const clusterId = Number(clusterPart);
+				const attributeId = Number(attributePart);
 				if (
 					!endpointPart ||
 					!clusterPart ||
+					!attributePart ||
 					!Number.isSafeInteger(endpointId) ||
 					endpointId > 65_534 ||
 					!Number.isSafeInteger(clusterId) ||
-					clusterId > 0xffff_ffff
+					clusterId > 0xffff_ffff ||
+					!Number.isSafeInteger(attributeId) ||
+					attributeId > 0xffff_ffff
 				) {
 					logger.warn(
-						`Ignoring Matter measurement with invalid ID "${measurement.id}" for device "${deviceId}"; expected endpointId-clusterId.`
+						`Ignoring Matter measurement with invalid ID "${measurement.id}" for device "${deviceId}"; expected endpointId-clusterId-attributeId.`
 					);
 					return [];
 				}
 				return [
-					{ measurementId: measurement.id, endpointId, clusterId }
+					{
+						measurementId: measurement.id,
+						endpointId,
+						clusterId,
+						attributeId
+					}
 				];
 			});
 	}
 
 	private toAttributePath(measurement: MatterMeasurementAddress) {
-		const attributeId =
-			measurement.clusterId === COLOR_CONTROL_CLUSTER_ID
-				? COLOR_TEMPERATURE_MIREDS_ATTRIBUTE_ID
-				: 0;
-		return `${String(measurement.endpointId)}/${String(measurement.clusterId)}/${String(attributeId)}`;
+		return `${String(measurement.endpointId)}/${String(measurement.clusterId)}/${String(measurement.attributeId)}`;
 	}
 
 	private toMatterNodeId(nodeId: string): number | bigint {
@@ -547,62 +450,10 @@ export default class MatterIntegration extends IntegrationBase {
 			throw new Error(`Unrecognized Matter measurement ${measurementId}`);
 		}
 
-		switch (measurement.clusterId) {
-			case ON_OFF_CLUSTER_ID:
-				if (typeof value.value !== "boolean") {
-					throw new Error(
-						`OnOff value must be boolean for ${measurementId}`
-					);
-				}
-				await this.client.deviceCommand(
-					nodeId,
-					measurement.endpointId,
-					ON_OFF_CLUSTER_ID,
-					value.value ? "on" : "off"
-				);
-				return;
-			case LEVEL_CONTROL_CLUSTER_ID:
-				if (typeof value.value !== "number") {
-					throw new Error(
-						`LevelControl value must be numeric for ${measurementId}`
-					);
-				}
-				await this.client.deviceCommand(
-					nodeId,
-					measurement.endpointId,
-					LEVEL_CONTROL_CLUSTER_ID,
-					"moveToLevel",
-					{
-						level: value.value,
-						transitionTime: null,
-						optionsMask: {},
-						optionsOverride: {}
-					}
-				);
-				return;
-			case COLOR_CONTROL_CLUSTER_ID:
-				if (typeof value.value !== "number") {
-					throw new Error(
-						`ColorControl value must be numeric for ${measurementId}`
-					);
-				}
-				await this.client.deviceCommand(
-					nodeId,
-					measurement.endpointId,
-					COLOR_CONTROL_CLUSTER_ID,
-					"moveToColorTemperature",
-					{
-						colorTemperatureMireds: value.value,
-						transitionTime: 0,
-						optionsMask: {},
-						optionsOverride: {}
-					}
-				);
-				return;
-			default:
-				throw new Error(
-					`Unrecognized measurement type ${measurementId}`
-				);
+		const cluster = this.getCluster(measurement.clusterId);
+		if (!cluster) {
+			throw new Error(`Unrecognized measurement type ${measurementId}`);
 		}
+		await cluster.control(this.client, nodeId, measurement, value.value);
 	}
 }

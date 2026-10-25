@@ -60,8 +60,8 @@ vi.mock("@matter-server/ws-client", () => ({
 vi.mock("ws", () => ({ default: vi.fn() }));
 
 const now = Date.now();
-const MEASUREMENT_POWER = "1-6";
-const MEASUREMENT_BRIGHTNESS = "1-8";
+const MEASUREMENT_POWER = "1-6-0";
+const MEASUREMENT_BRIGHTNESS = "1-8-0";
 const makeNode = (
 	nodeId: number | bigint,
 	available: boolean,
@@ -78,7 +78,6 @@ const getClient = () => {
 
 const createServices = (devices: Device[]) => {
 	const setDeviceOnlineStatus = vi.fn();
-	const setDeviceMeasurementDisabledStatus = vi.fn();
 	const assetService = {
 		getDevice: vi.fn((deviceId: string) => {
 			const device = devices.find((entry) => entry.id === deviceId);
@@ -97,8 +96,7 @@ const createServices = (devices: Device[]) => {
 				devices.find((device) => device.id === deviceId)
 					?.measurements ?? []
 		),
-		setDeviceOnlineStatus,
-		setDeviceMeasurementDisabledStatus
+		setDeviceOnlineStatus
 	} as unknown as AssetService;
 	const readLatestValue = vi.fn();
 	const write = vi.fn().mockResolvedValue(undefined);
@@ -113,8 +111,7 @@ const createServices = (devices: Device[]) => {
 		services,
 		readLatestValue,
 		write,
-		setDeviceOnlineStatus,
-		setDeviceMeasurementDisabledStatus
+		setDeviceOnlineStatus
 	};
 };
 
@@ -122,7 +119,7 @@ const createDevice = (id: string, endpointId = 1) =>
 	new Device(id, DeviceType.MatterIntegration, `Matter ${id}`, "icon", [
 		new Measurement(
 			id,
-			`${String(endpointId)}-6`,
+			`${String(endpointId)}-6-0`,
 			"Power",
 			MeasurementType.Boolean,
 			"",
@@ -131,7 +128,7 @@ const createDevice = (id: string, endpointId = 1) =>
 		),
 		new Measurement(
 			id,
-			`${String(endpointId)}-8`,
+			`${String(endpointId)}-8-0`,
 			"Brightness",
 			MeasurementType.Number,
 			"",
@@ -144,7 +141,8 @@ const settings = () =>
 	({
 		name: "MatterIntegration",
 		enabled: true,
-		serverUrl: "ws://localhost:5580/ws"
+		serverUrl: "ws://localhost:5580/ws",
+		websocketUrl: "ws://localhost:5580/ws"
 	}) satisfies MatterIntegrationSettings;
 
 const emit = (client: MockMatterClient, event: string, ...args: unknown[]) => {
@@ -177,12 +175,7 @@ test("exposes server URL and connected node count", () => {
 
 test("connects and initializes values from node-ID devices", async () => {
 	const device = createDevice("123");
-	const {
-		services,
-		write,
-		setDeviceOnlineStatus,
-		setDeviceMeasurementDisabledStatus
-	} = createServices([device]);
+	const { services, write, setDeviceOnlineStatus } = createServices([device]);
 	const integration = new MatterIntegration(services, settings());
 	const client = getClient();
 	client.nodes["123"] = makeNode(123, true, {
@@ -198,11 +191,6 @@ test("connects and initializes values from node-ID devices", async () => {
 		device.id,
 		DeviceOnlineStatus.ONLINE
 	]);
-	expect(setDeviceMeasurementDisabledStatus).toHaveBeenCalledWith(
-		device.id,
-		MEASUREMENT_BRIGHTNESS,
-		false
-	);
 	expect(write.mock.calls[0]?.[0]).toEqual([
 		expect.objectContaining({
 			deviceId: device.id,
@@ -226,7 +214,7 @@ test("parses large node IDs and endpoint IDs from the device ID", async () => {
 	device.measurements.push(
 		new Measurement(
 			device.id,
-			"1-6",
+			"1-6-0",
 			"Power endpoint 1",
 			MeasurementType.Boolean,
 			"",
@@ -235,7 +223,7 @@ test("parses large node IDs and endpoint IDs from the device ID", async () => {
 		),
 		new Measurement(
 			device.id,
-			"1-8",
+			"1-8-0",
 			"Brightness endpoint 1",
 			MeasurementType.Number,
 			"",
@@ -258,34 +246,34 @@ test("parses large node IDs and endpoint IDs from the device ID", async () => {
 	expect(write.mock.calls[0]?.[0]).toEqual([
 		expect.objectContaining({
 			deviceId: device.id,
-			measurementId: "3-6",
+			measurementId: "3-6-0",
 			value: true
 		}),
 		expect.objectContaining({
 			deviceId: device.id,
-			measurementId: "3-8",
+			measurementId: "3-8-0",
 			value: 42
 		}),
 		expect.objectContaining({
 			deviceId: device.id,
-			measurementId: "1-6",
+			measurementId: "1-6-0",
 			value: false
 		}),
 		expect.objectContaining({
 			deviceId: device.id,
-			measurementId: "1-8",
+			measurementId: "1-8-0",
 			value: 12
 		})
 	]);
 	await integration.control(
 		device.id,
-		"3-6",
-		new Value(device.id, "3-6", false, now)
+		"3-6-0",
+		new Value(device.id, "3-6-0", false, now)
 	);
 	await integration.control(
 		device.id,
-		"1-8",
-		new Value(device.id, "1-8", 25, now)
+		"1-8-0",
+		new Value(device.id, "1-8-0", 25, now)
 	);
 	expect(client.deviceCommand.mock.calls[0]).toEqual([
 		BigInt(nodeId),
@@ -309,7 +297,25 @@ test("supports ColorControl color temperature", async () => {
 	device.measurements.push(
 		new Measurement(
 			device.id,
-			"1-768",
+			"1-768-0",
+			"Hue",
+			MeasurementType.Number,
+			"",
+			"",
+			true
+		),
+		new Measurement(
+			device.id,
+			"1-768-1",
+			"Saturation",
+			MeasurementType.Number,
+			"",
+			"",
+			true
+		),
+		new Measurement(
+			device.id,
+			"1-768-7",
 			"Color temperature",
 			MeasurementType.Number,
 			"",
@@ -320,34 +326,87 @@ test("supports ColorControl color temperature", async () => {
 	const { services, write } = createServices([device]);
 	const integration = new MatterIntegration(services, settings());
 	const client = getClient();
+	device.measurements.push(
+		new Measurement(
+			device.id,
+			"1-768-8",
+			"Unsupported color attribute",
+			MeasurementType.Number,
+			"",
+			"",
+			true
+		)
+	);
 	client.nodes["123"] = makeNode(123, true, {
 		"1/6/0": true,
 		"1/8/0": 55,
-		"1/768/7": 300
+		"1/768/0": 120,
+		"1/768/1": 80,
+		"1/768/7": 300,
+		"1/768/8": 200
 	});
 
 	await integration.start();
 
 	expect(write.mock.calls[0]?.[0]).toContainEqual(
-		expect.objectContaining({ measurementId: "1-768", value: 300 })
+		expect.objectContaining({ measurementId: "1-768-7", value: 300 })
 	);
+	expect(write.mock.calls[0]?.[0]).toContainEqual(
+		expect.objectContaining({ measurementId: "1-768-0", value: 120 })
+	);
+	expect(write.mock.calls[0]?.[0]).toContainEqual(
+		expect.objectContaining({ measurementId: "1-768-1", value: 80 })
+	);
+
+	write.mockClear();
+	emit(client, "nodes_changed", {
+		nodeId: 123,
+		reason: "attribute_updated",
+		attributeKey: "1/768/8"
+	});
+	await Promise.resolve();
+	expect(write).not.toHaveBeenCalled();
 
 	client.nodes["123"] = makeNode(123, true, { "1/768/7": 400 });
 	emit(client, "nodes_changed", {
 		nodeId: 123,
 		reason: "attribute_updated",
 		attributeKey: "1/768/7"
-	} as unknown as NodesChangedDetail);
+	});
 	await vi.waitFor(() => {
 		expect(write.mock.calls.at(-1)?.[0]).toEqual([
-			expect.objectContaining({ measurementId: "1-768", value: 400 })
+			expect.objectContaining({ measurementId: "1-768-7", value: 400 })
 		]);
 	});
 
 	await integration.control(
 		device.id,
-		"1-768",
-		new Value(device.id, "1-768", 250, now)
+		"1-768-0",
+		new Value(device.id, "1-768-0", 200, now)
+	);
+	expect(client.deviceCommand.mock.calls.at(-1)).toEqual([
+		123,
+		1,
+		768,
+		"moveToHue",
+		expect.objectContaining({ hue: 200 })
+	]);
+	await integration.control(
+		device.id,
+		"1-768-1",
+		new Value(device.id, "1-768-1", 90, now)
+	);
+	expect(client.deviceCommand.mock.calls.at(-1)).toEqual([
+		123,
+		1,
+		768,
+		"moveToSaturation",
+		expect.objectContaining({ saturation: 90 })
+	]);
+	await integration.control(
+		device.id,
+		"1-768-7",
+		new Value(device.id, "1-768-7", 250, now)
 	);
 	expect(client.deviceCommand.mock.calls.at(-1)).toEqual([
 		123,
@@ -359,8 +418,8 @@ test("supports ColorControl color temperature", async () => {
 	await expect(
 		integration.control(
 			device.id,
-			"1-768",
-			new Value(device.id, "1-768", true, now)
+			"1-768-7",
+			new Value(device.id, "1-768-7", true, now)
 		)
 	).rejects.toThrow("ColorControl value must be numeric");
 
@@ -384,10 +443,28 @@ test("ignores Matter devices with an invalid encoded ID", async () => {
 	await integration.stop();
 });
 
-test("writes attribute changes and updates brightness availability", async () => {
+test("ignores legacy two-part Matter measurement IDs", async () => {
 	const device = createDevice("123");
-	const { services, write, setDeviceMeasurementDisabledStatus } =
-		createServices([device]);
+	for (const measurement of device.measurements) {
+		measurement.id = measurement.id.split("-").slice(0, 2).join("-");
+	}
+	const { services, write } = createServices([device]);
+	const integration = new MatterIntegration(services, settings());
+	const client = getClient();
+	client.nodes["123"] = makeNode(123, true, {
+		"1/6/0": true,
+		"1/8/0": 30
+	});
+
+	await integration.start();
+
+	expect(write.mock.calls[0]?.[0]).toEqual([]);
+	await integration.stop();
+});
+
+test("writes attribute changes", async () => {
+	const device = createDevice("123");
+	const { services, write } = createServices([device]);
 	const integration = new MatterIntegration(services, settings());
 	const client = getClient();
 	const node = makeNode(123, true, { "1/6/0": true, "1/8/0": 30 });
@@ -405,11 +482,6 @@ test("writes attribute changes and updates brightness availability", async () =>
 		expect(write.mock.calls).toHaveLength(1);
 	});
 
-	expect(setDeviceMeasurementDisabledStatus.mock.calls.at(-1)).toEqual([
-		device.id,
-		MEASUREMENT_BRIGHTNESS,
-		true
-	]);
 	expect(write.mock.calls[0]?.[0]).toEqual([
 		expect.objectContaining({
 			measurementId: MEASUREMENT_POWER,
