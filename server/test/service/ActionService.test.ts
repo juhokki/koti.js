@@ -109,11 +109,7 @@ test("Executes script that gets and controls a value", async () => {
 
 	await service.start();
 
-	service.onValueUpdated(
-		"device-1",
-		"id",
-		new Value("device-1", "id", 99999)
-	);
+	service.onValueUpdated("device-1", "id");
 
 	expect(mockControl).toHaveBeenCalledWith(
 		expect.objectContaining({

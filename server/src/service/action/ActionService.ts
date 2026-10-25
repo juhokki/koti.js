@@ -7,6 +7,7 @@ import type Device from "../../model/Device.ts";
 import type ActionHandler from "./actionhandler/ActionHandler.ts";
 import type Value from "../../model/Value.ts";
 import ScriptContext from "./ScriptContext.ts";
+import ActionTrigger from "../../constants/ActionTrigger.ts";
 
 export default class ActionService extends ServiceBase {
 	options: ActionServiceSettings;
@@ -29,7 +30,7 @@ export default class ActionService extends ServiceBase {
 			.on(
 				Messages.VALUE_UPDATED,
 				(deviceId: string, measurementId: string, value: Value) => {
-					this.onValueUpdated(deviceId, measurementId, value);
+					this.onValueUpdated(deviceId, measurementId);
 				}
 			);
 
@@ -58,11 +59,12 @@ export default class ActionService extends ServiceBase {
 		return this.actionHandlers;
 	}
 
-	onValueUpdated(deviceId: string, measurementId: string, value: Value) {
-		this.actionHandlers.forEach((action) => {
-			if (action.matches(deviceId, measurementId)) {
-				action.execute(this.context);
-			}
-		});
+	onValueUpdated(deviceId: string, measurementId: string) {
+		this.actionHandlers
+			.forEach((action) => {
+				if (action.matches(deviceId, measurementId, ActionTrigger.OnChange)) {
+					action.execute(this.context);
+				}
+			});
 	}
 }
