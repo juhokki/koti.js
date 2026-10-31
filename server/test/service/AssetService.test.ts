@@ -35,6 +35,8 @@ test("Builds assets", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
+			isRootAsset: true,
+			children: [],
 			devices: ["test-device"]
 		}
 	];
@@ -70,6 +72,8 @@ test("Builds assets", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
+			isRootAsset: true,
+			children: [],
 			devices: [
 				expect.objectContaining({
 					id: "test-device",
@@ -98,6 +102,8 @@ test("Finds asset, device and measurement", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
+			isRootAsset: true,
+			children: [],
 			devices: ["test-device"]
 		}
 	];
@@ -148,6 +154,8 @@ test("Enables and disables device measurement", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
+			isRootAsset: true,
+			children: [],
 			devices: ["test-device"]
 		}
 	];
@@ -211,6 +219,8 @@ test("Enables and disables device online status", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
+			isRootAsset: true,
+			children: [],
 			devices: ["test-device"]
 		}
 	];
@@ -258,4 +268,64 @@ test("Enables and disables device online status", async () => {
 	expect(mockEmit).toHaveBeenLastCalledWith("test-device");
 
 	expect(mockEmit).toHaveBeenCalledTimes(2);
+});
+
+const assetConfig = (id: string, isRootAsset: boolean, children: string[]) => ({
+	id,
+	name: id,
+	icon: "test-icon",
+	isRootAsset,
+	children,
+	devices: []
+});
+
+test("Allows asset with multiple parents", () => {
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([
+			assetConfig("a", true, ["c"]),
+			assetConfig("b", true, ["c"]),
+			assetConfig("c", false, [])
+		])
+	);
+
+	const service = new AssetService(services, settings);
+
+	expect(service.getAssets().length).toBe(3);
+});
+
+test("Throws on unknown child asset", () => {
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([assetConfig("a", true, ["missing"])])
+	);
+
+	expect(() => new AssetService(services, settings)).toThrow(
+		'Child asset "missing" of asset "a" not found.'
+	);
+});
+
+test("Throws on duplicate asset id", () => {
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([assetConfig("a", true, []), assetConfig("a", true, [])])
+	);
+
+	expect(() => new AssetService(services, settings)).toThrow(
+		"Duplicate asset id found"
+	);
+});
+
+test("Throws on asset cycle", () => {
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([
+			assetConfig("a", true, ["b"]),
+			assetConfig("b", false, ["a"])
+		])
+	);
+
+	expect(() => new AssetService(services, settings)).toThrow(
+		"Asset cycle found"
+	);
 });

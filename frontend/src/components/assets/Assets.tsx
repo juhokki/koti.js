@@ -16,7 +16,7 @@ export default function Assets() {
 	};
 
 	const filteredAssets = assets.filter((asset) => {
-		return asset.devices.length > 0;
+		return asset.isRootAsset;
 	});
 
 	return (

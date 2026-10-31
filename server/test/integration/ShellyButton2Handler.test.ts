@@ -32,7 +32,10 @@ function createButton() {
 		id: "button-1",
 		inputEventCounter0: 3,
 		battery: 92,
-		on: (_event: string, callback: (prop: string, value: number) => void) => {
+		on: (
+			_event: string,
+			callback: (prop: string, value: number) => void
+		) => {
 			onChange = callback;
 		}
 	} as unknown as ShellyDeviceButton2;
@@ -65,37 +68,28 @@ test("Writes initial button values and subsequent changes", () => {
 	const button = createButton();
 	new ShellyButton2Handler(createServices(), button.device);
 
-	expect(mockWrite).toHaveBeenNthCalledWith(
-		1,
-		[
-			expect.objectContaining({
-				deviceId: "button-1",
-				measurementId: INPUT_EVENT_COUNTER_0,
-				value: 3
-			})
-		]
-	);
-	expect(mockWrite).toHaveBeenNthCalledWith(
-		2,
-		[
-			expect.objectContaining({
-				deviceId: "button-1",
-				measurementId: BATTERY,
-				value: 92
-			})
-		]
-	);
+	expect(mockWrite).toHaveBeenNthCalledWith(1, [
+		expect.objectContaining({
+			deviceId: "button-1",
+			measurementId: INPUT_EVENT_COUNTER_0,
+			value: 3
+		})
+	]);
+	expect(mockWrite).toHaveBeenNthCalledWith(2, [
+		expect.objectContaining({
+			deviceId: "button-1",
+			measurementId: BATTERY,
+			value: 92
+		})
+	]);
 
 	button.emitChange(BATTERY, 87);
-	expect(mockWrite).toHaveBeenNthCalledWith(
-		3,
-		[
-			expect.objectContaining({
-				measurementId: BATTERY,
-				value: 87
-			})
-		]
-	);
+	expect(mockWrite).toHaveBeenNthCalledWith(3, [
+		expect.objectContaining({
+			measurementId: BATTERY,
+			value: 87
+		})
+	]);
 });
 
 test("Rejects writes for unconfigured measurements", async () => {

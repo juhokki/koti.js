@@ -19,11 +19,7 @@ import {
 	DeviceType,
 	MeasurementType
 } from "../../../src/interface/Asset";
-import type {
-	Asset,
-	Device,
-	Measurement
-} from "../../../src/interface/Asset";
+import type { Asset, Device, Measurement } from "../../../src/interface/Asset";
 import type { Value } from "../../../src/interface/Value";
 
 const mockGetDeviceValues = vi.hoisted(() => vi.fn());
@@ -37,7 +33,8 @@ vi.mock("../../../src/api/ValuesApi", () => ({
 }));
 
 vi.mock("../../../src/components/assets/device/DeviceChart", async () => {
-	const { createElement } = await vi.importActual<typeof import("react")>("react");
+	const { createElement } =
+		await vi.importActual<typeof import("react")>("react");
 	return {
 		default: ({
 			measurement,
@@ -83,6 +80,8 @@ const asset: Asset = {
 	id: "asset-1",
 	name: "Home",
 	icon: "home",
+	isRootAsset: true,
+	children: [],
 	devices: [device]
 };
 
@@ -91,7 +90,11 @@ beforeEach(() => {
 	mockControl.mockReset();
 });
 
-function createValue(measurementId: string, value: string | number | boolean, time = 1): Value {
+function createValue(
+	measurementId: string,
+	value: string | number | boolean,
+	time = 1
+): Value {
 	return { deviceId: device.id, measurementId, value, time };
 }
 
@@ -117,12 +120,9 @@ function renderValue(
 function renderHistory() {
 	return render(
 		<AssetsContext.Provider value={{ assets: [asset] }}>
-			<MemoryRouter initialEntries={["/assets/asset-1/device-1"]}>
+			<MemoryRouter initialEntries={["/assets/asset-1/device-1/history"]}>
 				<Routes>
-					<Route
-						path="/assets/:assetId/:deviceId"
-						element={<DeviceHistory />}
-					/>
+					<Route path="/assets/*" element={<DeviceHistory />} />
 				</Routes>
 			</MemoryRouter>
 		</AssetsContext.Provider>
@@ -164,10 +164,7 @@ test("Controllable boolean values update on success and retain the old value on 
 		controllable: true
 	};
 	mockControl.mockResolvedValueOnce({});
-	renderValue(
-		measurement,
-		createValue("temperature", true)
-	);
+	renderValue(measurement, createValue("temperature", true));
 	const input = screen.getByRole("switch");
 
 	fireEvent.click(input);
@@ -177,7 +174,9 @@ test("Controllable boolean values update on success and retain the old value on 
 	expect(mockControl).toHaveBeenCalledWith("device-1", "temperature", false);
 
 	cleanup();
-	const errorLog = vi.spyOn(console, "log").mockImplementation(() => undefined);
+	const errorLog = vi
+		.spyOn(console, "log")
+		.mockImplementation(() => undefined);
 	mockControl.mockRejectedValueOnce(new Error("offline"));
 	renderValue(measurement, createValue("temperature", true));
 	const failedInput = screen.getByRole("switch");
@@ -219,26 +218,28 @@ test("DeviceHistory groups values into charts and changes the week", async () =>
 		...device,
 		measurements: [
 			numberMeasurement,
-			{ ...numberMeasurement, id: "humidity", name: "Humidity", icon: "water" }
+			{
+				...numberMeasurement,
+				id: "humidity",
+				name: "Humidity",
+				icon: "water"
+			}
 		]
 	};
 	const historyAsset = { ...asset, devices: [historyDevice] };
 	render(
 		<AssetsContext.Provider value={{ assets: [historyAsset] }}>
-			<MemoryRouter initialEntries={["/assets/asset-1/device-1"]}>
+			<MemoryRouter initialEntries={["/assets/asset-1/device-1/history"]}>
 				<Routes>
-					<Route
-						path="/assets/:assetId/:deviceId"
-						element={<DeviceHistory />}
-					/>
+					<Route path="/assets/*" element={<DeviceHistory />} />
 				</Routes>
 			</MemoryRouter>
 		</AssetsContext.Provider>
 	);
 
-	expect(
-		(await screen.findByTestId("chart-temperature")).textContent
-	).toBe("2");
+	expect((await screen.findByTestId("chart-temperature")).textContent).toBe(
+		"2"
+	);
 	expect(screen.getByTestId("chart-humidity").textContent).toBe("1");
 	expect(mockGetDeviceValues).toHaveBeenCalledWith(
 		"device-1",
@@ -271,7 +272,9 @@ test("DeviceHistory shows empty and failed fetch states", async () => {
 	).toBeTruthy();
 
 	cleanup();
-	const errorLog = vi.spyOn(console, "log").mockImplementation(() => undefined);
+	const errorLog = vi
+		.spyOn(console, "log")
+		.mockImplementation(() => undefined);
 	mockGetDeviceValues.mockRejectedValueOnce(new Error("offline"));
 	renderHistory();
 	expect(

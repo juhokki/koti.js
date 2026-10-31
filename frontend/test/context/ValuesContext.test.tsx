@@ -55,15 +55,11 @@ test("Rejects removing a listener from an unknown topic or listener", () => {
 
 	expect(() => {
 		emitter.off("missing", vi.fn());
-	}).toThrow(
-		"Topic is not registered"
-	);
+	}).toThrow("Topic is not registered");
 	emitter.on("topic", vi.fn());
 	expect(() => {
 		emitter.off("topic", vi.fn());
-	}).toThrow(
-		"Topic has no listener"
-	);
+	}).toThrow("Topic has no listener");
 });
 
 function ValuesConsumer() {

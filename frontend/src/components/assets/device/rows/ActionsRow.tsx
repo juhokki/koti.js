@@ -1,6 +1,7 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { Device } from "../../../../interface/Asset";
+import useAssetPath from "../../../../hooks/useAssetPath";
 
 interface ActionsRowProps {
 	device: Device;
@@ -9,11 +10,11 @@ interface ActionsRowProps {
 export default function ActionsRow(props: ActionsRowProps) {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const params = useParams();
+	const { assetPath } = useAssetPath();
 	const openActions = () => {
 		Promise.resolve(
 			navigate(
-				`/assets/${params.assetId ?? ""}/${props.device.id}/actions${location.search}`
+				`${assetPath}/${props.device.id}/actions${location.search}`
 			)
 		).catch(console.log);
 	};

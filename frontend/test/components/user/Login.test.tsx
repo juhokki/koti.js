@@ -40,7 +40,9 @@ test("Submits credentials, stores the token, and connects the socket", async () 
 	fireEvent.change(screen.getByPlaceholderText("Salasana"), {
 		target: { value: "secret" }
 	});
-	const form = screen.getByRole("button", { name: "Kirjaudu" }).closest("form");
+	const form = screen
+		.getByRole("button", { name: "Kirjaudu" })
+		.closest("form");
 	if (form) {
 		fireEvent.submit(form);
 	}
@@ -65,7 +67,9 @@ test("Displays an error when login fails", async () => {
 	fireEvent.change(screen.getByPlaceholderText("Salasana"), {
 		target: { value: "wrong" }
 	});
-	const form = screen.getByRole("button", { name: "Kirjaudu" }).closest("form");
+	const form = screen
+		.getByRole("button", { name: "Kirjaudu" })
+		.closest("form");
 	if (form) {
 		fireEvent.submit(form);
 	}

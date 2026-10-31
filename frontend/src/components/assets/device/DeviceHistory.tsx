@@ -1,9 +1,9 @@
-import { useState, useContext, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Icon from "@mui/material/Icon";
-import { AssetsContext } from "../../../context/AssetsContext";
+import useAssetPath from "../../../hooks/useAssetPath";
 import ValuesApi from "../../../api/ValuesApi";
 import DeviceChart from "./DeviceChart";
 import { DeviceChartData } from "../../../interface/DeviceChartData";
@@ -17,11 +17,7 @@ import { Measurement } from "../../../interface/Asset";
 export default function DeviceHistory() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const assets = useContext(AssetsContext).assets;
-	const params = useParams();
-	const assetId = params.assetId;
-	const asset = assets.find((r) => r.id === params.assetId, 10);
-	const deviceId = params.deviceId;
+	const { asset, assetPath, deviceId } = useAssetPath();
 	const device = asset?.devices.find((d) => d.id === deviceId);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
@@ -83,11 +79,9 @@ export default function DeviceHistory() {
 	}, [deviceId, startDate, endDate]);
 
 	const goBack = () => {
-		if (assetId) {
-			Promise.resolve(
-				navigate(`/assets/${assetId}${location.search}`)
-			).catch(console.log);
-		}
+		Promise.resolve(navigate(`${assetPath}${location.search}`)).catch(
+			console.log
+		);
 	};
 	const getMeasurement = (measurementId: string): Measurement => {
 		if (device) {

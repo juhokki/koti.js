@@ -1,4 +1,5 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import useAssetPath from "../../../../hooks/useAssetPath";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Device } from "../../../../interface/Asset";
 
@@ -9,12 +10,10 @@ interface AlarmsRowProps {
 export default function AlarmsRow(props: AlarmsRowProps) {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const params = useParams();
+	const { assetPath } = useAssetPath();
 	const openAlarms = () => {
 		Promise.resolve(
-			navigate(
-				`/assets/${params.assetId ?? ""}/${props.device.id}/alarms${location.search}`
-			)
+			navigate(`${assetPath}/${props.device.id}/alarms${location.search}`)
 		).catch(console.log);
 	};
 

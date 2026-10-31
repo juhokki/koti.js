@@ -1,25 +1,35 @@
 import { useContext } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Icon from "@mui/material/Icon";
 import { AssetsContext } from "../../context/AssetsContext";
 import Device from "./device/DeviceView";
+import useAssetPath from "../../hooks/useAssetPath";
 
 export default function AssetDetails() {
 	const navigate = useNavigate();
-	const params = useParams();
+	const location = useLocation();
 	const [searchParams] = useSearchParams();
 	const assets = useContext(AssetsContext).assets;
-	const asset = assets.find((r) => r.id === params.assetId, 10);
+	const { asset, assetPath, parentPath } = useAssetPath();
 	const goBack = () => {
 		const path =
-			searchParams.get("from") === "alarms" ? "/alarms" : "/assets";
+			searchParams.get("from") === "alarms" ? "/alarms" : parentPath;
 		Promise.resolve(navigate(path)).catch(console.log);
+	};
+	const openChild = (childId: string) => {
+		Promise.resolve(
+			navigate(`${assetPath}/${childId}${location.search}`)
+		).catch(console.log);
 	};
 
 	if (!asset) {
 		return null;
 	}
+
+	const children = asset.children
+		.map((childId) => assets.find((a) => a.id === childId))
+		.filter((child) => child !== undefined);
 
 	const devices = asset.devices.filter((device) => {
 		return device.measurements.length > 0;
@@ -44,8 +54,21 @@ export default function AssetDetails() {
 			</section>
 			<section className="content">
 				<div className="grid">
+					{children.map((child) => (
+						<div className="grid-item" key={child.id}>
+							<h3
+								onClick={() => {
+									openChild(child.id);
+								}}
+								className="centered clickable"
+							>
+								<Icon>{child.icon}</Icon>
+								<span>{child.name}</span>
+							</h3>
+						</div>
+					))}
 					{devices.map((device) => (
-						<Device device={device} asset={asset} key={device.id} />
+						<Device device={device} key={device.id} />
 					))}
 				</div>
 			</section>

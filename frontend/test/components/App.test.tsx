@@ -28,7 +28,9 @@ test("Redirects unauthenticated users to login", async () => {
 		</MemoryRouter>
 	);
 
-	expect(await screen.findByRole("button", { name: "Kirjaudu" })).toBeTruthy();
+	expect(
+		await screen.findByRole("button", { name: "Kirjaudu" })
+	).toBeTruthy();
 	expect(socketMock.connect).not.toHaveBeenCalled();
 });
 

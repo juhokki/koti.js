@@ -27,8 +27,14 @@ function renderEditor(path: string) {
 		<MemoryRouter initialEntries={[path]}>
 			<Routes>
 				<Route path="/recipes/new" element={<RecipeEdit />} />
-				<Route path="/recipes/:recipeId/edit" element={<RecipeEdit />} />
-				<Route path="/recipes/:recipeId" element={<p>Recipe saved</p>} />
+				<Route
+					path="/recipes/:recipeId/edit"
+					element={<RecipeEdit />}
+				/>
+				<Route
+					path="/recipes/:recipeId"
+					element={<p>Recipe saved</p>}
+				/>
 			</Routes>
 		</MemoryRouter>
 	);

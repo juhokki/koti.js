@@ -65,4 +65,3 @@ export function formatTime(timestamp: number) {
 		hour12: false
 	});
 }
-

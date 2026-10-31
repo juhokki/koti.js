@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, test } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Alarms from "../../src/components/alarms/Alarms";
+import AssetRoute from "../../src/components/assets/AssetRoute";
 import AssetDetails from "../../src/components/assets/AssetDetails";
 import Assets from "../../src/components/assets/Assets";
 import Home from "../../src/components/home/Home";
@@ -47,12 +48,16 @@ const asset: Asset = {
 	id: "asset-1",
 	name: "Home",
 	icon: "home",
+	isRootAsset: true,
+	children: [],
 	devices: [device]
 };
 const emptyAsset: Asset = {
 	id: "empty-asset",
 	name: "Empty asset",
 	icon: "home",
+	isRootAsset: false,
+	children: [],
 	devices: []
 };
 const alarm: Alarm = {
@@ -101,17 +106,16 @@ test("Alarms distinguishes loading, empty, and active alarm states", () => {
 
 test("Alarm assets link back to details with alarm origin preserved", async () => {
 	render(
-		<AlarmsContext.Provider value={{ alarms: [alarm] }}>
-			<MemoryRouter initialEntries={["/alarms"]}>
-				<Routes>
-					<Route path="/alarms" element={<Alarms />} />
-					<Route
-						path="/assets/:assetId"
-						element={<p>Asset route</p>}
-					/>
-				</Routes>
-			</MemoryRouter>
-		</AlarmsContext.Provider>
+		<AssetsContext.Provider value={{ assets: [asset] }}>
+			<AlarmsContext.Provider value={{ alarms: [alarm] }}>
+				<MemoryRouter initialEntries={["/alarms"]}>
+					<Routes>
+						<Route path="/alarms" element={<Alarms />} />
+						<Route path="/assets/*" element={<p>Asset route</p>} />
+					</Routes>
+				</MemoryRouter>
+			</AlarmsContext.Provider>
+		</AssetsContext.Provider>
 	);
 
 	fireEvent.click(screen.getByText("Home"));
@@ -125,7 +129,10 @@ test("Home navigation exposes app sections and active alarm styling", () => {
 				<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="/assets/*" element={<p>Assets route</p>} />
-					<Route path="/shoppinglist/*" element={<p>Shopping route</p>} />
+					<Route
+						path="/shoppinglist/*"
+						element={<p>Shopping route</p>}
+					/>
 					<Route path="/recipes/*" element={<p>Recipes route</p>} />
 					<Route path="/alarms/*" element={<p>Alarms route</p>} />
 					<Route path="/system/*" element={<p>System route</p>} />
@@ -141,14 +148,14 @@ test("Home navigation exposes app sections and active alarm styling", () => {
 	expect(screen.getByText("Assets route")).toBeTruthy();
 });
 
-test("Assets omits empty groups and navigates to a populated asset", async () => {
+test("Assets lists only root assets and navigates to one", async () => {
 	render(
 		<AssetsContext.Provider value={{ assets: [emptyAsset, asset] }}>
 			<MemoryRouter initialEntries={["/assets"]}>
 				<Routes>
 					<Route path="/assets" element={<Assets />} />
 					<Route
-						path="/assets/:assetId"
+						path="/assets/*"
 						element={<p>Asset details route</p>}
 					/>
 				</Routes>
@@ -179,10 +186,7 @@ test("Asset details filters devices without measurements", () => {
 			<AssetsContext.Provider value={{ assets: [assetWithEmptyDevice] }}>
 				<MemoryRouter initialEntries={["/assets/asset-1"]}>
 					<Routes>
-						<Route
-							path="/assets/:assetId"
-							element={<AssetDetails />}
-						/>
+						<Route path="/assets/*" element={<AssetDetails />} />
 					</Routes>
 				</MemoryRouter>
 			</AssetsContext.Provider>
@@ -193,4 +197,30 @@ test("Asset details filters devices without measurements", () => {
 	expect(screen.getByText("Living room")).toBeTruthy();
 	expect(screen.getByText("22 C")).toBeTruthy();
 	expect(screen.getAllByText("Living room")).toHaveLength(1);
+});
+test("Asset details renders child assets as navigation boxes", async () => {
+	const parent: Asset = { ...asset, children: ["child-1"], devices: [] };
+	const child: Asset = {
+		...emptyAsset,
+		id: "child-1",
+		name: "Child asset",
+		devices: [device]
+	};
+	render(
+		<ValuesContext.Provider value={{ values: new ValueContextEmitter() }}>
+			<AssetsContext.Provider value={{ assets: [parent, child] }}>
+				<MemoryRouter initialEntries={["/assets/asset-1"]}>
+					<Routes>
+						<Route path="/assets/*" element={<AssetRoute />} />
+					</Routes>
+				</MemoryRouter>
+			</AssetsContext.Provider>
+		</ValuesContext.Provider>
+	);
+
+	fireEvent.click(screen.getByText("Child asset"));
+	expect(await screen.findByText("Living room")).toBeTruthy();
+	expect(
+		screen.queryByText("Child asset", { selector: "h3 span" })
+	).toBeNull();
 });

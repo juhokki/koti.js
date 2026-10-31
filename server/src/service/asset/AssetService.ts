@@ -28,6 +28,55 @@ export default class AssetService extends ServiceBase {
 
 	validate() {
 		this.deviceIdMustBeUnique();
+		this.assetIdMustBeUnique();
+		this.childAssetsMustExist();
+		this.assetsMustNotContainCycles();
+	}
+
+	assetIdMustBeUnique() {
+		const ids = this.assets.map((asset: Asset) => asset.id);
+
+		if (ids.length !== new Set(ids).size) {
+			throw new Error("Duplicate asset id found");
+		}
+	}
+
+	childAssetsMustExist() {
+		for (const asset of this.assets) {
+			for (const childId of asset.children) {
+				if (!this.assets.some((a: Asset) => a.id === childId)) {
+					throw new Error(
+						`Child asset "${childId}" of asset "${asset.id}" not found.`
+					);
+				}
+			}
+		}
+	}
+
+	assetsMustNotContainCycles() {
+		const done = new Set<string>();
+
+		const visit = (asset: Asset, path: string[]) => {
+			if (path.includes(asset.id)) {
+				throw new Error(
+					`Asset cycle found: ${[...path, asset.id].join(" -> ")}`
+				);
+			}
+
+			if (done.has(asset.id)) {
+				return;
+			}
+
+			for (const childId of asset.children) {
+				visit(this.getAsset(childId), [...path, asset.id]);
+			}
+
+			done.add(asset.id);
+		};
+
+		for (const asset of this.assets) {
+			visit(asset, []);
+		}
 	}
 
 	deviceIdMustBeUnique() {
@@ -77,6 +126,8 @@ export default class AssetService extends ServiceBase {
 				assetConfig.id,
 				assetConfig.name,
 				assetConfig.icon,
+				assetConfig.isRootAsset,
+				assetConfig.children,
 				assetConfig.devices.map((deviceId) => this.getDevice(deviceId))
 			);
 		});

@@ -158,7 +158,9 @@ export default function Logs() {
 							</div>
 							<div className="log-message">{entry.msg}</div>
 							{entry.err?.stack && (
-								<div className="log-stack">{entry.err.stack}</div>
+								<div className="log-stack">
+									{entry.err.stack}
+								</div>
 							)}
 						</div>
 					))}

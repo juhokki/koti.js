@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor
+} from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Integration from "../../../src/components/system/Integration";
 import Logs from "../../../src/components/system/Logs";
@@ -100,7 +106,10 @@ test("Integration displays parameters and opens URL values", async () => {
 });
 
 test("Integration displays empty and failed parameter states", async () => {
-	mockGetIntegration.mockResolvedValueOnce({ name: "RestApiIntegration", parameters: [] });
+	mockGetIntegration.mockResolvedValueOnce({
+		name: "RestApiIntegration",
+		parameters: []
+	});
 	renderRoutes("/system/integrations/RestApiIntegration");
 	expect(await screen.findByText("Ei parametreja")).toBeTruthy();
 
@@ -160,7 +169,9 @@ test("Logs handles failed requests and empty level selection", async () => {
 	mockGetLogs.mockResolvedValue({ entries: [] });
 	renderRoutes("/system/logs");
 	expect(
-		await screen.findByText("Lokimerkintöjä ei löytynyt valitulta päivältä.")
+		await screen.findByText(
+			"Lokimerkintöjä ei löytynyt valitulta päivältä."
+		)
 	).toBeTruthy();
 	fireEvent.click(screen.getByRole("button", { name: "info logs" }));
 	fireEvent.click(screen.getByRole("button", { name: "warn logs" }));

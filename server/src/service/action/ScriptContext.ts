@@ -27,7 +27,11 @@ export default class ScriptContext {
 			.sendToSubscribedUsers(title, message);
 	}
 
-	setDeviceMeasurementDisabledStatus(deviceId: string, measurementId: string, disabled: boolean) {
+	setDeviceMeasurementDisabledStatus(
+		deviceId: string,
+		measurementId: string,
+		disabled: boolean
+	) {
 		this.services
 			.getAssetService()
 			.setDeviceMeasurementDisabledStatus(

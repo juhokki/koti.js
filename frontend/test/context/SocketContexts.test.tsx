@@ -1,16 +1,31 @@
 import { useContext, useState } from "react";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen
+} from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import * as Messages from "../../src/constants/Messages";
 import { STATUS_OK } from "../../src/constants/HTTPStatus";
-import { AlarmsContext, AlarmsContextProvider } from "../../src/context/AlarmsContext";
+import {
+	AlarmsContext,
+	AlarmsContextProvider
+} from "../../src/context/AlarmsContext";
 import { AppContext, AppContextProvider } from "../../src/context/AppContext";
-import { AssetsContext, AssetsContextProvider } from "../../src/context/AssetsContext";
+import {
+	AssetsContext,
+	AssetsContextProvider
+} from "../../src/context/AssetsContext";
 import {
 	ShoppingListContext,
 	ShoppingListContextProvider
 } from "../../src/context/ShoppingListContext";
-import { UserContext, UserContextProvider } from "../../src/context/UserContext";
+import {
+	UserContext,
+	UserContextProvider
+} from "../../src/context/UserContext";
 import type { Alarm } from "../../src/interface/Alarm";
 import type { Asset } from "../../src/interface/Asset";
 import type { ShoppingList } from "../../src/interface/ShoppingList";
@@ -30,7 +45,14 @@ vi.mock("../../src/socket", () => ({
 
 const handlers = new Map<string, (...args: unknown[]) => void>();
 const user: User = { username: "alice", locale: "fi" };
-const asset: Asset = { id: "home", name: "Home", icon: "home", devices: [] };
+const asset: Asset = {
+	id: "home",
+	name: "Home",
+	icon: "home",
+	isRootAsset: true,
+	children: [],
+	devices: []
+};
 const alarm: Alarm = {
 	assetId: "home",
 	assetName: "Home",
@@ -59,19 +81,22 @@ function ContextConsumer() {
 		<div>
 			<span data-testid="connected">{String(connected)}</span>
 			<span data-testid="user">{user?.username ?? "none"}</span>
-			<span data-testid="assets">{assets.map((item) => item.name).join(",")}</span>
-			<span data-testid="alarms">{alarms?.map((item) => item.name).join(",") ?? "none"}</span>
+			<span data-testid="assets">
+				{assets.map((item) => item.name).join(",")}
+			</span>
+			<span data-testid="alarms">
+				{alarms?.map((item) => item.name).join(",") ?? "none"}
+			</span>
 			<span data-testid="shopping-list">
-				{shoppingList?.items.map((item) => item.text).join(",") ?? "none"}
+				{shoppingList?.items.map((item) => item.text).join(",") ??
+					"none"}
 			</span>
 			<span data-testid="save-result">{saveResult}</span>
 			<button
 				onClick={() => {
-					setShoppingList(shoppingList, (error) =>
-						{
-							setSaveResult(error ? error.message : "saved");
-						}
-					);
+					setShoppingList(shoppingList, (error) => {
+						setSaveResult(error ? error.message : "saved");
+					});
 				}}
 			>
 				Save

@@ -100,7 +100,9 @@ test("RecipesApi covers list, detail, create, update, and delete requests", asyn
 	await expect(
 		RecipesApi.updateRecipe("recipe / one", input)
 	).resolves.toEqual(recipe);
-	await expect(RecipesApi.deleteRecipe("recipe / one")).resolves.toBeUndefined();
+	await expect(
+		RecipesApi.deleteRecipe("recipe / one")
+	).resolves.toBeUndefined();
 
 	expect(mockFetch).toHaveBeenNthCalledWith(
 		1,
@@ -176,9 +178,9 @@ test("SystemApi fetches stats and URL-encodes integration names", async () => {
 		.mockResolvedValueOnce(createResponse(integration));
 
 	await expect(SystemApi.getSystemStats()).resolves.toEqual(stats);
-	await expect(SystemApi.getIntegration("Shelly Integration")).resolves.toEqual(
-		integration
-	);
+	await expect(
+		SystemApi.getIntegration("Shelly Integration")
+	).resolves.toEqual(integration);
 	expect(mockFetch).toHaveBeenNthCalledWith(
 		1,
 		"/api/system",
@@ -243,7 +245,9 @@ test("WebPushApi checks, subscribes, and cancels subscriptions", async () => {
 		status
 	);
 	await expect(WebPushApi.subscribe(subscription)).resolves.toBeUndefined();
-	await expect(WebPushApi.cancelSubscription(subscription)).resolves.toBeUndefined();
+	await expect(
+		WebPushApi.cancelSubscription(subscription)
+	).resolves.toBeUndefined();
 	for (const method of ["PUT", "POST", "DELETE"]) {
 		expect(mockFetch).toHaveBeenCalledWith(
 			"/api/user/web-push",
@@ -262,16 +266,19 @@ test("WebPushApi checks, subscribes, and cancels subscriptions", async () => {
 test.each([
 	["subscribe", 500, "Failed to subscribe"],
 	["cancel", 500, "Failed to cancel subscription"]
-])("WebPushApi %s reports non-200 responses", async (action, status, message) => {
-	mockFetch.mockResolvedValueOnce(createResponse({}, status));
-	const subscription = {
-		endpoint: "https://push.example/endpoint",
-		keys: { p256dh: "public", auth: "secret" }
-	} as PushSubscription;
-	const request =
-		action === "subscribe"
-			? WebPushApi.subscribe(subscription)
-			: WebPushApi.cancelSubscription(subscription);
+])(
+	"WebPushApi %s reports non-200 responses",
+	async (action, status, message) => {
+		mockFetch.mockResolvedValueOnce(createResponse({}, status));
+		const subscription = {
+			endpoint: "https://push.example/endpoint",
+			keys: { p256dh: "public", auth: "secret" }
+		} as PushSubscription;
+		const request =
+			action === "subscribe"
+				? WebPushApi.subscribe(subscription)
+				: WebPushApi.cancelSubscription(subscription);
 
-	await expect(request).rejects.toThrow(message);
-});
+		await expect(request).rejects.toThrow(message);
+	}
+);

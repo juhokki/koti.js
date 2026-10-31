@@ -60,11 +60,12 @@ export default class ActionService extends ServiceBase {
 	}
 
 	onValueUpdated(deviceId: string, measurementId: string) {
-		this.actionHandlers
-			.forEach((action) => {
-				if (action.matches(deviceId, measurementId, ActionTrigger.OnChange)) {
-					action.execute(this.context);
-				}
-			});
+		this.actionHandlers.forEach((action) => {
+			if (
+				action.matches(deviceId, measurementId, ActionTrigger.OnChange)
+			) {
+				action.execute(this.context);
+			}
+		});
 	}
 }

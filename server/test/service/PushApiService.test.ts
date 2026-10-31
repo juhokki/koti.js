@@ -143,10 +143,18 @@ test("Sends one notification per triggered alarm", async () => {
 test("Removes subscriptions after a push endpoint returns 410", async () => {
 	mockGetUsers.mockReturnValueOnce([]);
 	const service = new PushApiService(services, settings);
-	const subscription = { endpoint: "https://push.example" } as PushSubscription;
+	const subscription = {
+		endpoint: "https://push.example"
+	} as PushSubscription;
 	service.addSubscription("test", subscription);
 	mockSendNotification.mockRejectedValueOnce(
-		new WebPushError("Subscription expired", 410, {}, "", subscription.endpoint)
+		new WebPushError(
+			"Subscription expired",
+			410,
+			{},
+			"",
+			subscription.endpoint
+		)
 	);
 
 	await service.sendToSubscribedUsers("title", "body");
@@ -160,7 +168,9 @@ test("Removes subscriptions after a push endpoint returns 410", async () => {
 test("Keeps subscriptions after non-410 notification failures", async () => {
 	mockGetUsers.mockReturnValueOnce([]);
 	const service = new PushApiService(services, settings);
-	const subscription = { endpoint: "https://push.example" } as PushSubscription;
+	const subscription = {
+		endpoint: "https://push.example"
+	} as PushSubscription;
 	service.addSubscription("test", subscription);
 	mockSendNotification.mockRejectedValueOnce(new Error("Temporary failure"));
 

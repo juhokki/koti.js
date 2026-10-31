@@ -23,9 +23,10 @@ test("Adds, crosses, removes, and clears shopping list items", () => {
 			{ id: "bread", text: "Bread", crossed: true }
 		]
 	};
-	const setShoppingList = vi.fn<
-		(list: ShoppingList, callback: (error?: Error) => void) => void
-	>();
+	const setShoppingList =
+		vi.fn<
+			(list: ShoppingList, callback: (error?: Error) => void) => void
+		>();
 	render(
 		<ShoppingListContext.Provider value={{ shoppingList, setShoppingList }}>
 			<ShoppingListView />
@@ -72,7 +73,10 @@ test("Adds, crosses, removes, and clears shopping list items", () => {
 
 	fireEvent.click(screen.getByRole("button", { name: "Poista ostetut" }));
 	expect(setShoppingList).toHaveBeenLastCalledWith(
-		{ update: "update-1", items: [{ id: "milk", text: "Milk", crossed: false }] },
+		{
+			update: "update-1",
+			items: [{ id: "milk", text: "Milk", crossed: false }]
+		},
 		expect.any(Function)
 	);
 });

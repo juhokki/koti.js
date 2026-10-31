@@ -107,7 +107,9 @@ test("Integration info requires name and enabled integration", async () => {
 	mockGetEnabledIntegrations.mockReturnValue(["RestApiIntegration"]);
 
 	// eslint-disable-next-line
-	const missing = await (request(app) as TestAgent).get("/system/integration");
+	const missing = await (request(app) as TestAgent).get(
+		"/system/integration"
+	);
 	// eslint-disable-next-line
 	const unknown = await (request(app) as TestAgent).get(
 		"/system/integration?name=Nope"
@@ -164,7 +166,9 @@ test("Returns a device value range", async () => {
 test("Returns an error when reading a device value range fails", async () => {
 	const app = express();
 	app.use(getApiRouter(services));
-	mockReadDeviceValues.mockRejectedValueOnce(new Error("Database unavailable"));
+	mockReadDeviceValues.mockRejectedValueOnce(
+		new Error("Database unavailable")
+	);
 
 	// eslint-disable-next-line
 	const response = await (request(app) as TestAgent).get(
@@ -182,9 +186,7 @@ test("Returns an error when writing values fails", async () => {
 	mockWrite.mockRejectedValueOnce(new Error("Integration unavailable"));
 
 	// eslint-disable-next-line
-	const response = await (request(app) as TestAgent)
-		.post("/values")
-		.send([]);
+	const response = await (request(app) as TestAgent).post("/values").send([]);
 
 	expect(response.status).toBe(500);
 	expect(response.text).toBe("Failed to write values.");

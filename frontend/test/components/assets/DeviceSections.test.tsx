@@ -5,6 +5,8 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import DeviceActions from "../../../src/components/assets/device/DeviceActions";
 import DeviceAlarms from "../../../src/components/assets/device/DeviceAlarms";
 import DeviceSchedules from "../../../src/components/assets/device/DeviceSchedules";
+import AssetRoute from "../../../src/components/assets/AssetRoute";
+import useAssetPath from "../../../src/hooks/useAssetPath";
 import DeviceView from "../../../src/components/assets/device/DeviceView";
 import { AlarmsContext } from "../../../src/context/AlarmsContext";
 import { AssetsContext } from "../../../src/context/AssetsContext";
@@ -33,7 +35,9 @@ const measurement: Measurement = {
 	min: undefined,
 	max: undefined,
 	actions: [{ name: "Notify", trigger: ActionTrigger.OnChange, script: "" }],
-	alarms: [{ name: "High temperature", type: AlarmType.ValueUpperLimit, limit: 30 }],
+	alarms: [
+		{ name: "High temperature", type: AlarmType.ValueUpperLimit, limit: 30 }
+	],
 	schedules: [{ name: "Morning", cron: "0 8 * * *", value: 20 }],
 	disabled: false
 };
@@ -51,6 +55,8 @@ const asset: Asset = {
 	id: "asset-1",
 	name: "Home",
 	icon: "home",
+	isRootAsset: true,
+	children: [],
 	devices: [device]
 };
 
@@ -92,16 +98,19 @@ function renderDeviceRoute(
 	);
 }
 
+function SummaryOrHistory() {
+	const { deviceId } = useAssetPath();
+
+	return deviceId ? <p>History view</p> : <DeviceView device={device} />;
+}
+
 afterEach(cleanup);
 
 test("Device actions show configured actions and the empty state", () => {
 	renderDeviceRoute(
 		"/assets/asset-1/device-1/actions",
 		<Routes>
-			<Route
-				path="/assets/:assetId/:deviceId/actions"
-				element={<DeviceActions />}
-			/>
+			<Route path="/assets/*" element={<DeviceActions />} />
 		</Routes>
 	);
 
@@ -113,10 +122,7 @@ test("Device alarms distinguish active alarms from clear alarms", () => {
 	renderDeviceRoute(
 		"/assets/asset-1/device-1/alarms",
 		<Routes>
-			<Route
-				path="/assets/:assetId/:deviceId/alarms"
-				element={<DeviceAlarms />}
-			/>
+			<Route path="/assets/*" element={<DeviceAlarms />} />
 		</Routes>,
 		[activeAlarm]
 	);
@@ -129,10 +135,7 @@ test("Device schedules show configured times and empty state", () => {
 	renderDeviceRoute(
 		"/assets/asset-1/device-1/schedules",
 		<Routes>
-			<Route
-				path="/assets/:assetId/:deviceId/schedules"
-				element={<DeviceSchedules />}
-			/>
+			<Route path="/assets/*" element={<DeviceSchedules />} />
 		</Routes>
 	);
 
@@ -144,8 +147,7 @@ test("Device summary renders values and navigates to history", async () => {
 	renderDeviceRoute(
 		"/assets/asset-1",
 		<Routes>
-			<Route path="/assets/:assetId" element={<DeviceView asset={asset} device={device} />} />
-			<Route path="/assets/:assetId/:deviceId" element={<p>History view</p>} />
+			<Route path="/assets/*" element={<SummaryOrHistory />} />
 		</Routes>
 	);
 
@@ -162,25 +164,24 @@ test("Device sections show their empty messages when nothing is configured", () 
 	const emptyAsset = { ...asset, devices: [emptyDevice] };
 	const routes = (
 		<Routes>
-			<Route
-				path="/assets/:assetId/:deviceId/actions"
-				element={<DeviceActions />}
-			/>
-			<Route
-				path="/assets/:assetId/:deviceId/alarms"
-				element={<DeviceAlarms />}
-			/>
-			<Route
-				path="/assets/:assetId/:deviceId/schedules"
-				element={<DeviceSchedules />}
-			/>
+			<Route path="/assets/*" element={<AssetRoute />} />
 		</Routes>
 	);
-	renderDeviceRoute("/assets/asset-1/device-1/actions", routes, [], emptyAsset);
+	renderDeviceRoute(
+		"/assets/asset-1/device-1/actions",
+		routes,
+		[],
+		emptyAsset
+	);
 	expect(screen.getByText("Ei toimintoja.")).toBeTruthy();
 
 	cleanup();
-	renderDeviceRoute("/assets/asset-1/device-1/alarms", routes, [], emptyAsset);
+	renderDeviceRoute(
+		"/assets/asset-1/device-1/alarms",
+		routes,
+		[],
+		emptyAsset
+	);
 	expect(screen.getByText("Ei hälytyksiä.")).toBeTruthy();
 
 	cleanup();

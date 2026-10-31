@@ -29,7 +29,9 @@ class SystemApi {
 		const response = await fetch(url, options);
 
 		if (!response.ok) {
-			throw new Error(`Request failed with status ${String(response.status)}`);
+			throw new Error(
+				`Request failed with status ${String(response.status)}`
+			);
 		}
 
 		return (await response.json()) as IntegrationInfo;

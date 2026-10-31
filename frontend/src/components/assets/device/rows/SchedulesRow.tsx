@@ -1,4 +1,5 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import useAssetPath from "../../../../hooks/useAssetPath";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { Device } from "../../../../interface/Asset";
 
@@ -9,11 +10,11 @@ interface SchedulesRowProps {
 export default function SchedulesRow(props: SchedulesRowProps) {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const params = useParams();
+	const { assetPath } = useAssetPath();
 	const openSchedules = () => {
 		Promise.resolve(
 			navigate(
-				`/assets/${params.assetId ?? ""}/${props.device.id}/schedules${location.search}`
+				`${assetPath}/${props.device.id}/schedules${location.search}`
 			)
 		).catch(console.log);
 	};

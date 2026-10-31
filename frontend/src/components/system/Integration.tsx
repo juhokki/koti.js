@@ -69,7 +69,7 @@ export default function Integration() {
 						/>
 					</div>
 					<div>
-						<span>{name?.replace(/([a-z])([A-Z])/g, '$1 $2')}</span>
+						<span>{name?.replace(/([a-z])([A-Z])/g, "$1 $2")}</span>
 					</div>
 					<div className="right"></div>
 				</h2>
@@ -83,7 +83,7 @@ export default function Integration() {
 					<div className="grid">
 						<div className="grid-item">
 							<h3 className="centered underline">
-						        <SettingsIcon />
+								<SettingsIcon />
 								<span>Parametrit</span>
 							</h3>
 							{info.parameters.length === 0 ? (
@@ -93,36 +93,42 @@ export default function Integration() {
 							) : (
 								<table className="margin-top">
 									<tbody>
-											{info.parameters.map((parameter) => {
-												const url = getParameterUrl(parameter.value);
-												return (
-													<tr key={parameter.name}>
-												<th className="centered">
-													<span>{parameter.name}</span>
-												</th>
-												<td className="centered">
-													<span>
+										{info.parameters.map((parameter) => {
+											const url = getParameterUrl(
+												parameter.value
+											);
+											return (
+												<tr key={parameter.name}>
+													<th className="centered">
+														<span>
+															{parameter.name}
+														</span>
+													</th>
+													<td className="centered">
+														<span>
 															{url ? (
-										<button
-											type="button"
-											onClick={() =>
-												window.open(
-													url,
-													"_blank",
-													"noopener,noreferrer"
-												)
-											}
+																<button
+																	type="button"
+																	onClick={() =>
+																		window.open(
+																			url,
+																			"_blank",
+																			"noopener,noreferrer"
+																		)
+																	}
 																>
-																			Avaa
-										</button>
+																	Avaa
+																</button>
 															) : (
-																String(parameter.value)
+																String(
+																	parameter.value
+																)
 															)}
-													</span>
-												</td>
-											</tr>
-												);
-											})}
+														</span>
+													</td>
+												</tr>
+											);
+										})}
 									</tbody>
 								</table>
 							)}

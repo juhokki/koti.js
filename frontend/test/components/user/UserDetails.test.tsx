@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor
+} from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import UserDetails from "../../../src/components/user/UserDetails";
 import { UserContext } from "../../../src/context/UserContext";
@@ -85,8 +91,12 @@ afterEach(() => {
 });
 
 test("Displays user details and enabled status for an existing subscription", async () => {
-	const pushManager = { getSubscription: vi.fn().mockResolvedValue(subscription) };
-	setServiceWorker(Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration));
+	const pushManager = {
+		getSubscription: vi.fn().mockResolvedValue(subscription)
+	};
+	setServiceWorker(
+		Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration)
+	);
 	mockCheckSubscription.mockResolvedValueOnce({ status: true });
 
 	renderUser();
@@ -99,7 +109,9 @@ test("Displays user details and enabled status for an existing subscription", as
 
 test("Starts with notifications disabled when no subscription exists", async () => {
 	const pushManager = { getSubscription: vi.fn().mockResolvedValue(null) };
-	setServiceWorker(Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration));
+	setServiceWorker(
+		Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration)
+	);
 
 	renderUser();
 
@@ -114,7 +126,9 @@ test("Enables notifications by creating and registering a subscription", async (
 		getSubscription: vi.fn().mockResolvedValue(null),
 		subscribe: subscribePush
 	};
-	setServiceWorker(Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration));
+	setServiceWorker(
+		Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration)
+	);
 	mockSubscribe.mockResolvedValueOnce(undefined);
 	renderUser();
 
@@ -134,8 +148,12 @@ test("Enables notifications by creating and registering a subscription", async (
 });
 
 test("Disables notifications and removes the existing subscription", async () => {
-	const pushManager = { getSubscription: vi.fn().mockResolvedValue(subscription) };
-	setServiceWorker(Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration));
+	const pushManager = {
+		getSubscription: vi.fn().mockResolvedValue(subscription)
+	};
+	setServiceWorker(
+		Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration)
+	);
 	mockCheckSubscription.mockResolvedValueOnce({ status: true });
 	mockCancelSubscription.mockResolvedValueOnce(undefined);
 	renderUser();
@@ -165,10 +183,14 @@ test("Displays an error when subscription status cannot be loaded", async () => 
 
 test("Logout clears the user and token and disconnects the socket", async () => {
 	const pushManager = { getSubscription: vi.fn().mockResolvedValue(null) };
-	setServiceWorker(Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration));
+	setServiceWorker(
+		Promise.resolve({ pushManager } as unknown as ServiceWorkerRegistration)
+	);
 	const { setUser } = renderUser();
 
-	fireEvent.click(await screen.findByRole("button", { name: "Kirjaudu ulos" }));
+	fireEvent.click(
+		await screen.findByRole("button", { name: "Kirjaudu ulos" })
+	);
 
 	expect(await screen.findByText("Login page")).toBeTruthy();
 	expect(setUser).toHaveBeenCalledWith(null);

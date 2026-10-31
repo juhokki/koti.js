@@ -3,19 +3,24 @@ import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { AlarmsContext } from "../../context/AlarmsContext";
+import { AssetsContext } from "../../context/AssetsContext";
+import { findAssetPath } from "../../util/AssetPathUtil";
 import { timeElapsed } from "../../util/TimeUtil";
 
 export default function Alarms() {
 	const navigate = useNavigate();
 	const context = useContext(AlarmsContext);
 	const alarms = context.alarms;
+	const assets = useContext(AssetsContext).assets;
 	const goBack = () => {
 		Promise.resolve(navigate("/")).catch(console.log);
 	};
 	const goToAsset = (assetId: string) => {
-		Promise.resolve(navigate(`/assets/${assetId}?from=alarms`)).catch(
-			console.log
-		);
+		const path = findAssetPath(assets, assetId) ?? [assetId];
+
+		Promise.resolve(
+			navigate(`/assets/${path.join("/")}?from=alarms`)
+		).catch(console.log);
 	};
 
 	if (alarms === null) {

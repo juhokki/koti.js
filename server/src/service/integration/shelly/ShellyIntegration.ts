@@ -29,7 +29,10 @@ export default class ShellyIntegration extends IntegrationBase {
 
 	override getParameters(): IntegrationParameter[] {
 		return [
-			{ name: "Discovered devices count", value: this.deviceHandlers.size }
+			{
+				name: "Discovered devices count",
+				value: this.deviceHandlers.size
+			}
 		];
 	}
 

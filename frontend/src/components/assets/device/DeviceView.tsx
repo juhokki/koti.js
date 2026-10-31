@@ -1,27 +1,27 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Icon from "@mui/material/Icon";
+import useAssetPath from "../../../hooks/useAssetPath";
 import MeasurementRow from "./rows/MeasurementRow";
 import DeviceLastUpdatedRow from "./rows/DeviceLastUpdatedRow";
 import ActionsRow from "./rows/ActionsRow";
 import AlarmsRow from "./rows/AlarmsRow";
 import SchedulesRow from "./rows/SchedulesRow";
-import { Asset, Device, DeviceOnlineStatus } from "../../../interface/Asset";
+import { Device, DeviceOnlineStatus } from "../../../interface/Asset";
 
 interface DeviceViewProps {
-	asset: Asset;
 	device: Device;
 }
 
 export default function DeviceView(props: DeviceViewProps) {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const asset = props.asset;
+	const { assetPath } = useAssetPath();
 	const device = props.device;
 	const offline = device.onlineStatus === DeviceOnlineStatus.OFFLINE;
 	const measurements = device.measurements;
 	const openMeasurementHistory = () => {
 		Promise.resolve(
-			navigate(`/assets/${asset.id}/${device.id}${location.search}`)
+			navigate(`${assetPath}/${device.id}/history${location.search}`)
 		).catch(console.log);
 	};
 

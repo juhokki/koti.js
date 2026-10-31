@@ -205,7 +205,12 @@ export default function System() {
 								{stats.integrations.map((name) => (
 									<tr key={name}>
 										<th className="centered">
-											<span>{name.replace(/([a-z])([A-Z])/g, '$1 $2')}</span>
+											<span>
+												{name.replace(
+													/([a-z])([A-Z])/g,
+													"$1 $2"
+												)}
+											</span>
 										</th>
 										<td className="centered">
 											<button

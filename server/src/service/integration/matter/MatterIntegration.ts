@@ -307,7 +307,7 @@ export default class MatterIntegration extends IntegrationBase {
 		if (value === undefined) {
 			return;
 		}
-		
+
 		await this.services
 			.getDataService()
 			.write([

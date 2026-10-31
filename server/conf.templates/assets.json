@@ -3,6 +3,8 @@
 		"id": "asset id",
 		"name": "asset name",
 		"icon": "asset icon",
+		"isRootAsset": true,
+		"children": ["child asset id"],
 		"devices": ["asset device id"]
 	}
 ]

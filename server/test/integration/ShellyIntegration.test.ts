@@ -234,7 +234,9 @@ test("Ignores discovered devices that are not configured", () => {
 
 test("Rejects configured devices with an unsupported type", () => {
 	const integration = new ShellyIntegration(services, settings);
-	mockGetDevice.mockReturnValue(new Device("device-1", "unknown" as DeviceType, "", "", []));
+	mockGetDevice.mockReturnValue(
+		new Device("device-1", "unknown" as DeviceType, "", "", [])
+	);
 	const unsupportedDevice = {
 		id: "device-1",
 		type: "SHSW-1",
@@ -259,30 +261,24 @@ test("Routes Button 2 discovery and rejects control for missing handlers", () =>
 		}
 	};
 	mockGetDevice.mockReturnValue(
-		new Device(
-			"button-1",
-			DeviceType.ShellyIntegration,
-			"Button",
-			"icon",
-			[
-				new Measurement(
-					"button-1",
-					"inputEventCounter0",
-					"Input events",
-					MeasurementType.Counter,
-					"",
-					"icon"
-				),
-				new Measurement(
-					"button-1",
-					"battery",
-					"Battery",
-					MeasurementType.Number,
-					"%",
-					"icon"
-				)
-			]
-		)
+		new Device("button-1", DeviceType.ShellyIntegration, "Button", "icon", [
+			new Measurement(
+				"button-1",
+				"inputEventCounter0",
+				"Input events",
+				MeasurementType.Counter,
+				"",
+				"icon"
+			),
+			new Measurement(
+				"button-1",
+				"battery",
+				"Battery",
+				MeasurementType.Number,
+				"%",
+				"icon"
+			)
+		])
 	);
 	mockWrite.mockResolvedValue(Promise.resolve());
 

@@ -29,7 +29,9 @@ export default class OnChangeActionHandler implements ActionHandler {
 
 	matches(deviceId: string, measurementId: string, trigger: ActionTrigger) {
 		return (
-			this.deviceId === deviceId 	&& this.measurementId === measurementId && this.trigger === trigger
+			this.deviceId === deviceId &&
+			this.measurementId === measurementId &&
+			this.trigger === trigger
 		);
 	}
 

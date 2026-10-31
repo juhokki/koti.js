@@ -188,20 +188,18 @@ test("Enabled integrations are loaded, started and stopped with the service", as
 });
 
 test("Returns enabled integrations and their parameters", () => {
-mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
 
-const service = new IntegrationService(services, settings);
+	const service = new IntegrationService(services, settings);
 
-service.integrations = new Map();
-service.integrations.set("TestIntegration", {
-getParameters: () => [{ name: "Count", value: 1 }]
-} as unknown as IntegrationBase);
+	service.integrations = new Map();
+	service.integrations.set("TestIntegration", {
+		getParameters: () => [{ name: "Count", value: 1 }]
+	} as unknown as IntegrationBase);
 
-expect(service.getEnabledIntegrations()).toStrictEqual([
-"TestIntegration"
-]);
-expect(service.getIntegrationParameters("TestIntegration")).toStrictEqual([
-{ name: "Count", value: 1 }
-]);
-expect(() => service.getIntegrationParameters("Nope")).toThrow();
+	expect(service.getEnabledIntegrations()).toStrictEqual(["TestIntegration"]);
+	expect(service.getIntegrationParameters("TestIntegration")).toStrictEqual([
+		{ name: "Count", value: 1 }
+	]);
+	expect(() => service.getIntegrationParameters("Nope")).toThrow();
 });

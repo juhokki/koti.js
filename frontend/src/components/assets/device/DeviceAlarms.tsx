@@ -1,28 +1,22 @@
 ﻿import { useContext } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Icon from "@mui/material/Icon";
-import { AssetsContext } from "../../../context/AssetsContext";
+import useAssetPath from "../../../hooks/useAssetPath";
 import { AlarmsContext } from "../../../context/AlarmsContext";
 import { timeElapsed } from "../../../util/TimeUtil";
 
 export default function DeviceAlarms() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const params = useParams();
-	const assetId = params.assetId;
-	const deviceId = params.deviceId;
-	const assets = useContext(AssetsContext).assets;
+	const { asset, assetPath, deviceId } = useAssetPath();
 	const activeAlarms = useContext(AlarmsContext).alarms ?? [];
-	const asset = assets.find((a) => a.id === assetId);
 	const device = asset?.devices.find((d) => d.id === deviceId);
 
 	const goBack = () => {
-		if (assetId) {
-			Promise.resolve(
-				navigate(`/assets/${assetId}${location.search}`)
-			).catch(console.log);
-		}
+		Promise.resolve(navigate(`${assetPath}${location.search}`)).catch(
+			console.log
+		);
 	};
 
 	if (!device) {

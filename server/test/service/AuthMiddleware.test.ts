@@ -104,8 +104,6 @@ test("Rejects unsupported authentication schemes", () => {
 	const { status, send, next } = executeMiddleware("Digest credentials");
 
 	expect(status).toHaveBeenCalledWith(401);
-	expect(send).toHaveBeenCalledWith(
-		"Unsupported authentication scheme."
-	);
+	expect(send).toHaveBeenCalledWith("Unsupported authentication scheme.");
 	expect(next).not.toHaveBeenCalled();
 });

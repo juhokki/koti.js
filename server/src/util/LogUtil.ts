@@ -56,12 +56,15 @@ export function toPinoArguments(args: unknown[]): [string] | [Error, string] {
 	// Pass the error as the merging object, and format the rest as the message
 	const err = args[errIndex] as Error;
 	const rest = args.filter((_, i) => i !== errIndex);
-	
+
 	return [err, rest.length ? format(...rest) : err.message];
 }
 
 // Pino's overloads reject a spread union of tuples, so branch on the tuple length
-function logWith(level: "trace" | "debug" | "info" | "warn" | "error", args: unknown[]) {
+function logWith(
+	level: "trace" | "debug" | "info" | "warn" | "error",
+	args: unknown[]
+) {
 	const pinoArgs = toPinoArguments(args);
 
 	if (pinoArgs.length === 1) {
@@ -74,10 +77,20 @@ function logWith(level: "trace" | "debug" | "info" | "warn" | "error", args: unk
 // Redirects console output from dependencies to the logger
 export function redirectConsole() {
 	/* eslint-disable no-console */
-	console.log = console.info = (...args: unknown[]) => { logWith("info", args); };
-	console.trace = (...args: unknown[]) => { logWith("trace", args); };
-	console.debug = (...args: unknown[]) => { logWith("debug", args); };
-	console.warn = (...args: unknown[]) => { logWith("warn", args); };
-	console.error = (...args: unknown[]) => { logWith("error", args); };
+	console.log = console.info = (...args: unknown[]) => {
+		logWith("info", args);
+	};
+	console.trace = (...args: unknown[]) => {
+		logWith("trace", args);
+	};
+	console.debug = (...args: unknown[]) => {
+		logWith("debug", args);
+	};
+	console.warn = (...args: unknown[]) => {
+		logWith("warn", args);
+	};
+	console.error = (...args: unknown[]) => {
+		logWith("error", args);
+	};
 	/* eslint-enable no-console */
 }
