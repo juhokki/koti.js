@@ -126,8 +126,8 @@ export default class AssetService extends ServiceBase {
 				assetConfig.id,
 				assetConfig.name,
 				assetConfig.icon,
-				assetConfig.isRootAsset,
-				assetConfig.children,
+				assetConfig.isRootAsset ?? false,
+				assetConfig.children ?? [],
 				assetConfig.devices.map((deviceId) => this.getDevice(deviceId))
 			);
 		});

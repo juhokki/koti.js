@@ -329,3 +329,18 @@ test("Throws on asset cycle", () => {
 		"Asset cycle found"
 	);
 });
+
+test("Defaults missing isRootAsset and children", () => {
+mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+mockReadFileSync.mockReturnValueOnce(
+JSON.stringify([
+{ id: "a", name: "a", icon: "test-icon", devices: [] }
+])
+);
+
+const [asset] = new AssetService(services, settings).getAssets();
+
+expect(asset).toEqual(
+expect.objectContaining({ isRootAsset: false, children: [] })
+);
+});
