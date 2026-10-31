@@ -11,7 +11,7 @@ import Select from "@mui/material/Select";
 import RecipesApi from "../../api/RecipesApi";
 import { RecipeIngredient } from "../../interface/Recipe";
 
-const UNITS = ["g", "kg", "dl", "l", "tl", "rkl", "%", "kpl", "prk"] as const;
+const UNITS = ["g", "kg", "dl", "l", "tl", "rkl", "%", "kpl", "prk", "ps"] as const;
 const DEFAULT_UNIT = "";
 
 interface IngredientDraft {
