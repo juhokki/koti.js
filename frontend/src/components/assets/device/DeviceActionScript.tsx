@@ -89,7 +89,9 @@ export default function DeviceActionScript() {
 						)}
 						{action && (
 							<>
-								<pre className="script">{action.script}</pre>
+								<div className="script grid-sub-item">
+									{action.script}
+								</div>
 								<div className="centered margin-top">
 									<button onClick={run} disabled={running}>
 										Suorita

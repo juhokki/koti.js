@@ -149,19 +149,29 @@ export default function Logs() {
 						Tietojen hakeminen ei onnistunut.
 					</div>
 				)}
-				<div className="logs">
+				<div className="grid">
 					{entries.map((entry, i) => (
-						<div className="log-item" key={i}>
-							<div className="log-header">
-								<span>{formatTime(entry.time)}</span>
-								<span>{levelName(entry.level)}</span>
-							</div>
-							<div className="log-message">{entry.msg}</div>
-							{entry.err?.stack && (
-								<div className="log-stack">
-									{entry.err.stack}
-								</div>
-							)}
+						<div className="grid-item full-width" key={i}>
+							<table>
+								<tbody>
+									<tr className="underline">
+										<th>{formatTime(entry.time)}</th>
+										<td>{levelName(entry.level)}</td>
+									</tr>
+									<tr>
+										<td colSpan={2}>{entry.msg}</td>
+									</tr>
+									{entry.err?.stack && (
+										<tr>
+											<td colSpan={2}>
+												<div className="log-stack grid-sub-item">
+													{entry.err.stack}
+												</div>
+											</td>
+										</tr>
+									)}
+								</tbody>
+							</table>
 						</div>
 					))}
 				</div>

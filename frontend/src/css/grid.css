@@ -38,8 +38,12 @@
 	flex-shrink: 0;
 }
 
-.grid pre.script {
+.grid .grid-sub-item {
+	margin-top: calc(var(--spacing) / 2);
+	padding: calc(var(--spacing) / 2);
+	border-radius: var(--border-radius);
+	background-color: var(--sub-box-background-color);
+	font-weight: 100;
 	white-space: pre-wrap;
-	overflow-x: auto;
-	text-align: left;
+	overflow: auto;
 }
