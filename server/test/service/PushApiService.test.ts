@@ -94,8 +94,6 @@ test("PushApiService sends alarm notification", async () => {
 		}
 	];
 	const alarm = new Alarm(
-		"asset-1",
-		"asset-name",
 		"device-1",
 		"device-name",
 		"meas-1",
@@ -114,7 +112,7 @@ test("PushApiService sends alarm notification", async () => {
 
 	expect(mockSendNotification).toHaveBeenLastCalledWith(
 		"test",
-		JSON.stringify({ title: "asset-name/meas-name", body: "name" })
+		JSON.stringify({ title: "device-name/meas-name", body: "name" })
 	);
 });
 
@@ -124,8 +122,6 @@ test("Sends one notification per triggered alarm", async () => {
 	]);
 	const service = new PushApiService(services, settings);
 	const alarm = new Alarm(
-		"asset-1",
-		"asset-name",
 		"device-1",
 		"device-name",
 		"meas-1",

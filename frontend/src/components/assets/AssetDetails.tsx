@@ -83,20 +83,20 @@ export default function AssetDetails() {
 							</h3>
 						</div>
 					))}
-					{asset.isSummaryAsset ? (
-						devices.length > 0 && (
-							<AssetSummaryView devices={devices} />
-						)
-					) : (
-						devices.map(({ device, displayName, measurements }) => (
-							<Device
-								device={device}
-								displayName={displayName}
-								measurements={measurements}
-								key={device.id}
-							/>
-						))
-					)}
+					{asset.isSummaryAsset
+						? devices.length > 0 && (
+								<AssetSummaryView devices={devices} />
+							)
+						: devices.map(
+								({ device, displayName, measurements }) => (
+									<Device
+										device={device}
+										displayName={displayName}
+										measurements={measurements}
+										key={device.id}
+									/>
+								)
+							)}
 				</div>
 			</section>
 		</section>

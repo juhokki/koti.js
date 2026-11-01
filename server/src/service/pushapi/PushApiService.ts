@@ -53,7 +53,7 @@ export default class PushApiService extends ServiceBase {
 	}
 
 	async onAlarmTriggered(alarm: Alarm) {
-		const title = `${alarm.assetName}/${alarm.measurementName}`;
+		const title = `${alarm.deviceName}/${alarm.measurementName}`;
 		const body = alarm.name;
 
 		await this.sendToSubscribedUsers(title, body);

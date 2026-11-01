@@ -87,13 +87,8 @@ export default class AlarmCheckerBase {
 			const device = this.services
 				.getAssetService()
 				.getDevice(measurement.deviceId);
-			const asset = this.services
-				.getAssetService()
-				.getDeviceAsset(device.id);
 			const name = this.getConfigAttribute<string>(measurement, "name");
 			const alarm = new Alarm(
-				asset.id,
-				asset.name,
 				device.id,
 				device.name,
 				measurement.id,

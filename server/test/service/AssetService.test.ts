@@ -149,7 +149,9 @@ test("Finds asset, device and measurement", async () => {
 		service.getDevicesWithType(DeviceType.ShellyIntegration).length
 	).toBe(1);
 	expect(service.getDevice("test-device").id).toBe("test-device");
-	expect(service.getDeviceAsset("test-device").id).toBe("test-asset");
+	expect(
+		service.getAsset("test-asset").devices.map((device) => device.id)
+	).toContain("test-device");
 	expect(service.getDeviceMeasurements("test-device")).toStrictEqual([
 		expect.objectContaining({ id: "test-meas" })
 	]);
@@ -342,16 +344,14 @@ test("Throws on asset cycle", () => {
 });
 
 test("Defaults missing isRootAsset and children", () => {
-mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
-mockReadFileSync.mockReturnValueOnce(
-JSON.stringify([
-{ id: "a", name: "a", icon: "test-icon", devices: [] }
-])
-);
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([{ id: "a", name: "a", icon: "test-icon", devices: [] }])
+	);
 
-const [asset] = new AssetService(services, settings).getAssets();
+	const [asset] = new AssetService(services, settings).getAssets();
 
-expect(asset).toEqual(
-expect.objectContaining({ isRootAsset: false, children: [] })
-);
+	expect(asset).toEqual(
+		expect.objectContaining({ isRootAsset: false, children: [] })
+	);
 });

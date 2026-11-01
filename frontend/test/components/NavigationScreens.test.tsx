@@ -61,8 +61,6 @@ const emptyAsset: Asset = {
 	devices: []
 };
 const alarm: Alarm = {
-	assetId: asset.id,
-	assetName: asset.name,
 	deviceId: device.id,
 	deviceName: device.name,
 	measurementId: measurement.id,
@@ -75,33 +73,43 @@ const alarm: Alarm = {
 afterEach(cleanup);
 
 test("Alarms distinguishes loading, empty, and active alarm states", () => {
-	const { rerender } = render(
+	const renderAlarms = (alarms: Alarm[] | null) => (
 		<MemoryRouter>
-			<AlarmsContext.Provider value={{ alarms: null }}>
-				<Alarms />
-			</AlarmsContext.Provider>
+			<AssetsContext.Provider value={{ assets: [asset] }}>
+				<AlarmsContext.Provider value={{ alarms }}>
+					<Alarms />
+				</AlarmsContext.Provider>
+			</AssetsContext.Provider>
 		</MemoryRouter>
 	);
+	const { rerender } = render(renderAlarms(null));
 	expect(document.querySelector(".loader")).toBeTruthy();
 
-	rerender(
-		<MemoryRouter>
-			<AlarmsContext.Provider value={{ alarms: [] }}>
-				<Alarms />
-			</AlarmsContext.Provider>
-		</MemoryRouter>
-	);
+	rerender(renderAlarms([]));
 	expect(screen.getByText("Ei aktiivisia hälytyksiä.")).toBeTruthy();
 
-	rerender(
-		<MemoryRouter>
-			<AlarmsContext.Provider value={{ alarms: [alarm] }}>
-				<Alarms />
-			</AlarmsContext.Provider>
-		</MemoryRouter>
-	);
+	rerender(renderAlarms([alarm]));
 	expect(screen.getByText("High temperature")).toBeTruthy();
 	expect(screen.getByText("Home")).toBeTruthy();
+	expect(screen.getByRole("columnheader", { name: "Alkanut" })).toBeTruthy();
+
+	const initialWidth = window.innerWidth;
+	Object.defineProperty(window, "innerWidth", {
+		configurable: true,
+		value: 800
+	});
+	fireEvent(window, new Event("resize"));
+
+	expect(screen.queryByRole("columnheader", { name: "Alkanut" })).toBeNull();
+	expect(
+		document.querySelector("tbody tr")?.querySelectorAll("td")
+	).toHaveLength(2);
+
+	Object.defineProperty(window, "innerWidth", {
+		configurable: true,
+		value: initialWidth
+	});
+	fireEvent(window, new Event("resize"));
 });
 
 test("Alarm assets link back to details with alarm origin preserved", async () => {
@@ -248,6 +256,11 @@ test("Asset details applies device name overrides and measurement filters", () =
 	expect(screen.getByText("Temperature")).toBeTruthy();
 	expect(screen.queryByText("Humidity")).toBeNull();
 	expect(screen.queryByText("Toiminnot")).toBeNull();
+	expect(
+		document
+			.querySelector(".grid-item table tbody tr:first-child")
+			?.querySelectorAll("td")
+	).toHaveLength(1);
 });
 
 test("Summary asset renders filtered readings in one box", () => {
@@ -296,12 +309,35 @@ test("Summary asset renders filtered readings in one box", () => {
 		</ValuesContext.Provider>
 	);
 
-	expect(screen.getByText("Yhteenveto")).toBeTruthy();
-	expect(screen.getByText("Living room: Temperature")).toBeTruthy();
-	expect(screen.getByText("Kitchenette: Humidity")).toBeTruthy();
+	expect(screen.getByRole("columnheader", { name: "Kohde" })).toBeTruthy();
+	expect(screen.getByRole("columnheader", { name: "Arvo" })).toBeTruthy();
+	expect(screen.getByText("Living room")).toBeTruthy();
+	expect(screen.getByText("Kitchenette")).toBeTruthy();
 	expect(screen.getByText("22 C")).toBeTruthy();
 	expect(screen.getByText("45 %")).toBeTruthy();
+	expect(screen.getAllByTitle("Päivitetty")).toHaveLength(2);
+	expect(
+		document.querySelectorAll(".grid-item table tbody tr:first-child td")
+	).toHaveLength(2);
 	expect(document.querySelectorAll(".grid-item")).toHaveLength(1);
+
+	const initialWidth = window.innerWidth;
+	Object.defineProperty(window, "innerWidth", {
+		configurable: true,
+		value: 800
+	});
+	fireEvent(window, new Event("resize"));
+
+	expect(
+		screen.queryByRole("columnheader", { name: "Päivitetty" })
+	).toBeNull();
+	expect(screen.queryByTitle("Päivitetty")).toBeNull();
+
+	Object.defineProperty(window, "innerWidth", {
+		configurable: true,
+		value: initialWidth
+	});
+	fireEvent(window, new Event("resize"));
 });
 test("Asset details renders child assets as navigation boxes", async () => {
 	const parent: Asset = { ...asset, children: ["child-1"], devices: [] };

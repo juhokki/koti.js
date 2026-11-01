@@ -106,15 +106,17 @@ describe("AlarmService", () => {
 			expect(mockAlarmsChange).toHaveBeenLastCalledWith(
 				expect.arrayContaining([
 					expect.objectContaining({
-						assetId: "asset-1",
 						deviceId: "device-1",
+						deviceName: "name",
 						measurementId: "1",
+						measurementName: "meas",
 						type: AlarmType.Stale
 					}),
 					expect.objectContaining({
-						assetId: "asset-1",
 						deviceId: "device-1",
+						deviceName: "name",
 						measurementId: "1",
+						measurementName: "meas",
 						type: AlarmType.ValueUpperLimit
 					})
 				])
@@ -165,9 +167,10 @@ describe("AlarmService", () => {
 			expect(mockAlarmsChange).toHaveBeenLastCalledWith(
 				expect.arrayContaining([
 					expect.objectContaining({
-						assetId: "asset-1",
 						deviceId: "device-1",
+						deviceName: "name",
 						measurementId: "1",
+						measurementName: "meas",
 						type: AlarmType.ValueUpperLimit
 					})
 				])
@@ -291,9 +294,10 @@ describe("AlarmService", () => {
 			expect(mockAlarmsChange).toHaveBeenLastCalledWith(
 				expect.arrayContaining([
 					expect.objectContaining({
-						assetId: "asset-1",
 						deviceId: "device-2",
+						deviceName: "name",
 						measurementId: "2",
+						measurementName: "meas2",
 						name: "test"
 					})
 				])
@@ -373,9 +377,10 @@ describe("AlarmService", () => {
 				expect(mockAlarmsChange).toHaveBeenLastCalledWith(
 					expect.arrayContaining([
 						expect.objectContaining({
-							assetId: "asset-1",
 							deviceId: "device-1",
-							measurementId: "1"
+							deviceName: "name",
+							measurementId: "1",
+							measurementName: "meas"
 						})
 					])
 				);
@@ -728,9 +733,10 @@ describe("AlarmService", () => {
 
 				expect(service.getAlarms()).toStrictEqual([
 					expect.objectContaining({
-						assetId: "asset-1",
 						deviceId: "device-1",
+						deviceName: "name",
 						measurementId: "1",
+						measurementName: "meas",
 						name: "test",
 						time: now,
 						type: AlarmType.ValueUpperLimit
@@ -891,9 +897,10 @@ describe("AlarmService", () => {
 
 				expect(service.getAlarms()).toStrictEqual([
 					expect.objectContaining({
-						assetId: "asset-1",
 						deviceId: "device-1",
+						deviceName: "name",
 						measurementId: "1",
+						measurementName: "meas",
 						name: "test",
 						time: now,
 						type: AlarmType.ValueLowerLimit

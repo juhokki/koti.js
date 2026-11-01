@@ -1,6 +1,4 @@
 export interface Alarm {
-	assetId: string;
-	assetName: string;
 	deviceId: string;
 	deviceName: string;
 	measurementId: string;

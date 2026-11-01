@@ -1,8 +1,6 @@
 import type AlarmType from "../constants/AlarmType.ts";
 
 export default class Alarm {
-	assetId: string;
-	assetName: string;
 	deviceId: string;
 	deviceName: string;
 	measurementId: string;
@@ -12,8 +10,6 @@ export default class Alarm {
 	type: AlarmType;
 
 	constructor(
-		assetId: string,
-		assetName: string,
 		deviceId: string,
 		deviceName: string,
 		measurementId: string,
@@ -22,8 +18,6 @@ export default class Alarm {
 		time: number,
 		type: AlarmType
 	) {
-		this.assetId = assetId;
-		this.assetName = assetName;
 		this.deviceId = deviceId;
 		this.deviceName = deviceName;
 		this.measurementId = measurementId;

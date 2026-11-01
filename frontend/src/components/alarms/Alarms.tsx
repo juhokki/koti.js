@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -6,12 +6,30 @@ import { AlarmsContext } from "../../context/AlarmsContext";
 import { AssetsContext } from "../../context/AssetsContext";
 import { findAssetPath } from "../../util/AssetPathUtil";
 import { timeElapsed } from "../../util/TimeUtil";
+import { findDeviceAsset } from "../../util/AssetUtil";
+
+const STARTED_AT_COLUMN_MIN_WIDTH = 800;
 
 export default function Alarms() {
+	const [showStartedAt, setShowStartedAt] = useState(
+		() => window.innerWidth > STARTED_AT_COLUMN_MIN_WIDTH
+	);
 	const navigate = useNavigate();
 	const context = useContext(AlarmsContext);
 	const alarms = context.alarms;
 	const assets = useContext(AssetsContext).assets;
+	useEffect(() => {
+		const updateColumnVisibility = () => {
+			setShowStartedAt(window.innerWidth > STARTED_AT_COLUMN_MIN_WIDTH);
+		};
+
+		window.addEventListener("resize", updateColumnVisibility);
+
+		return () => {
+			window.removeEventListener("resize", updateColumnVisibility);
+		};
+	}, []);
+
 	const goBack = () => {
 		Promise.resolve(navigate("/")).catch(console.log);
 	};
@@ -62,30 +80,47 @@ export default function Alarms() {
 									<tr className="underline">
 										<th>Kohde</th>
 										<th>Hälytys</th>
-										<th>Alkanut</th>
+										{showStartedAt && <th>Alkanut</th>}
 									</tr>
 								</thead>
 								<tbody>
-									{alarms.map((alarm) => (
-										<tr
-											key={`${alarm.assetName}-${alarm.deviceName}-${alarm.measurementName}-${alarm.type}`}
-										>
-											<td>
-												<span
-													className="clickable"
-													onClick={() => {
-														goToAsset(
-															alarm.assetId
-														);
-													}}
-												>
-													{alarm.assetName}
-												</span>
-											</td>
-											<td>{alarm.name}</td>
-											<td>{timeElapsed(alarm.time)}</td>
-										</tr>
-									))}
+									{alarms.map((alarm) => {
+										const asset = findDeviceAsset(
+											alarm.deviceId,
+											assets
+										);
+
+										if (!asset) {
+											throw new Error(
+												`Asset not found for device ${alarm.deviceId}`
+											);
+										}
+
+										return (
+											<tr
+												key={`${asset.name}-${alarm.deviceName}-${alarm.measurementName}-${alarm.type}`}
+											>
+												<td>
+													<span
+														className="clickable"
+														onClick={() => {
+															goToAsset(asset.id);
+														}}
+													>
+														{asset.name}
+													</span>
+												</td>
+												<td>{alarm.name}</td>
+												{showStartedAt && (
+													<td>
+														{timeElapsed(
+															alarm.time
+														)}
+													</td>
+												)}
+											</tr>
+										);
+									})}
 								</tbody>
 							</table>
 						)}

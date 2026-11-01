@@ -36,18 +36,6 @@ export default function Home() {
 				</h3>
 			</div>
 			<div className="grid-item">
-				<h3 onClick={goToShoppingList} className="centered clickable">
-					<ShoppingCartIcon />
-					<span>Ostoslista</span>
-				</h3>
-			</div>
-			<div className="grid-item">
-				<h3 onClick={goToRecipes} className="centered clickable">
-					<RestaurantMenuIcon />
-					<span>Reseptit</span>
-				</h3>
-			</div>
-			<div className="grid-item">
 				<h3
 					onClick={goToAlarms}
 					className={
@@ -58,6 +46,18 @@ export default function Home() {
 				>
 					<NotificationsIcon />
 					<span>Hälytykset</span>
+				</h3>
+			</div>
+			<div className="grid-item">
+				<h3 onClick={goToShoppingList} className="centered clickable">
+					<ShoppingCartIcon />
+					<span>Ostoslista</span>
+				</h3>
+			</div>
+			<div className="grid-item">
+				<h3 onClick={goToRecipes} className="centered clickable">
+					<RestaurantMenuIcon />
+					<span>Reseptit</span>
 				</h3>
 			</div>
 			<div className="grid-item">

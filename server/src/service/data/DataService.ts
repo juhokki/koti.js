@@ -172,7 +172,7 @@ export default class DataService extends ServiceBase {
 			logger.error(e, "Failed to write values.");
 		}
 	}
-	
+
 	verifyMeasurementType(measurement: Measurement, value: Value) {
 		switch (measurement.type) {
 			case MeasurementType.Number:
