@@ -5,6 +5,7 @@ import getSystemRouter from "./system.ts";
 import getLogsRouter from "./logs.ts";
 import getRecipesRouter from "./recipes.ts";
 import getShoppingListRouter from "./shoppinglist.ts";
+import getActionsRouter from "./actions.ts";
 import type ServiceLocator from "../../../ServiceLocator.ts";
 
 export default function (services: ServiceLocator) {
@@ -16,6 +17,7 @@ export default function (services: ServiceLocator) {
 	router.use(getLogsRouter());
 	router.use(getRecipesRouter(services));
 	router.use(getShoppingListRouter(services));
+	router.use(getActionsRouter(services));
 
 	return router;
 }

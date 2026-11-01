@@ -1,3 +1,4 @@
+import type ActionService from "./action/ActionService.ts";
 import type AlarmService from "./alarm/AlarmService.ts";
 import type AssetService from "./asset/AssetService.ts";
 import type DataService from "./data/DataService.ts";
@@ -50,6 +51,10 @@ export default class ServiceLocator {
 
 	getPushApiService(): PushApiService {
 		return this.get("PushApiService") as PushApiService;
+	}
+
+	getActionService(): ActionService {
+		return this.get("ActionService") as ActionService;
 	}
 
 	getAlarmService(): AlarmService {

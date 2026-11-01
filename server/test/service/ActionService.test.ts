@@ -121,3 +121,60 @@ test("Executes script that gets and controls a value", async () => {
 
 	await service.stop();
 });
+
+function deviceWithScript(script: string) {
+	return [
+		new Device("device-1", DeviceType.ShellyIntegration, "name", "icon", [
+			new Measurement(
+				"device-1",
+				"id",
+				"name",
+				MeasurementType.Number,
+				"unit",
+				"icon",
+				false,
+				undefined,
+				undefined,
+				[new ActionConfig("test", ActionTrigger.OnChange, script)]
+			)
+		])
+	];
+}
+
+test("Manual execution propagates script errors and reports unknown actions", async () => {
+	const service = new ActionService(services, settings);
+
+	mockGetDevices.mockReturnValue(
+		deviceWithScript("throw new Error('boom');")
+	);
+	await service.start();
+
+	expect(() =>
+		service.executeAction("device-1", "id", "test", ActionTrigger.OnChange)
+	).toThrow("boom");
+	expect(
+		service.executeAction(
+			"device-1",
+			"id",
+			"missing",
+			ActionTrigger.OnChange
+		)
+	).toBe(false);
+
+	await service.stop();
+});
+
+test("Value updates do not throw when a script fails", async () => {
+	const service = new ActionService(services, settings);
+
+	mockGetDevices.mockReturnValue(
+		deviceWithScript("throw new Error('boom');")
+	);
+	await service.start();
+
+	expect(() => {
+		service.onValueUpdated("device-1", "id");
+	}).not.toThrow();
+
+	await service.stop();
+});

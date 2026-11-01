@@ -8,6 +8,7 @@ import type ActionHandler from "./actionhandler/ActionHandler.ts";
 import type Value from "../../model/Value.ts";
 import ScriptContext from "./ScriptContext.ts";
 import ActionTrigger from "../../constants/ActionTrigger.ts";
+import logger from "../../util/logger.ts";
 
 export default class ActionService extends ServiceBase {
 	options: ActionServiceSettings;
@@ -64,8 +65,39 @@ export default class ActionService extends ServiceBase {
 			if (
 				action.matches(deviceId, measurementId, ActionTrigger.OnChange)
 			) {
-				action.execute(this.context);
+				try {
+					action.execute(this.context);
+				} catch (error) {
+					logger.error(
+						error,
+						`Failed to execute action "${action.name}".`
+					);
+				}
 			}
 		});
+	}
+
+	/** Runs the action manually. Returns false if not found; script errors propagate. */
+	executeAction(
+		deviceId: string,
+		measurementId: string,
+		name: string,
+		trigger: string
+	) {
+		const action = this.actionHandlers.find(
+			(handler) =>
+				handler.deviceId === deviceId &&
+				handler.measurementId === measurementId &&
+				handler.name === name &&
+				handler.trigger === trigger
+		);
+
+		if (!action) {
+			return false;
+		}
+
+		action.execute(this.context);
+
+		return true;
 	}
 }

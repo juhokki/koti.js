@@ -36,11 +36,7 @@ export default class OnChangeActionHandler implements ActionHandler {
 	}
 
 	execute(context: ScriptContext) {
-		try {
-			logger.info(`Executing action "${this.name}".`);
-			this.script.call(context);
-		} catch (error) {
-			logger.error(error, `Failed to execute action "${this.name}".`);
-		}
+		logger.info(`Executing action "${this.name}".`);
+		this.script.call(context);
 	}
 }

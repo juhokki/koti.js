@@ -3,6 +3,7 @@ import DeviceHistory from "./device/DeviceHistory";
 import DeviceAlarms from "./device/DeviceAlarms";
 import DeviceSchedules from "./device/DeviceSchedules";
 import DeviceActions from "./device/DeviceActions";
+import DeviceActionScript from "./device/DeviceActionScript";
 import useAssetPath from "../../hooks/useAssetPath";
 
 export default function AssetRoute() {
@@ -25,6 +26,8 @@ export default function AssetRoute() {
 			return <DeviceSchedules />;
 		case "actions":
 			return <DeviceActions />;
+		case "script":
+			return <DeviceActionScript />;
 		default:
 			return null;
 	}

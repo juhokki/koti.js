@@ -28,6 +28,15 @@ export default function DeviceActions() {
 		);
 	}
 
+	const openScript = (measurementId: string, index: number) => {
+		const params = new URLSearchParams(location.search);
+		params.set("action", `${measurementId}:${String(index)}`);
+
+		Promise.resolve(
+			navigate(`${assetPath}/${device.id}/script?${params.toString()}`)
+		).catch(console.log);
+	};
+
 	const measurements = device.measurements.filter(
 		(measurement) => measurement.actions.length > 0
 	);
@@ -51,39 +60,49 @@ export default function DeviceActions() {
 			</section>
 			<section className="content">
 				<div className="grid">
-					<div className="grid-item full-width">
-						{measurements.length === 0 && (
+					{measurements.length === 0 && (
+						<div className="grid-item full-width">
 							<div className="centered">Ei toimintoja.</div>
-						)}
-						{measurements.length > 0 && (
-							<table>
-								<thead>
-									<tr className="underline">
-										<th>Toiminto</th>
-										<th>Laukaisin</th>
-									</tr>
-								</thead>
-								<tbody>
-									{measurements.flatMap((measurement) =>
-										measurement.actions.map((action) => (
-											<tr
-												key={`${measurement.id}-${action.name}-${action.trigger}`}
-											>
-												<td>{action.name}</td>
-												<td>
-													{
-														triggerLabels[
-															action.trigger
-														]
-													}
-												</td>
-											</tr>
-										))
-									)}
-								</tbody>
-							</table>
-						)}
-					</div>
+						</div>
+					)}
+					{measurements.flatMap((measurement) =>
+						measurement.actions.map((action, index) => (
+							<div
+								className="grid-item"
+								key={`${measurement.id}-${action.name}-${action.trigger}`}
+							>
+								<table>
+									<tbody>
+										<tr>
+											<th>Toiminto</th>
+											<td>{action.name}</td>
+										</tr>
+										<tr>
+											<th>Laukaisin</th>
+											<td>
+												{triggerLabels[action.trigger]}
+											</td>
+										</tr>
+										<tr>
+											<th>Skripti</th>
+											<td>
+												<button
+													onClick={() => {
+														openScript(
+															measurement.id,
+															index
+														);
+													}}
+												>
+													Näytä
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						))
+					)}
 				</div>
 			</section>
 		</section>

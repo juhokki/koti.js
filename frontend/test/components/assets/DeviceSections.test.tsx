@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, cleanup } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
 import type { ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import DeviceActions from "../../../src/components/assets/device/DeviceActions";
@@ -23,6 +23,12 @@ import {
 } from "../../../src/interface/Asset";
 import type { Asset, Device, Measurement } from "../../../src/interface/Asset";
 import type { Alarm } from "../../../src/interface/Alarm";
+
+const mockExecuteAction = vi.hoisted(() => vi.fn());
+
+vi.mock("../../../src/api/ActionsApi", () => ({
+	default: { executeAction: mockExecuteAction }
+}));
 
 const measurement: Measurement = {
 	deviceId: "device-1",
@@ -115,6 +121,37 @@ test("Device actions show configured actions and the empty state", () => {
 	);
 
 	expect(screen.getByText("Notify")).toBeTruthy();
+	expect(screen.getByText("Arvon muuttuessa")).toBeTruthy();
+});
+
+test("Action script view shows the script and the execution result", async () => {
+	mockExecuteAction.mockResolvedValueOnce({ ok: false, error: "boom" });
+	mockExecuteAction.mockResolvedValueOnce({ ok: true });
+
+	renderDeviceRoute(
+		"/assets/asset-1/device-1/actions",
+		<Routes>
+			<Route path="/assets/*" element={<AssetRoute />} />
+		</Routes>
+	);
+
+	fireEvent.click(screen.getByText("Näytä"));
+	fireEvent.click(screen.getByText("Suorita"));
+
+	expect(await screen.findByText("boom")).toBeTruthy();
+	expect(mockExecuteAction).toHaveBeenCalledWith(
+		"device-1",
+		"temperature",
+		"Notify",
+		"onChange"
+	);
+
+	fireEvent.click(screen.getByText("Suorita"));
+
+	expect(await screen.findByText("OK")).toBeTruthy();
+
+	fireEvent.click(screen.getByText("Takaisin"));
+
 	expect(screen.getByText("Arvon muuttuessa")).toBeTruthy();
 });
 
