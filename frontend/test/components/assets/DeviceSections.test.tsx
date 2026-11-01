@@ -148,7 +148,7 @@ test("Action script view shows the script and the execution result", async () =>
 
 	expect(await screen.findByText("OK")).toBeTruthy();
 
-	fireEvent.click(screen.getByText("Takaisin"));
+	fireEvent.click(screen.getByTestId("ChevronLeftIcon"));
 
 	expect(screen.getByText("Arvon muuttuessa")).toBeTruthy();
 });

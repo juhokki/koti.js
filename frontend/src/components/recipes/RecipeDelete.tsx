@@ -114,15 +114,6 @@ export default function RecipeDelete() {
 									<DeleteIcon />
 									<span>Poista</span>
 								</button>
-								<button
-									type="button"
-									disabled={deleting}
-									onClick={() => {
-										go(`/recipes/${recipe.id}`);
-									}}
-								>
-									<span>Peruuta</span>
-								</button>
 							</div>
 						</>
 					)}

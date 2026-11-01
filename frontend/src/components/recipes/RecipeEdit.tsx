@@ -358,19 +358,6 @@ export default function RecipeEdit() {
 									<SaveIcon />
 									<span>Tallenna</span>
 								</button>
-								<button
-									type="button"
-									className="danger"
-									onClick={() => {
-										go(
-											recipeId
-												? `/recipes/${recipeId}`
-												: "/recipes"
-										);
-									}}
-								>
-									<span>Peruuta</span>
-								</button>
 							</div>
 						</form>
 					)}

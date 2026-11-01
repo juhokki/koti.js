@@ -138,13 +138,6 @@ export default function RecipeShoppingList() {
 								>
 									<span>Lisää</span>
 								</button>
-								<button
-									type="button"
-									className="danger"
-									onClick={goBack}
-								>
-									<span>Peruuta</span>
-								</button>
 							</div>
 						</>
 					)}

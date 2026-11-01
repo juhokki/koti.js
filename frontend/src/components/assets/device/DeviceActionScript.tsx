@@ -91,7 +91,6 @@ export default function DeviceActionScript() {
 							<>
 								<pre className="script">{action.script}</pre>
 								<div className="centered margin-top">
-									<button onClick={goBack}>Takaisin</button>
 									<button onClick={run} disabled={running}>
 										Suorita
 									</button>

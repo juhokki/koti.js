@@ -76,13 +76,3 @@ it("Shows an error message when adding fails", async () => {
 
 	expect(await screen.findByText("Lisääminen epäonnistui.")).toBeTruthy();
 });
-
-it("Cancel adds nothing and returns to the recipe", async () => {
-	renderPage();
-
-	await screen.findByText("2 dl flour");
-	fireEvent.click(screen.getByText("Peruuta"));
-
-	expect(mockAppendItems).not.toHaveBeenCalled();
-	expect(await screen.findByText("details")).toBeTruthy();
-});
