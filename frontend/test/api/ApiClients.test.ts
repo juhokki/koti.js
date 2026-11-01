@@ -234,7 +234,7 @@ test("WebPushApi checks, subscribes, and cancels subscriptions", async () => {
 	const subscription = {
 		endpoint: "https://push.example/endpoint",
 		keys: { p256dh: "public", auth: "secret" }
-	} as PushSubscription;
+	} as unknown as PushSubscription;
 	const status = { status: true };
 	mockFetch
 		.mockResolvedValueOnce(createResponse(status))
@@ -273,7 +273,7 @@ test.each([
 		const subscription = {
 			endpoint: "https://push.example/endpoint",
 			keys: { p256dh: "public", auth: "secret" }
-		} as PushSubscription;
+		} as unknown as PushSubscription;
 		const request =
 			action === "subscribe"
 				? WebPushApi.subscribe(subscription)

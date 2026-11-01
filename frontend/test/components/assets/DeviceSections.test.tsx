@@ -67,8 +67,6 @@ const asset: Asset = {
 };
 
 const activeAlarm: Alarm = {
-	assetId: asset.id,
-	assetName: asset.name,
 	deviceId: device.id,
 	deviceName: device.name,
 	measurementId: measurement.id,

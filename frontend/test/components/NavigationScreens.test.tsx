@@ -13,6 +13,7 @@ import {
 	ValueContextEmitter
 } from "../../src/context/ValuesContext";
 import {
+	ActionTrigger,
 	AlarmType,
 	DeviceOnlineStatus,
 	DeviceType,
@@ -212,7 +213,13 @@ test("Asset details applies device name overrides and measurement filters", () =
 		...measurement,
 		id: "humidity",
 		name: "Humidity",
-		actions: [{ name: "Hidden action", trigger: "onChange", script: "" }]
+		actions: [
+			{
+				name: "Hidden action",
+				trigger: ActionTrigger.OnChange,
+				script: ""
+			}
+		]
 	};
 	const filteredDevice = {
 		...device,

@@ -165,7 +165,7 @@ test("Controllable boolean values update on success and retain the old value on 
 	};
 	mockControl.mockResolvedValueOnce({});
 	renderValue(measurement, createValue("temperature", true));
-	const input = screen.getByRole("switch");
+	const input = screen.getByRole<HTMLInputElement>("switch");
 
 	fireEvent.click(input);
 	await waitFor(() => {

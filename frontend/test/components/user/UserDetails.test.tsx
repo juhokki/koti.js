@@ -103,7 +103,7 @@ test("Displays user details and enabled status for an existing subscription", as
 
 	expect(await screen.findByText("alice")).toBeTruthy();
 	expect(screen.getByText("fi")).toBeTruthy();
-	expect(screen.getByRole("switch").checked).toBe(true);
+	expect(screen.getByRole<HTMLInputElement>("switch").checked).toBe(true);
 	expect(mockCheckSubscription).toHaveBeenCalledWith(subscription);
 });
 
@@ -116,7 +116,7 @@ test("Starts with notifications disabled when no subscription exists", async () 
 	renderUser();
 
 	expect(await screen.findByText("alice")).toBeTruthy();
-	expect(screen.getByRole("switch").checked).toBe(false);
+	expect(screen.getByRole<HTMLInputElement>("switch").checked).toBe(false);
 	expect(mockCheckSubscription).not.toHaveBeenCalled();
 });
 
@@ -132,7 +132,7 @@ test("Enables notifications by creating and registering a subscription", async (
 	mockSubscribe.mockResolvedValueOnce(undefined);
 	renderUser();
 
-	const toggle = await screen.findByRole("switch");
+	const toggle = await screen.findByRole<HTMLInputElement>("switch");
 	fireEvent.click(toggle);
 
 	await waitFor(() => {
@@ -143,7 +143,7 @@ test("Enables notifications by creating and registering a subscription", async (
 		applicationServerKey: PUBLIC_KEY
 	});
 	await waitFor(() => {
-		expect(screen.getByRole("switch").checked).toBe(true);
+		expect(screen.getByRole<HTMLInputElement>("switch").checked).toBe(true);
 	});
 });
 
@@ -158,7 +158,7 @@ test("Disables notifications and removes the existing subscription", async () =>
 	mockCancelSubscription.mockResolvedValueOnce(undefined);
 	renderUser();
 
-	const toggle = await screen.findByRole("switch");
+	const toggle = await screen.findByRole<HTMLInputElement>("switch");
 	expect(toggle.checked).toBe(true);
 	fireEvent.click(toggle);
 
@@ -167,7 +167,9 @@ test("Disables notifications and removes the existing subscription", async () =>
 	});
 	expect(mockCancelSubscription).toHaveBeenCalledWith(subscription);
 	await waitFor(() => {
-		expect(screen.getByRole("switch").checked).toBe(false);
+		expect(screen.getByRole<HTMLInputElement>("switch").checked).toBe(
+			false
+		);
 	});
 });
 

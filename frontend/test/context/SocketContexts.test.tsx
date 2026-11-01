@@ -26,7 +26,7 @@ import {
 	UserContext,
 	UserContextProvider
 } from "../../src/context/UserContext";
-import type { Alarm } from "../../src/interface/Alarm";
+import { AlarmType, type Alarm } from "../../src/interface/Alarm";
 import type { Asset } from "../../src/interface/Asset";
 import type { ShoppingList } from "../../src/interface/ShoppingList";
 import type { User } from "../../src/interface/User";
@@ -54,17 +54,15 @@ const asset: Asset = {
 	devices: []
 };
 const alarm: Alarm = {
-	assetId: "home",
-	assetName: "Home",
 	deviceId: "heater",
 	deviceName: "Heater",
 	measurementId: "temperature",
 	measurementName: "Temperature",
 	name: "Too warm",
 	time: 10,
-	type: "value.upper-limit"
+	type: AlarmType.ValueUpperLimit
 };
-const shoppingList: ShoppingList = {
+const sampleShoppingList: ShoppingList = {
 	update: "now",
 	items: [{ id: "milk", text: "Milk", crossed: false }]
 };
@@ -94,7 +92,7 @@ function ContextConsumer() {
 			<span data-testid="save-result">{saveResult}</span>
 			<button
 				onClick={() => {
-					setShoppingList(shoppingList, (error) => {
+					setShoppingList(sampleShoppingList, (error) => {
 						setSaveResult(error ? error.message : "saved");
 					});
 				}}
@@ -150,7 +148,7 @@ test("Receives connection, user, asset, alarm, and shopping-list socket events",
 		handlers.get(Messages.ALARMS)?.([alarm]);
 	});
 	act(() => {
-		handlers.get(Messages.SHOPPINGLIST)?.(shoppingList);
+		handlers.get(Messages.SHOPPINGLIST)?.(sampleShoppingList);
 	});
 
 	expect(screen.getByTestId("connected").textContent).toBe("true");
@@ -184,7 +182,7 @@ test("Reports shopping-list socket acknowledgement success and failure", () => {
 
 	expect(mockSocketEmit).toHaveBeenCalledWith(
 		Messages.SHOPPINGLIST,
-		null,
+		sampleShoppingList,
 		expect.any(Function)
 	);
 	const callback = mockSocketEmit.mock.calls[0]?.[2] as (

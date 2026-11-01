@@ -41,7 +41,7 @@ test("Creates stable device and measurement value keys", () => {
 test("Reads CSS variables as text and integers", () => {
 	CssUtil.computedStyle = {
 		getPropertyValue: () => "42px"
-	} as CSSStyleDeclaration;
+	} as unknown as CSSStyleDeclaration;
 
 	expect(CssUtil.getVar("--test-variable")).toBe("42px");
 	expect(CssUtil.getVarInt("--test-variable")).toBe(42);

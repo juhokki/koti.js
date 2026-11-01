@@ -63,7 +63,11 @@ test("Adds, crosses, removes, and clears shopping list items", () => {
 		crossed: false
 	});
 
-	fireEvent.click(screen.getAllByTestId("RemoveCircleIcon")[0]);
+	const [removeIcon] = screen.getAllByTestId("RemoveCircleIcon");
+	expect(removeIcon).toBeDefined();
+	if (removeIcon) {
+		fireEvent.click(removeIcon);
+	}
 	expect(setShoppingList).toHaveBeenLastCalledWith(
 		expect.objectContaining({
 			items: [{ id: "bread", text: "Bread", crossed: true }]
