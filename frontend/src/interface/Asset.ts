@@ -7,6 +7,9 @@ export interface Asset {
 	isRootAsset: boolean;
 	children: string[];
 	devices: Device[];
+	deviceNameOverrides?: { id: string; name: string }[];
+	isSummaryAsset?: boolean;
+	measurementFilter?: string | null;
 }
 
 export interface Device {

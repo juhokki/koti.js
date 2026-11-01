@@ -5,6 +5,9 @@
 		"icon": "asset icon",
 		"isRootAsset": true,
 		"children": ["child asset id"],
-		"devices": ["asset device id"]
+		"devices": ["asset device id"],
+		"deviceNameOverrides": [],
+		"isSummaryAsset": false,
+		"measurementFilter": null
 	}
 ]

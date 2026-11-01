@@ -5,6 +5,7 @@ import { Device, Measurement } from "../../../../interface/Asset";
 interface MeasurementRowProps {
 	device: Device;
 	measurement: Measurement;
+	deviceName?: string;
 }
 
 export default function MeasurementRow(props: MeasurementRowProps) {
@@ -16,7 +17,10 @@ export default function MeasurementRow(props: MeasurementRowProps) {
 			<th>
 				<div>
 					<Icon>{measurement.icon}</Icon>
-					<span>{measurement.name}</span>
+					<span>
+						{props.deviceName ? `${props.deviceName}: ` : ""}
+						{measurement.name}
+					</span>
 				</div>
 			</th>
 			<td>

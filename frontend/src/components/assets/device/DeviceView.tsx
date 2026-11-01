@@ -6,10 +6,16 @@ import DeviceLastUpdatedRow from "./rows/DeviceLastUpdatedRow";
 import ActionsRow from "./rows/ActionsRow";
 import AlarmsRow from "./rows/AlarmsRow";
 import SchedulesRow from "./rows/SchedulesRow";
-import { Device, DeviceOnlineStatus } from "../../../interface/Asset";
+import {
+	Device,
+	DeviceOnlineStatus,
+	Measurement
+} from "../../../interface/Asset";
 
 interface DeviceViewProps {
 	device: Device;
+	displayName?: string;
+	measurements?: Measurement[];
 }
 
 export default function DeviceView(props: DeviceViewProps) {
@@ -17,21 +23,23 @@ export default function DeviceView(props: DeviceViewProps) {
 	const location = useLocation();
 	const { assetPath } = useAssetPath();
 	const device = props.device;
+	const displayName = props.displayName ?? device.name;
 	const offline = device.onlineStatus === DeviceOnlineStatus.OFFLINE;
-	const measurements = device.measurements;
+	const measurements = props.measurements ?? device.measurements;
+	const viewDevice = { ...device, measurements };
 	const openMeasurementHistory = () => {
 		Promise.resolve(
 			navigate(`${assetPath}/${device.id}/history${location.search}`)
 		).catch(console.log);
 	};
 
-	const hasActions = !!device.measurements.find(
+	const hasActions = !!measurements.find(
 		(measurement) => measurement.actions.length > 0
 	);
-	const hasAlarms = !!device.measurements.find(
+	const hasAlarms = !!measurements.find(
 		(measurement) => measurement.alarms.length > 0
 	);
-	const hasSchedules = !!device.measurements.find(
+	const hasSchedules = !!measurements.find(
 		(measurement) => measurement.schedules.length > 0
 	);
 
@@ -42,7 +50,7 @@ export default function DeviceView(props: DeviceViewProps) {
 				className={`centered underline ${offline ? "danger" : "clickable"}`}
 			>
 				<Icon>{device.icon}</Icon>
-				<span>{device.name}</span>
+				<span>{displayName}</span>
 			</h3>
 			<table className="margin-top">
 				<tbody>
@@ -53,10 +61,10 @@ export default function DeviceView(props: DeviceViewProps) {
 							key={measurement.id}
 						/>
 					))}
-					<DeviceLastUpdatedRow device={device} />
-					{hasActions && <ActionsRow device={device} />}
-					{hasAlarms && <AlarmsRow device={device} />}
-					{hasSchedules && <SchedulesRow device={device} />}
+					<DeviceLastUpdatedRow device={viewDevice} />
+					{hasActions && <ActionsRow device={viewDevice} />}
+					{hasAlarms && <AlarmsRow device={viewDevice} />}
+					{hasSchedules && <SchedulesRow device={viewDevice} />}
 				</tbody>
 			</table>
 		</div>

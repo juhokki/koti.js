@@ -7,6 +7,9 @@ export default class Asset {
 	isRootAsset: boolean;
 	children: string[];
 	devices: Device[];
+	deviceNameOverrides: { id: string; name: string }[];
+	isSummaryAsset: boolean;
+	measurementFilter: string | null;
 
 	constructor(
 		id: string,
@@ -14,7 +17,10 @@ export default class Asset {
 		icon: string,
 		isRootAsset: boolean,
 		children: string[],
-		devices: Device[]
+		devices: Device[],
+		deviceNameOverrides: { id: string; name: string }[],
+		isSummaryAsset: boolean,
+		measurementFilter: string | null
 	) {
 		this.id = id;
 		this.name = name;
@@ -22,5 +28,8 @@ export default class Asset {
 		this.isRootAsset = isRootAsset;
 		this.children = children;
 		this.devices = devices;
+		this.deviceNameOverrides = deviceNameOverrides;
+		this.isSummaryAsset = isSummaryAsset;
+		this.measurementFilter = measurementFilter;
 	}
 }

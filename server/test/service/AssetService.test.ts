@@ -37,7 +37,10 @@ test("Builds assets", async () => {
 			icon: "test-icon",
 			isRootAsset: true,
 			children: [],
-			devices: ["test-device"]
+			devices: ["test-device"],
+			deviceNameOverrides: [{ id: "test-device", name: "Custom name" }],
+			isSummaryAsset: true,
+			measurementFilter: "test-meas"
 		}
 	];
 	const devicesConfig = [
@@ -74,6 +77,9 @@ test("Builds assets", async () => {
 			icon: "test-icon",
 			isRootAsset: true,
 			children: [],
+			deviceNameOverrides: [{ id: "test-device", name: "Custom name" }],
+			isSummaryAsset: true,
+			measurementFilter: "test-meas",
 			devices: [
 				expect.objectContaining({
 					id: "test-device",
@@ -132,6 +138,11 @@ test("Finds asset, device and measurement", async () => {
 
 	await service.start();
 
+	expect(service.getAsset("test-asset")).toMatchObject({
+		deviceNameOverrides: [],
+		isSummaryAsset: false,
+		measurementFilter: null
+	});
 	expect(service.getAsset("test-asset").id).toBe("test-asset");
 	expect(service.getDevices().length).toBe(1);
 	expect(

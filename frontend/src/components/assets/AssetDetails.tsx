@@ -5,6 +5,7 @@ import Icon from "@mui/material/Icon";
 import { AssetsContext } from "../../context/AssetsContext";
 import Device from "./device/DeviceView";
 import useAssetPath from "../../hooks/useAssetPath";
+import AssetSummaryView from "./AssetSummaryView";
 
 export default function AssetDetails() {
 	const navigate = useNavigate();
@@ -31,9 +32,24 @@ export default function AssetDetails() {
 		.map((childId) => assets.find((a) => a.id === childId))
 		.filter((child) => child !== undefined);
 
-	const devices = asset.devices.filter((device) => {
-		return device.measurements.length > 0;
-	});
+	const devices = asset.devices
+		.map((device) => {
+			const override = (asset.deviceNameOverrides ?? []).find(
+				(item) => item.id === device.id
+			);
+			const measurements = device.measurements.filter(
+				(measurement) =>
+					asset.measurementFilter == null ||
+					measurement.id === asset.measurementFilter
+			);
+
+			return {
+				device,
+				displayName: override?.name ?? device.name,
+				measurements
+			};
+		})
+		.filter((item) => item.measurements.length > 0);
 
 	return (
 		<section>
@@ -67,9 +83,20 @@ export default function AssetDetails() {
 							</h3>
 						</div>
 					))}
-					{devices.map((device) => (
-						<Device device={device} key={device.id} />
-					))}
+					{asset.isSummaryAsset ? (
+						devices.length > 0 && (
+							<AssetSummaryView devices={devices} />
+						)
+					) : (
+						devices.map(({ device, displayName, measurements }) => (
+							<Device
+								device={device}
+								displayName={displayName}
+								measurements={measurements}
+								key={device.id}
+							/>
+						))
+					)}
 				</div>
 			</section>
 		</section>

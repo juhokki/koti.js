@@ -128,7 +128,10 @@ export default class AssetService extends ServiceBase {
 				assetConfig.icon,
 				assetConfig.isRootAsset ?? false,
 				assetConfig.children ?? [],
-				assetConfig.devices.map((deviceId) => this.getDevice(deviceId))
+				assetConfig.devices.map((deviceId) => this.getDevice(deviceId)),
+				assetConfig.deviceNameOverrides ?? [],
+				assetConfig.isSummaryAsset ?? false,
+				assetConfig.measurementFilter ?? null
 			);
 		});
 	}
@@ -169,6 +172,7 @@ export default class AssetService extends ServiceBase {
 		return device;
 	}
 
+	// TODO: Device can belong to multiple assets, this currently returns the first one found.
 	getDeviceAsset(deviceId: string): Asset {
 		const asset = this.assets.find((asset: Asset) =>
 			asset.devices.find((device: Device) => device.id === deviceId)
