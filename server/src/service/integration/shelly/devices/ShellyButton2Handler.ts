@@ -1,4 +1,4 @@
-import { type ShellyDeviceButton2 } from "shellies";
+import { type ShellyButton1V2 } from "shellies";
 import Value from "../../../../model/Value.ts";
 import type ServiceLocator from "../../../ServiceLocator.ts";
 import UnconfiguredMeasurementError from "../UnconfiguredMeasurementError.ts";
@@ -10,9 +10,9 @@ export const BATTERY = "battery";
 
 export default class ShellyButton2Handler implements ShellyDeviceHandler {
 	services: ServiceLocator;
-	device: ShellyDeviceButton2;
+	device: ShellyButton1V2;
 
-	constructor(services: ServiceLocator, device: ShellyDeviceButton2) {
+	constructor(services: ServiceLocator, device: ShellyButton1V2) {
 		this.services = services;
 		this.device = device;
 		this.device.on("change", (prop, value) => {

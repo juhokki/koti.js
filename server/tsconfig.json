@@ -12,6 +12,9 @@
 		/* Strictness */
 		"strict": true,
 		"noUncheckedIndexedAccess": true,
-		"noImplicitOverride": true
+		"noImplicitOverride": true,
+
+		/* Types */
+		"types": ["shellies-types"]
 	}
 }

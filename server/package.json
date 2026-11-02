@@ -53,6 +53,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"globals": "^17.11.0",
 		"prettier": "^3.9.6",
+		"shellies-types": "github:juhokki/shellies-types",
 		"supertest": "^7.2.2",
 		"vitest": "^4.1.10"
 	},

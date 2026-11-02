@@ -1,4 +1,4 @@
-import type { ShellyDeviceButton2 } from "shellies";
+import type { ShellyButton1V2 } from "shellies";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import type AssetService from "../../src/service/asset/AssetService.js";
 import type DataService from "../../src/service/data/DataService.js";
@@ -38,7 +38,7 @@ function createButton() {
 		) => {
 			onChange = callback;
 		}
-	} as unknown as ShellyDeviceButton2;
+	} as unknown as ShellyButton1V2;
 
 	return {
 		device,

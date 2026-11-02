@@ -1,7 +1,7 @@
 import type {
-	ShellyDevice,
-	ShellyDeviceButton2,
-	ShellyDevicePlugS
+	Device as ShellyDevice,
+	ShellyButton1V2,
+	ShellyPlugS
 } from "shellies";
 import { expect, test, vi } from "vitest";
 import DeviceType from "../../src/constants/DeviceType.ts";
@@ -78,7 +78,7 @@ test("ShellyIntegration starts and stops shellies", async () => {
 
 test("ShellyIntegration starts discovery", async () => {
 	const integration = new ShellyIntegration(services, settings);
-	const mockShellyDevice: ShellyDevicePlugS = {
+	const mockShellyDevice = {
 		id: "device-1",
 		host: "",
 		type: "SHPLG-S",
@@ -90,7 +90,7 @@ test("ShellyIntegration starts discovery", async () => {
 		},
 		power0: 10,
 		relay0: true
-	};
+	} as unknown as ShellyPlugS;
 
 	mockGetDevice.mockReturnValue(
 		new Device(
@@ -139,7 +139,7 @@ test("Discovered device writes initial values and changed values", () => {
 		((prop: string, value: number | boolean) => void) | undefined;
 
 	const integration = new ShellyIntegration(services, settings);
-	const mockShellyDevice: ShellyDevicePlugS = {
+	const mockShellyDevice = {
 		id: "device-1",
 		host: "",
 		type: "SHPLG-S",
@@ -151,7 +151,7 @@ test("Discovered device writes initial values and changed values", () => {
 		},
 		power0: 10,
 		relay0: true
-	};
+	} as unknown as ShellyPlugS;
 
 	mockGetDevice.mockReturnValue(
 		new Device(
@@ -225,7 +225,7 @@ test("Ignores discovered devices that are not configured", () => {
 	const device = {
 		id: "unconfigured-device",
 		type: "SHPLG-S"
-	} as ShellyDevice;
+	} as unknown as ShellyDevice;
 
 	integration.onDeviceDiscovered(device);
 
@@ -250,7 +250,7 @@ test("Rejects configured devices with an unsupported type", () => {
 
 test("Routes Button 2 discovery and rejects control for missing handlers", () => {
 	const integration = new ShellyIntegration(services, settings);
-	const button: ShellyDeviceButton2 = {
+	const button = {
 		id: "button-1",
 		type: "SHBTN-2",
 		host: "localhost",
@@ -259,7 +259,7 @@ test("Routes Button 2 discovery and rejects control for missing handlers", () =>
 		on: () => {
 			/* Do nothing */
 		}
-	};
+	} as unknown as ShellyButton1V2;
 	mockGetDevice.mockReturnValue(
 		new Device("button-1", DeviceType.ShellyIntegration, "Button", "icon", [
 			new Measurement(
@@ -303,7 +303,7 @@ test("Routes Button 2 discovery and rejects control for missing handlers", () =>
 
 test("ShellyIntegration controls device", async () => {
 	const integration = new ShellyIntegration(services, settings);
-	const mockShellyDevice: ShellyDevicePlugS = {
+	const mockShellyDevice = {
 		id: "device-1",
 		type: "SHPLG-S",
 		on: (
@@ -315,7 +315,7 @@ test("ShellyIntegration controls device", async () => {
 		power0: 10,
 		relay0: false,
 		host: "http://test"
-	};
+	} as unknown as ShellyPlugS;
 
 	mockShelliesOn.mockImplementation(
 		(topic: string, callback: (shellyDevice: ShellyDevice) => void) => {

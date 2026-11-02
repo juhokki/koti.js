@@ -1,7 +1,9 @@
-import shellies, {
-	type ShellyDevice,
-	type ShellyDeviceButton2,
-	type ShellyDevicePlugS
+import shellies from "shellies";
+import type {
+	Device as ShellyDevice,
+	ShellyButton1V2,
+	ShellyPlugS,
+	Shellies
 } from "shellies";
 import IntegrationBase from "../IntegrationBase.ts";
 import Value from "../../../model/Value.ts";
@@ -15,6 +17,8 @@ import type IntegrationParameter from "../IntegrationParameter.ts";
 
 export const ShellyDeviceTypeButton2 = "SHBTN-2";
 export const ShellyDeviceTypePlugS = "SHPLG-S";
+
+const shellyClient = shellies as Shellies;
 
 export default class ShellyIntegration extends IntegrationBase {
 	options: IntegrationConfig;
@@ -37,17 +41,17 @@ export default class ShellyIntegration extends IntegrationBase {
 	}
 
 	override start() {
-		shellies.on("discover", (shellyDevice) => {
+		shellyClient.on("discover", (shellyDevice) => {
 			this.onDeviceDiscovered(shellyDevice);
 		});
 
-		shellies.start();
+		shellyClient.start();
 
 		return Promise.resolve();
 	}
 
 	override stop() {
-		shellies.stop();
+		shellyClient.stop();
 
 		return Promise.resolve();
 	}
@@ -72,7 +76,7 @@ export default class ShellyIntegration extends IntegrationBase {
 					shellyDevice.id,
 					new ShellyButton2Handler(
 						this.services,
-						shellyDevice as ShellyDeviceButton2
+						shellyDevice as ShellyButton1V2
 					)
 				);
 				break;
@@ -82,7 +86,7 @@ export default class ShellyIntegration extends IntegrationBase {
 					shellyDevice.id,
 					new ShellyPlugSHandler(
 						this.services,
-						shellyDevice as ShellyDevicePlugS
+						shellyDevice as ShellyPlugS
 					)
 				);
 				break;

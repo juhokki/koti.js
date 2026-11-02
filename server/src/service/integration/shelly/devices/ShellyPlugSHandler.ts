@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { type ShellyDevicePlugS } from "shellies";
+import type { ShellyPlugS } from "shellies";
 import Value from "../../../../model/Value.ts";
 import type ServiceLocator from "../../../ServiceLocator.ts";
 import UnconfiguredMeasurementError from "../UnconfiguredMeasurementError.ts";
@@ -11,9 +11,9 @@ export const POWER_0 = "power0";
 
 export default class ShellyPlugSHandler implements ShellyDeviceHandler {
 	services: ServiceLocator;
-	device: ShellyDevicePlugS;
+	device: ShellyPlugS;
 
-	constructor(services: ServiceLocator, device: ShellyDevicePlugS) {
+	constructor(services: ServiceLocator, device: ShellyPlugS) {
 		this.services = services;
 		this.device = device;
 		this.device.on("change", (prop, value) => {
