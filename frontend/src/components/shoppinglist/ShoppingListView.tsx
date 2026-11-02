@@ -64,10 +64,7 @@ export default function ShoppingListView() {
 		setNewItem("");
 	};
 
-	const crossItem = (event: React.MouseEvent<HTMLSpanElement>) => {
-		const target = event.target as HTMLSpanElement;
-		const parent = target.parentElement as HTMLLIElement;
-		const itemId = parent.dataset.itemId;
+	const crossItem = (itemId: string) => {
 		const index = shoppingListItems.findIndex((i) => i.id === itemId);
 
 		if (typeof index !== "undefined" && index !== -1) {
@@ -121,30 +118,29 @@ export default function ShoppingListView() {
 				</h2>
 			</section>
 			<section className="content">
-				<div className="shoppinglist">
-					<ul>
-						{shoppingListItems.map((item) => (
-							<li
-								key={item.id}
-								data-item-id={item.id}
-								className="shopping-list-item clickable"
+				<div className="grid">
+					{shoppingListItems.map((item) => (
+						<div
+							key={item.id}
+							data-item-id={item.id}
+							className="grid-item full-width clickable"
+							onClick={() => { crossItem(item.id) }}
+						>
+							<span
+								className={item.crossed ? "crossed" : ""}
 							>
-								<span
-									onClick={crossItem}
-									className={item.crossed ? "crossed" : ""}
-								>
-									{item.text}
-								</span>
-								<RemoveCircleIcon
-									onClick={() => {
-										removeItem(item.id);
-									}}
-									className="danger"
-								/>
-							</li>
-						))}
-					</ul>
-					<form onSubmit={addItem}>
+								{item.text}
+							</span>
+							<RemoveCircleIcon
+								onClick={() => {
+									removeItem(item.id);
+								}}
+								className="danger"
+								style={{ float: "right" }}
+							/>
+						</div>
+					))}
+					<form className="full-width margin-top margin-left margin-right" onSubmit={addItem}>
 						<input
 							value={newItem}
 							onChange={(e) => {
@@ -154,7 +150,7 @@ export default function ShoppingListView() {
 							placeholder="Lisää ostettava asia"
 						/>
 					</form>
-					<div className="buttons">
+					<div className="full-width buttons">
 						{hasCrossedItems && (
 							<button
 								onClick={clear}

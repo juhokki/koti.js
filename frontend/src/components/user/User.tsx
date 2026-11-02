@@ -19,8 +19,8 @@ export default function User() {
 	}
 
 	return (
-		<div className={`user ${connected ? "online" : "offline"}`}>
-			<span onClick={goToUserDetails} className="clickable">
+		<div>
+			<span onClick={goToUserDetails} className="clickable" style={{ color: connected ? "inherit" : "var(--danger-color)" }}>
 				<PersonIcon />
 				{user.username}
 			</span>

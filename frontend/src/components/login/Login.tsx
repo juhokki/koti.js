@@ -52,7 +52,7 @@ export default function Login() {
 	}
 
 	return (
-		<section>
+		<section className="login-page">
 			<section className="header">
 				<h1>
 					<span className="left">Koti</span>
@@ -64,35 +64,39 @@ export default function Login() {
 						Kirjautuminen epäonnistui
 					</div>
 				)}
-				<form onSubmit={handleSubmit}>
-					<div className="form-field">
-						<label>
-							<PersonIcon />
-						</label>
-						<input
-							onChange={(e) => {
-								setUsername(e.target.value);
-							}}
-							type="text"
-							placeholder="Käyttäjätunnus"
-							autoComplete="username"
-						/>
-					</div>
-					<div className="form-field">
-						<label>
-							<LockIcon />
-						</label>
-						<input
-							onChange={(e) => {
-								setPassword(e.target.value);
-							}}
-							type="password"
-							placeholder="Salasana"
-							autoComplete="current-password"
-						/>
-					</div>
-					<div className="form-field">
-						<button type="submit">Kirjaudu</button>
+				<form className="grid" onSubmit={handleSubmit}>
+					<div className="grid-item">
+						<div className="margin-bottom" style={{ display: "flex", alignItems: "center" }}>
+							<label className="margin-right">
+								<PersonIcon />
+							</label>
+							<input
+								onChange={(e) => {
+									setUsername(e.target.value);
+								}}
+								type="text"
+								placeholder="Käyttäjätunnus"
+								autoComplete="username"
+								style={{ flexGrow: 1 }}
+							/>
+						</div>
+						<div className="margin-bottom" style={{ display: "flex", alignItems: "center" }}>
+							<label className="margin-right">
+								<LockIcon />
+							</label>
+							<input
+								onChange={(e) => {
+									setPassword(e.target.value);
+								}}
+								type="password"
+								placeholder="Salasana"
+								autoComplete="current-password"
+								style={{ flexGrow: 1 }}
+							/>
+						</div>
+						<div className="buttons">
+							<button type="submit">Kirjaudu</button>
+						</div>
 					</div>
 				</form>
 			</section>

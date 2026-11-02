@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
+export default createTheme({
 	palette: {
 		primary: {
 			main: "#30bced"
@@ -75,8 +75,35 @@ const theme = createTheme({
 					}
 				}
 			}
+		},
+		MuiCheckbox: {
+			styleOverrides: {
+				root: {
+					color: "var(--highlight-color)"
+				}
+			}
+		},
+		MuiIcon: {
+			styleOverrides: {
+				root: {
+					fontSize: "var(--icon-size) !important",
+					"&.danger": {
+						color: "var(--danger-color)",
+						backgroundColor: "inherit !important"
+					}
+				}
+			}
+		},
+		MuiSvgIcon: {
+			styleOverrides: {
+				root: {
+					fontSize: "var(--icon-size) !important",
+					"&.danger": {
+						color: "var(--danger-color)",
+						backgroundColor: "inherit !important"
+					}
+				}
+			}
 		}
 	}
 });
-
-export default theme;

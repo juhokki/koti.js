@@ -8,13 +8,19 @@
 
 .grid .grid-item {
 	padding: var(--spacing);
+	margin: var(--spacing);
 	background: var(--box-background-color);
 	box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.1);
 	border-radius: var(--border-radius);
 	display: block;
-	margin: var(--spacing);
 	flex: 1 1 100%;
 	max-width: 350px;
+}
+
+@media only screen and (max-width: 800px) {
+	.grid-item {
+		max-width: 100% !important;
+	}
 }
 
 .grid th,
@@ -46,4 +52,18 @@
 	font-weight: 100;
 	white-space: pre-wrap;
 	overflow: auto;
+}
+
+.buttons {
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+    padding: 0;
+}
+
+.buttons button {
+	margin-right: 0;
+	margin-left: calc(var(--spacing) * 2);
 }

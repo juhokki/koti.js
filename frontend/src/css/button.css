@@ -1,0 +1,38 @@
+button {
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	background-color: var(--button-color);
+	color: var(--font-color);
+	padding: calc(var(--spacing) / 2) var(--spacing);
+	margin: var(--spacing);
+	border: 0;
+	box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+	border-radius: var(--border-radius);
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+button.danger {
+	color: var(--font-color);
+	background-color: var(--danger-color) !important;
+}
+
+button:active {
+	transform: translateY(1px);
+	filter: saturate(150%);
+}
+
+button.inactive {
+	background-color: var(--box-background-color);
+}
+
+button .MuiSvgIcon-root,
+button .MuiIcon-root,
+button span {
+	vertical-align: middle;
+}
+
+button .MuiSvgIcon-root,
+button .MuiIcon-root {
+	margin-right: var(--spacing);
+}

@@ -11,7 +11,7 @@ import Select from "@mui/material/Select";
 import RecipesApi from "../../api/RecipesApi";
 import { RecipeIngredient } from "../../interface/Recipe";
 
-const UNITS = [
+export const UNITS = [
 	"g",
 	"kg",
 	"dl",
@@ -177,13 +177,13 @@ export default function RecipeEdit() {
 				</h2>
 			</section>
 			<section className="content">
-				<div className="recipes">
+				<form className="grid" onSubmit={save}>
 					{loading ? (
 						<div className="loader-container">
 							<div className="loader"></div>
 						</div>
 					) : (
-						<form onSubmit={save}>
+						<>
 							{error && (
 								<div className="message error">
 									Tallennus epäonnistui.
@@ -191,7 +191,7 @@ export default function RecipeEdit() {
 							)}
 							<input
 								type="text"
-								className="recipe-title"
+								className="full-width margin-top margin-bottom margin-left margin-right"
 								placeholder="Reseptin nimi"
 								value={title}
 								required
@@ -199,12 +199,12 @@ export default function RecipeEdit() {
 									setTitle(e.target.value);
 								}}
 							/>
-							<div className="recipe-box">
+							<div className="grid-item full-width">
 								<h3 className="centered underline">
 									Ainesosat
 								</h3>
 								{ingredients.map((ingredient, i) => (
-									<div key={i} className="row ingredient-row">
+									<div key={i} style={{ "display": "flex", "alignItems": "center", "padding": "var(--spacing)" }}>
 										<input
 											type="text"
 											placeholder="Määrä"
@@ -216,9 +216,9 @@ export default function RecipeEdit() {
 													e.target.value
 												);
 											}}
+											style={{ "marginRight": "var(--spacing)", "width": "80px" }}
 										/>
 										<Select
-											className="unit-select"
 											size="small"
 											displayEmpty
 											value={ingredient.unit}
@@ -241,6 +241,7 @@ export default function RecipeEdit() {
 													e.target.value
 												);
 											}}
+											style={{ "marginRight": "var(--spacing)", "width": "100px" }}
 										>
 											<MenuItem value={DEFAULT_UNIT}>
 												-
@@ -265,9 +266,11 @@ export default function RecipeEdit() {
 													e.target.value
 												);
 											}}
+											style={{ "marginRight": "var(--spacing)", "flexGrow": 1 }}
 										/>
 										<RemoveCircleIcon
 											className="danger clickable"
+											style={{ "verticalAlign": "middle" }}
 											onClick={() => {
 												setIngredients(
 													ingredients.filter(
@@ -291,7 +294,7 @@ export default function RecipeEdit() {
 									<span>Lisää ainesosa</span>
 								</button>
 							</div>
-							<div className="recipe-box">
+							<div className="grid-item full-width">
 								<h3 className="centered underline">
 									Valmistus
 								</h3>
@@ -299,10 +302,11 @@ export default function RecipeEdit() {
 									<div
 										key={i}
 										data-step-index={i}
-										className={`row ${dragIndex === i ? "dragging" : ""}`}
+										className={dragIndex === i ? "dragging" : ""}
+										style={{ "display": "flex", "alignItems": "center", "padding": "var(--spacing)" }}
 									>
 										<DragIndicatorIcon
-											className="drag-handle clickable"
+											className="clickable"
 											onPointerDown={(e) => {
 												e.currentTarget.setPointerCapture(
 													e.pointerId
@@ -316,6 +320,7 @@ export default function RecipeEdit() {
 											onPointerCancel={() => {
 												setDragIndex(null);
 											}}
+											style={{ "marginRight": "var(--spacing)" }}
 										/>
 										<input
 											type="text"
@@ -330,6 +335,7 @@ export default function RecipeEdit() {
 													)
 												);
 											}}
+											style={{ "marginRight": "var(--spacing)", "flexGrow": 1 }}
 										/>
 										<RemoveCircleIcon
 											className="danger clickable"
@@ -353,15 +359,15 @@ export default function RecipeEdit() {
 									<span>Lisää vaihe</span>
 								</button>
 							</div>
-							<div className="buttons">
+							<div className="buttons full-width">
 								<button type="submit">
 									<SaveIcon />
 									<span>Tallenna</span>
 								</button>
 							</div>
-						</form>
+						</>
 					)}
-				</div>
+				</form>
 			</section>
 		</section>
 	);

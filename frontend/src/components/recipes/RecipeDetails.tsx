@@ -52,7 +52,7 @@ export default function RecipeDetails() {
 				</h2>
 			</section>
 			<section className="content">
-				<div className="recipes">
+				<div className="grid">
 					{error && <p>Reseptiä ei löytynyt.</p>}
 					{!recipe && !error && (
 						<div className="loader-container">
@@ -61,29 +61,37 @@ export default function RecipeDetails() {
 					)}
 					{recipe && (
 						<>
-							<div className="recipe-box">
+							<div className="grid-item full-width">
 								<h3 className="centered underline">
 									Ainesosat
 								</h3>
-								<ul className="ingredients">
+								<ul>
 									{recipe.ingredients.map((ingredient, i) => (
 										<li key={i}>
-											{`${ingredient.amount} ${ingredient.unit} ${ingredient.name}`}
+											<span style={{ "marginRight": "var(--spacing)", "display": "inline-block", "width": "80px" }}>
+												{ingredient.amount} {ingredient.unit}
+											</span>
+											{ingredient.name}
 										</li>
 									))}
 								</ul>
 							</div>
-							<div className="recipe-box">
+							<div className="grid-item full-width">
 								<h3 className="centered underline">
 									Valmistus
 								</h3>
-								<ol className="steps">
+								<ol>
 									{recipe.steps.map((step, i) => (
-										<li key={i}>{step}</li>
+										<li key={i}>
+											<span style={{ "marginRight": "var(--spacing)", "display": "inline-block", "width": "40px" }}>
+												{`${(i + 1).toString()}.`}
+											</span>
+											{step}
+										</li>
 									))}
 								</ol>
 							</div>
-							<div className="buttons">
+							<div className="buttons full-width">
 								<button
 									type="button"
 									onClick={() => {

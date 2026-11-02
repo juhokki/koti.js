@@ -126,7 +126,7 @@ export default function Logs() {
 							<button
 								key={levelName}
 								type="button"
-								aria-pressed={enabled}
+								className={enabled ? "" : "inactive"}
 								aria-label={`${levelName} logs`}
 								onClick={() => {
 									setLevels((currentLevels) =>

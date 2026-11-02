@@ -47,32 +47,35 @@ export default function RecipeList() {
 				</h2>
 			</section>
 			<section className="content">
-				<div className="recipes">
+				<div className="grid">
 					{error && <p>Reseptien haku epäonnistui.</p>}
 					{!recipes && !error && (
 						<div className="loader-container">
 							<div className="loader"></div>
 						</div>
 					)}
-					{recipes && (
-						<ul className="recipe-list">
-							{recipes.map((recipe) => (
-								<li
-									key={recipe.id}
-									className="recipe-item clickable"
-									onClick={() => {
-										go(`/recipes/${recipe.id}`);
-									}}
-								>
-									<span>{recipe.title}</span>
-									<span className="recipe-owner">
-										{recipe.owner}
-									</span>
-								</li>
-							))}
-						</ul>
-					)}
-					<div className="buttons">
+					{recipes?.map((recipe) => (
+						<div
+							key={recipe.id}
+							className="grid-item full-width clickable"
+							onClick={() => {
+								go(`/recipes/${recipe.id}`);
+							}}
+						>
+							<span>{recipe.title}</span>
+							<span
+								style={{
+									display: "inline-block",
+									float: "right",
+									fontStyle: "italic",
+									color: "var(--background-color)"
+								}}
+							>
+								{recipe.owner}
+							</span>
+						</div>
+					))}
+					<div className="buttons full-width">
 						<button
 							type="button"
 							onClick={() => {
