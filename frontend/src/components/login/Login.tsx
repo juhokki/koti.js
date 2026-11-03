@@ -77,7 +77,7 @@ export default function Login() {
 								type="text"
 								placeholder="Käyttäjätunnus"
 								autoComplete="username"
-								style={{ flexGrow: 1 }}
+								style={{ flexGrow: 1, "minWidth": 0 }}
 							/>
 						</div>
 						<div className="margin-bottom" style={{ display: "flex", alignItems: "center" }}>
@@ -91,7 +91,7 @@ export default function Login() {
 								type="password"
 								placeholder="Salasana"
 								autoComplete="current-password"
-								style={{ flexGrow: 1 }}
+								style={{ flexGrow: 1, "minWidth": 0 }}
 							/>
 						</div>
 						<div className="buttons">

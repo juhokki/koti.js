@@ -216,7 +216,7 @@ export default function RecipeEdit() {
 													e.target.value
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "width": "80px" }}
+											style={{ "marginRight": "var(--spacing)", "width": "100px" }}
 										/>
 										<Select
 											size="small"
@@ -266,7 +266,7 @@ export default function RecipeEdit() {
 													e.target.value
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "flexGrow": 1 }}
+											style={{ "marginRight": "var(--spacing)", "flexGrow": 1, "minWidth": 0 }}
 										/>
 										<RemoveCircleIcon
 											className="danger clickable"
@@ -335,7 +335,7 @@ export default function RecipeEdit() {
 													)
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "flexGrow": 1 }}
+											style={{ "marginRight": "var(--spacing)", "flexGrow": 1, "minWidth": 0 }}
 										/>
 										<RemoveCircleIcon
 											className="danger clickable"

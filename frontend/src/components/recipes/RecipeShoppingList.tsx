@@ -210,7 +210,7 @@ export default function RecipeShoppingList() {
 													e.target.value
 												);
 											}}
-											style={{ "flexGrow": 1 }}
+											style={{ "flexGrow": 1, "minWidth": 0 }}
 										/>
 									</div>
 								))}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import Icon from "@mui/material/Icon";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import useAssetPath from "../../../hooks/useAssetPath";
 import ActionsApi from "../../../api/ActionsApi";
 
@@ -75,8 +75,8 @@ export default function DeviceActionScript() {
 						/>
 					</div>
 					<div>
-						<Icon>{device.icon}</Icon>
-						<span>{action?.name ?? device.name}</span>
+						<AutoAwesomeIcon />
+						<span>Skripti</span>
 					</div>
 					<div className="right"></div>
 				</h2>
@@ -89,10 +89,15 @@ export default function DeviceActionScript() {
 						)}
 						{action && (
 							<>
-								<div className="script grid-sub-item">
-									{action.script}
+								<div className="underline margin-bottom" style={{ padding: "var(--spacing)" }}>
+									{action.name}
 								</div>
-								<div className="centered margin-top">
+								<div style={{ padding: "var(--spacing)" }}>
+									<div className="grid-sub-item">
+										{action.script}
+									</div>
+								</div>
+								<div className="buttons">
 									<button onClick={run} disabled={running}>
 										Suorita
 									</button>

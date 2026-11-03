@@ -118,7 +118,7 @@ export default function Logs() {
 				</h2>
 			</section>
 			<section className="content">
-				<div className="centered margin-bottom log-level-filters">
+				<div className="centered margin-bottom">
 					{LEVELS.map((levelName) => {
 						const enabled = levels.includes(levelName);
 
@@ -152,26 +152,18 @@ export default function Logs() {
 				<div className="grid">
 					{entries.map((entry, i) => (
 						<div className="grid-item full-width" key={i}>
-							<table>
-								<tbody>
-									<tr className="underline">
-										<th>{formatTime(entry.time)}</th>
-										<td>{levelName(entry.level)}</td>
-									</tr>
-									<tr>
-										<td colSpan={2}>{entry.msg}</td>
-									</tr>
-									{entry.err?.stack && (
-										<tr>
-											<td colSpan={2}>
-												<div className="log-stack grid-sub-item">
-													{entry.err.stack}
-												</div>
-											</td>
-										</tr>
-									)}
-								</tbody>
-							</table>
+							<div className="underline" style={{ display: "flex", padding: "var(--spacing)" }}>
+								<span>{formatTime(entry.time)}</span>
+								<span style={{ marginLeft: "auto" }}>{levelName(entry.level)}</span>
+							</div>
+							<div style={{ padding: "var(--spacing)" }}>
+								<span>{entry.msg}</span>
+								{entry.err?.stack && (
+									<div className="grid-sub-item">
+										{entry.err.stack}
+									</div>
+								)}
+							</div>
 						</div>
 					))}
 				</div>

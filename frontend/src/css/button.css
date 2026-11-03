@@ -12,6 +12,10 @@ button {
 	white-space: nowrap;
 }
 
+button:first-child {
+	margin-left: 0;
+}
+
 button.danger {
 	color: var(--font-color);
 	background-color: var(--danger-color) !important;

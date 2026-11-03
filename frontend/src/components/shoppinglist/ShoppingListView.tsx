@@ -148,9 +148,10 @@ export default function ShoppingListView() {
 							}}
 							type="text"
 							placeholder="Lisää ostettava asia"
+							className="full-width"
 						/>
 					</form>
-					<div className="full-width buttons">
+					<div className="buttons">
 						{hasCrossedItems && (
 							<button
 								onClick={clear}
