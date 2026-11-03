@@ -2,8 +2,7 @@ import shellies from "shellies";
 import type {
 	Device as ShellyDevice,
 	ShellyButton1V2,
-	ShellyPlugS,
-	Shellies
+	ShellyPlugS
 } from "shellies";
 import IntegrationBase from "../IntegrationBase.ts";
 import Value from "../../../model/Value.ts";
@@ -18,7 +17,7 @@ import type IntegrationParameter from "../IntegrationParameter.ts";
 export const ShellyDeviceTypeButton2 = "SHBTN-2";
 export const ShellyDeviceTypePlugS = "SHPLG-S";
 
-const shellyClient = shellies as Shellies;
+const shellyClient = shellies;
 
 export default class ShellyIntegration extends IntegrationBase {
 	options: IntegrationConfig;
@@ -45,9 +44,7 @@ export default class ShellyIntegration extends IntegrationBase {
 			this.onDeviceDiscovered(shellyDevice);
 		});
 
-		shellyClient.start();
-
-		return Promise.resolve();
+		return shellyClient.start();
 	}
 
 	override stop() {
@@ -93,7 +90,7 @@ export default class ShellyIntegration extends IntegrationBase {
 			}
 			default:
 				throw new Error(
-					`No handler implemented for Shelly device type ${shellyDevice.type as string}`
+					`No handler implemented for Shelly device type ${shellyDevice.type}`
 				);
 		}
 	}

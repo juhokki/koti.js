@@ -15,8 +15,10 @@ export default class ShellyButton2Handler implements ShellyDeviceHandler {
 	constructor(services: ServiceLocator, device: ShellyButton1V2) {
 		this.services = services;
 		this.device = device;
-		this.device.on("change", (prop, value) => {
-			this.onDeviceValueChanged(prop, value);
+		this.device.on("change", (prop, value: unknown) => {
+			if (typeof value === "number") {
+				this.onDeviceValueChanged(prop, value);
+			}
 		});
 		this.onDeviceValueChanged(
 			INPUT_EVENT_COUNTER_0,

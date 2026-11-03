@@ -16,8 +16,10 @@ export default class ShellyPlugSHandler implements ShellyDeviceHandler {
 	constructor(services: ServiceLocator, device: ShellyPlugS) {
 		this.services = services;
 		this.device = device;
-		this.device.on("change", (prop, value) => {
-			this.onDeviceValueChanged(prop, value);
+		this.device.on("change", (prop, value: unknown) => {
+			if (typeof value === "number" || typeof value === "boolean") {
+				this.onDeviceValueChanged(prop, value);
+			}
 		});
 		this.onDeviceValueChanged(RELAY_0, this.device[RELAY_0]);
 		this.onDeviceValueChanged(POWER_0, this.device[POWER_0]);
