@@ -1,5 +1,6 @@
 import { expect, test, vi } from "vitest";
 import ActionTrigger from "../../src/constants/ActionTrigger.ts";
+import * as Messages from "../../src/constants/Messages.ts";
 import ActionConfig from "../../src/service/asset/ActionConfig.js";
 import Device from "../../src/model/Device.js";
 import Measurement from "../../src/model/Measurement.js";
@@ -16,6 +17,26 @@ import type DataService from "../../src/service/data/DataService.js";
 const mockGetDevices = vi.fn();
 const mockReadLatestValue = vi.fn();
 const mockControl = vi.fn();
+const mockDataServiceListeners = new Map<
+	string,
+	(deviceId: string, measurementId: string, value: Value) => void
+>();
+
+const mockDataService = {
+	on(
+		event: string,
+		callback: (
+			deviceId: string,
+			measurementId: string,
+			value: Value
+		) => void
+	) {
+		mockDataServiceListeners.set(event, callback);
+		return this;
+	},
+	readLatestValue: mockReadLatestValue,
+	control: mockControl
+};
 
 const services = new ServiceLocator(
 	new Map([
@@ -25,20 +46,24 @@ const services = new ServiceLocator(
 				getDevices: mockGetDevices
 			} as unknown as AssetService
 		],
-		[
-			"DataService",
-			{
-				on: () => {
-					/* Do nothing */
-				},
-				readLatestValue: mockReadLatestValue,
-				control: mockControl
-			} as unknown as DataService
-		]
+		["DataService", mockDataService as unknown as DataService]
 	] as [string, ServiceBase][])
 );
 
 const settings = {} satisfies ActionServiceSettings;
+
+function emitValueUpdated(deviceId: string, measurementId: string) {
+	const callback = mockDataServiceListeners.get(Messages.VALUE_UPDATED);
+	if (!callback) {
+		throw new Error("Value update listener is not registered.");
+	}
+
+	callback(
+		deviceId,
+		measurementId,
+		new Value(deviceId, measurementId, 10, Date.now())
+	);
+}
 
 test("ActionService is created", () => {
 	const service = new ActionService(services, settings);
@@ -109,7 +134,7 @@ test("Executes script that gets and controls a value", async () => {
 
 	await service.start();
 
-	service.onValueUpdated("device-1", "id");
+	emitValueUpdated("device-1", "id");
 
 	expect(mockControl).toHaveBeenCalledWith(
 		expect.objectContaining({
@@ -173,7 +198,7 @@ test("Value updates do not throw when a script fails", async () => {
 	await service.start();
 
 	expect(() => {
-		service.onValueUpdated("device-1", "id");
+		emitValueUpdated("device-1", "id");
 	}).not.toThrow();
 
 	await service.stop();

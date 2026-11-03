@@ -1,5 +1,6 @@
 const ActionTrigger = {
-	OnChange: "onChange"
+	OnChange: "onChange",
+	OnInitialValue: "onInitialValue"
 } as const;
 
 type ActionTrigger = (typeof ActionTrigger)[keyof typeof ActionTrigger];
