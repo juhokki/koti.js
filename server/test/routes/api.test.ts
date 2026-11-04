@@ -18,6 +18,7 @@ const mockWrite = vi.fn();
 const mockControl = vi.fn();
 const mockGetEnabledIntegrations = vi.fn();
 const mockGetIntegrationParameters = vi.fn();
+const mockGetServiceParameters = vi.fn();
 const mockReadDeviceValues = vi.fn();
 
 const services = new ServiceLocator(
@@ -48,6 +49,12 @@ const services = new ServiceLocator(
 				getEnabledIntegrations: mockGetEnabledIntegrations,
 				getIntegrationParameters: mockGetIntegrationParameters
 			} as unknown as SystemService
+		],
+		[
+			"TestService",
+			{
+				getParameters: mockGetServiceParameters
+			} as unknown as ServiceBase
 		]
 	] as [string, ServiceBase][])
 );
@@ -69,12 +76,48 @@ test("Gets system info", async () => {
 	expect(response.body).toStrictEqual(
 		expect.objectContaining({
 			integrations: ["RestApiIntegration"],
+			services: services.getNames(),
 			disk: {
 				size: disk.getSize(),
 				free: disk.getFree()
 			}
 		})
 	);
+});
+
+test("Gets service parameters", async () => {
+	const app = express();
+
+	app.use(getApiRouter(services));
+
+	mockGetServiceParameters.mockReturnValueOnce([{ name: "Count", value: 1 }]);
+
+	// eslint-disable-next-line
+	const response = await (request(app) as TestAgent).get(
+		"/system/service?name=TestService"
+	);
+
+	expect(response.status).toBe(200);
+	expect(response.body).toStrictEqual({
+		name: "TestService",
+		parameters: [{ name: "Count", value: 1 }]
+	});
+});
+
+test("Service info requires name and registered service", async () => {
+	const app = express();
+
+	app.use(getApiRouter(services));
+
+	// eslint-disable-next-line
+	const missing = await (request(app) as TestAgent).get("/system/service");
+	// eslint-disable-next-line
+	const unknown = await (request(app) as TestAgent).get(
+		"/system/service?name=Nope"
+	);
+
+	expect(missing.status).toBe(400);
+	expect(unknown.status).toBe(404);
 });
 
 test("Gets integration parameters", async () => {

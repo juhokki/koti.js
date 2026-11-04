@@ -9,6 +9,7 @@ import type UserPayload from "./UserPayload.ts";
 import type UserConfig from "./UserConfig.ts";
 import { readConfigFile, writeConfigFile } from "../../util/FileUtil.ts";
 import logger from "../../util/logger.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class UserService extends ServiceBase {
 	options: UserServiceSettings;
@@ -19,6 +20,10 @@ export default class UserService extends ServiceBase {
 
 		this.options = options;
 		this.users = this.readUsersFromFile();
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [{ name: "Users count", value: this.users.length }];
 	}
 
 	readUsersFromFile(): User[] {

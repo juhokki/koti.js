@@ -11,6 +11,7 @@ import ActionTrigger from "../../constants/ActionTrigger.ts";
 import logger from "../../util/logger.ts";
 import OnInitialValueActionHandler from "./actionhandler/OnInitialValueActionHandler.ts";
 import type ActionConfig from "../asset/ActionConfig.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class ActionService extends ServiceBase {
 	options: ActionServiceSettings;
@@ -23,6 +24,10 @@ export default class ActionService extends ServiceBase {
 		this.options = options;
 		this.actionHandlers = [];
 		this.context = new ScriptContext(services);
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [{ name: "Actions count", value: this.actionHandlers.length }];
 	}
 
 	override start() {

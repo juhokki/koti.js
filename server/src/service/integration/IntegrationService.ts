@@ -17,6 +17,7 @@ import ShellyIntegration from "./shelly/ShellyIntegration.ts";
 import ToshibaAcIntegration from "./toshiba/ToshibaAcIntegration.ts";
 import type ToshibaAcIntegrationConfig from "./toshiba/ToshibaAcIntegrationConfig.ts";
 import logger from "../../util/logger.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class IntegrationService extends ServiceBase {
 	options: IntegrationServiceSettings;
@@ -27,6 +28,15 @@ export default class IntegrationService extends ServiceBase {
 
 		this.options = options;
 		this.integrations = this.createIntegrations();
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [
+			{
+				name: "Enabled integrations count",
+				value: this.integrations.size
+			}
+		];
 	}
 
 	override async start() {

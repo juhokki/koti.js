@@ -12,6 +12,7 @@ import type {
 	SuncalcScheduleOptions
 } from "../asset/ScheduleConfig.ts";
 import logger from "../../util/logger.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class SchedulerService extends ServiceBase {
 	options: SchedulerServiceSettings;
@@ -22,6 +23,10 @@ export default class SchedulerService extends ServiceBase {
 
 		this.options = options;
 		this.tasks = [];
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [{ name: "Scheduled tasks count", value: this.tasks.length }];
 	}
 
 	override start() {

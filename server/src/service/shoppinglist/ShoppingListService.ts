@@ -8,6 +8,7 @@ import ShoppingListItem from "../../model/ShoppingListItem.ts";
 import type ShoppingListConfig from "./ShoppingListConfig.ts";
 import { readConfigFile, writeConfigFile } from "../../util/FileUtil.ts";
 import logger from "../../util/logger.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class ShoppingListService extends ServiceBase {
 	options: ShoppingListServiceSettings;
@@ -24,6 +25,10 @@ export default class ShoppingListService extends ServiceBase {
 		this.options = options;
 		this.shoppingList = this.readShoppingListFromFile();
 		this.shoppingListUpdateTimeoutId = null;
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [{ name: "Items count", value: this.shoppingList.items.length }];
 	}
 
 	override stop() {

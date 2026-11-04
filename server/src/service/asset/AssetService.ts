@@ -11,6 +11,7 @@ import type AssetConfig from "./AssetConfig.ts";
 import type DeviceType from "../../constants/DeviceType.ts";
 import { readConfigFile } from "../../util/FileUtil.ts";
 import logger from "../../util/logger.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class AssetService extends ServiceBase {
 	options: AssetServiceSettings;
@@ -24,6 +25,14 @@ export default class AssetService extends ServiceBase {
 		this.devices = this.readDevicesFromFile();
 		this.assets = this.readAssetsFromFile();
 		this.validate();
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [
+			{ name: "Assets count", value: this.assets.length },
+			{ name: "Devices count", value: this.devices.length },
+			{ name: "Measurements count", value: this.getMeasurements().length }
+		];
 	}
 
 	validate() {

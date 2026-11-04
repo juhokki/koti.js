@@ -9,6 +9,7 @@ import type Value from "../../model/Value.ts";
 import MeasurementType from "../../constants/MeasurementType.ts";
 import logger from "../../util/logger.ts";
 import type Measurement from "../../model/Measurement.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class DataService extends ServiceBase {
 	options: DataServiceSettings;
@@ -20,6 +21,16 @@ export default class DataService extends ServiceBase {
 
 		this.options = options;
 		this.database = this.buildDatabase();
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [
+			{ name: "Database", value: this.database.constructor.name },
+			{
+				name: "Cached values count",
+				value: this.latestValueCache.values().length
+			}
+		];
 	}
 
 	override async start() {

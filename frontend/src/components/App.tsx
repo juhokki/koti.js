@@ -32,6 +32,7 @@ import Alarms from "./alarms/Alarms";
 import System from "./system/System";
 import Logs from "./system/Logs";
 import Integration from "./system/Integration";
+import Service from "./system/Service";
 import PullToRefresh from "./PullToRefresh";
 
 export default function App() {
@@ -146,6 +147,10 @@ export default function App() {
 										<Route
 											path="system/integrations/:name"
 											element={<Integration />}
+										/>
+										<Route
+											path="system/services/:name"
+											element={<Service />}
 										/>
 									</Routes>
 									<Outlet />

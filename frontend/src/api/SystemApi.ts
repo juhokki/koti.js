@@ -1,5 +1,6 @@
 import { SystemState } from "../interface/SystemState";
 import { IntegrationInfo } from "../interface/IntegrationInfo";
+import { ServiceInfo } from "../interface/ServiceInfo";
 import AuthUtil from "../util/AuthUtil";
 
 class SystemApi {
@@ -35,6 +36,26 @@ class SystemApi {
 		}
 
 		return (await response.json()) as IntegrationInfo;
+	}
+
+	async getService(name: string): Promise<ServiceInfo> {
+		const url = `/api/system/service?name=${encodeURIComponent(name)}`;
+		const options = {
+			method: "GET",
+			headers: {
+				Authorization: AuthUtil.buildAuthorization()
+			}
+		};
+
+		const response = await fetch(url, options);
+
+		if (!response.ok) {
+			throw new Error(
+				`Request failed with status ${String(response.status)}`
+			);
+		}
+
+		return (await response.json()) as ServiceInfo;
 	}
 }
 

@@ -10,6 +10,7 @@ import type Alarm from "../../model/Alarm.ts";
 import type AlarmCheckerBase from "./alarmcheckers/AlarmCheckerBase.ts";
 import type Measurement from "../../model/Measurement.ts";
 import type AlarmCheckerOptions from "./alarmcheckers/AlarmCheckerOptions.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class AlarmService extends ServiceBase {
 	options: AlarmServiceSettings;
@@ -22,6 +23,12 @@ export default class AlarmService extends ServiceBase {
 		this.options = options;
 		this.alarms = new Map();
 		this.alarmCheckers = [];
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [
+			{ name: "Active alarms count", value: this.getAlarms().length }
+		];
 	}
 
 	override start() {

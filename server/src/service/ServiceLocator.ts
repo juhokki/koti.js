@@ -37,6 +37,10 @@ export default class ServiceLocator {
 		return this.services.values();
 	}
 
+	getNames(): string[] {
+		return Array.from(this.services.keys());
+	}
+
 	getAssetService(): AssetService {
 		return this.get("AssetService") as AssetService;
 	}

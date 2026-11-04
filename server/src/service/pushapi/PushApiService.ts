@@ -6,6 +6,7 @@ import type ServiceLocator from "../ServiceLocator.ts";
 import type Alarm from "../../model/Alarm.ts";
 import logger from "../../util/logger.ts";
 import type { UserSubscription } from "./UserSubscription.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class PushApiService extends ServiceBase {
 	options: PushApiServiceSettings;
@@ -16,6 +17,12 @@ export default class PushApiService extends ServiceBase {
 
 		this.options = options;
 		this.subscriptions = this.readSubscriptions();
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [
+			{ name: "Subscriptions count", value: this.subscriptions.length }
+		];
 	}
 
 	readSubscriptions(): UserSubscription[] {

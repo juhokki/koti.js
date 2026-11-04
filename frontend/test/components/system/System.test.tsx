@@ -9,16 +9,19 @@ import {
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Integration from "../../../src/components/system/Integration";
 import Logs from "../../../src/components/system/Logs";
+import Service from "../../../src/components/system/Service";
 import System from "../../../src/components/system/System";
 
 const mockGetSystemStats = vi.hoisted(() => vi.fn());
 const mockGetIntegration = vi.hoisted(() => vi.fn());
+const mockGetService = vi.hoisted(() => vi.fn());
 const mockGetLogs = vi.hoisted(() => vi.fn());
 
 vi.mock("../../../src/api/SystemApi", () => ({
 	default: {
 		getSystemStats: mockGetSystemStats,
-		getIntegration: mockGetIntegration
+		getIntegration: mockGetIntegration,
+		getService: mockGetService
 	}
 }));
 
@@ -31,7 +34,8 @@ vi.mock("../../../src/api/LogsApi", () => ({
 const systemStats = {
 	uptime: 90061,
 	disk: { size: 1_000_000, free: 500_000 },
-	integrations: ["ShellyIntegration"]
+	integrations: ["ShellyIntegration"],
+	services: ["DataService"]
 };
 
 function renderRoutes(initialEntry: string) {
@@ -44,6 +48,7 @@ function renderRoutes(initialEntry: string) {
 					path="/system/integrations/:name"
 					element={<Integration />}
 				/>
+				<Route path="/system/services/:name" element={<Service />} />
 				<Route path="/system/integrations" element={<Integration />} />
 			</Routes>
 		</MemoryRouter>
@@ -53,6 +58,7 @@ function renderRoutes(initialEntry: string) {
 beforeEach(() => {
 	mockGetSystemStats.mockReset();
 	mockGetIntegration.mockReset();
+	mockGetService.mockReset();
 	mockGetLogs.mockReset();
 });
 
@@ -70,6 +76,7 @@ test("System displays server, disk, and integration data", async () => {
 	expect(screen.getByText("Koko")).toBeTruthy();
 	expect(screen.getByText("Vapaana")).toBeTruthy();
 	expect(screen.getByText("Shelly Integration")).toBeTruthy();
+	expect(screen.getByText("Data Service")).toBeTruthy();
 });
 
 test("System displays an error when stats cannot be loaded", async () => {
@@ -116,6 +123,38 @@ test("Integration displays empty and failed parameter states", async () => {
 	cleanup();
 	mockGetIntegration.mockRejectedValueOnce(new Error("offline"));
 	renderRoutes("/system/integrations/UnknownIntegration");
+	expect(
+		await screen.findByText("Tietojen hakeminen ei onnistunut.")
+	).toBeTruthy();
+});
+
+test("Service displays parameters", async () => {
+	mockGetService.mockResolvedValueOnce({
+		name: "DataService",
+		parameters: [
+			{ name: "Database", value: "TimescaleDatabase" },
+			{ name: "Cached values count", value: 3 }
+		]
+	});
+	renderRoutes("/system/services/DataService");
+
+	expect(await screen.findByText("Data Service")).toBeTruthy();
+	expect(screen.getByText("Database")).toBeTruthy();
+	expect(screen.getByText("TimescaleDatabase")).toBeTruthy();
+	expect(screen.getByText("3")).toBeTruthy();
+});
+
+test("Service displays empty and failed parameter states", async () => {
+	mockGetService.mockResolvedValueOnce({
+		name: "DataService",
+		parameters: []
+	});
+	renderRoutes("/system/services/DataService");
+	expect(await screen.findByText("Ei parametreja")).toBeTruthy();
+
+	cleanup();
+	mockGetService.mockRejectedValueOnce(new Error("offline"));
+	renderRoutes("/system/services/UnknownService");
 	expect(
 		await screen.findByText("Tietojen hakeminen ei onnistunut.")
 	).toBeTruthy();

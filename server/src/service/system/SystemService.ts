@@ -4,6 +4,7 @@ import ServiceBase from "../ServiceBase.ts";
 import Disk from "../../model/Disk.ts";
 import type SystemServiceSettings from "./SystemServiceSettings.ts";
 import type ServiceLocator from "../ServiceLocator.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class SystemService extends ServiceBase {
 	options: SystemServiceSettings;
@@ -12,6 +13,10 @@ export default class SystemService extends ServiceBase {
 		super(services);
 
 		this.options = options;
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [{ name: "Uptime (seconds)", value: process.uptime() }];
 	}
 
 	async getDisk() {

@@ -10,6 +10,7 @@ import type HttpServiceSettings from "./HttpServiceSettings.ts";
 import type UserPayload from "../user/UserPayload.ts";
 import type ShoppingList from "../../model/ShoppingList.ts";
 import logger from "../../util/logger.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class HttpService extends ServiceBase {
 	options: HttpServiceSettings;
@@ -24,6 +25,16 @@ export default class HttpService extends ServiceBase {
 		this.httpServer = this.setupHttpServer();
 		this.express = this.setupExpress();
 		this.sockets = this.setupSockets();
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [
+			{ name: "Port", value: this.options.port },
+			{
+				name: "Connected sockets count",
+				value: this.sockets.sockets.sockets.size
+			}
+		];
 	}
 
 	override async start() {

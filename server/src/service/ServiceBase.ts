@@ -1,5 +1,6 @@
 import EventEmitter from "events";
 import ServiceLocator from "./ServiceLocator.ts";
+import type ServiceParameter from "./ServiceParameter.ts";
 
 export default class ServiceBase extends EventEmitter {
 	services: ServiceLocator;
@@ -16,5 +17,9 @@ export default class ServiceBase extends EventEmitter {
 
 	stop(): Promise<void> {
 		return Promise.resolve();
+	}
+
+	getParameters(): ServiceParameter[] {
+		return [];
 	}
 }

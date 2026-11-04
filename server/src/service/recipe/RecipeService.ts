@@ -7,6 +7,7 @@ import type RecipeServiceSettings from "./RecipeServiceSettings.ts";
 import type RecipeConfig from "./RecipeConfig.ts";
 import { readConfigFile, writeConfigFile } from "../../util/FileUtil.ts";
 import logger from "../../util/logger.ts";
+import type ServiceParameter from "../ServiceParameter.ts";
 
 export type RecipeInput = Omit<Recipe, "id" | "owner">;
 
@@ -19,6 +20,10 @@ export default class RecipeService extends ServiceBase {
 
 		this.options = options;
 		this.recipes = this.readRecipesFromFile();
+	}
+
+	override getParameters(): ServiceParameter[] {
+		return [{ name: "Recipes count", value: this.recipes.length }];
 	}
 
 	readRecipesFromFile(): Recipe[] {

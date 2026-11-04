@@ -19,10 +19,32 @@ export default function (services: ServiceLocator) {
 			res.send({
 				disk,
 				uptime,
-				integrations: integrationService.getEnabledIntegrations()
+				integrations: integrationService.getEnabledIntegrations(),
+				services: services.getNames()
 			});
 		} catch (e) {
 			logger.error(e, "Failed to get system info.");
+			res.sendStatus(HTTP_INTERNAL_SERVER_ERROR);
+		}
+	});
+
+	router.get("/system/service", (req: Request, res: Response) => {
+		const name = req.query.name;
+
+		if (typeof name !== "string" || name === "") {
+			res.sendStatus(HTTP_BAD_REQUEST);
+			return;
+		}
+
+		if (!services.getNames().includes(name)) {
+			res.sendStatus(HTTP_NOT_FOUND);
+			return;
+		}
+
+		try {
+			res.send({ name, parameters: services.get(name).getParameters() });
+		} catch (e) {
+			logger.error(e, "Failed to get service info.");
 			res.sendStatus(HTTP_INTERNAL_SERVER_ERROR);
 		}
 	});
