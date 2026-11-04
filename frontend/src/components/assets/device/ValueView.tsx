@@ -88,12 +88,34 @@ export default function ValueView(props: ValueViewProps) {
 
 	if (measurement.controllable) {
 		if (type === MeasurementType.Number) {
+			const hasSteps = measurement.steps !== undefined;
+			const stepValues = measurement.steps ?? [];
+			const hasStepValues = stepValues.length > 0;
+			const min = hasSteps
+				? hasStepValues
+					? Math.min(...stepValues)
+					: undefined
+				: measurement.min;
+			const max = hasSteps
+				? hasStepValues
+					? Math.max(...stepValues)
+					: undefined
+				: measurement.max;
 			return (
 				<Slider
 					key={key}
-					disabled={disabled}
-					min={measurement.min}
-					max={measurement.max}
+					disabled={disabled || (hasSteps && !hasStepValues)}
+					min={min}
+					max={max}
+					step={hasSteps ? null : undefined}
+					marks={
+						hasSteps
+							? stepValues.map((stepValue) => ({
+									value: stepValue,
+									label: String(stepValue)
+								}))
+							: false
+					}
 					value={value.value as number}
 					onChange={(
 						event: Event,

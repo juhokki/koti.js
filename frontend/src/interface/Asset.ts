@@ -41,6 +41,7 @@ export interface Measurement {
 	controllable: boolean;
 	min: number | undefined;
 	max: number | undefined;
+	steps?: number[];
 	actions: ActionConfig[];
 	alarms: AlarmConfig[];
 	schedules: ScheduleConfig[];

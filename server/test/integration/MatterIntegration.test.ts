@@ -494,8 +494,7 @@ test("writes attribute changes", async () => {
 
 test("marks unavailable devices offline and syncs their reported state on recovery", async () => {
 	const device = createDevice("123");
-	const { services, write, setDeviceOnlineStatus } =
-		createServices([device]);
+	const { services, write, setDeviceOnlineStatus } = createServices([device]);
 	const integration = new MatterIntegration(services, settings());
 	const client = getClient();
 	const node = makeNode(123, false, { "1/6/0": false, "1/8/0": 5 });
@@ -523,11 +522,11 @@ test("marks unavailable devices offline and syncs their reported state on recove
 	expect(write.mock.calls.at(-1)?.[0]).toEqual([
 		expect.objectContaining({
 			measurementId: MEASUREMENT_POWER,
-				value: false
+			value: false
 		}),
 		expect.objectContaining({
 			measurementId: MEASUREMENT_BRIGHTNESS,
-				value: 5
+			value: 5
 		})
 	]);
 	expect(client.deviceCommand).not.toHaveBeenCalled();

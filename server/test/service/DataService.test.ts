@@ -143,6 +143,42 @@ test("DataService writes values", async () => {
 	expect(mockWrite).toHaveBeenLastCalledWith(values);
 });
 
+test("Reported numeric values are written regardless of configured steps and bounds", async () => {
+	const service = new DataService(services, settings);
+	const measurement = new Measurement(
+		"device-1",
+		"meas-1",
+		"",
+		MeasurementType.Number,
+		"",
+		"",
+		false,
+		0,
+		100,
+		[],
+		[],
+		[],
+		[10, 20, 30]
+	);
+	const mockEmit = vi.fn();
+	mockReadLatestValues.mockReturnValueOnce(Promise.resolve([]));
+	mockGetMeasurement
+		.mockReturnValueOnce(measurement)
+		.mockReturnValueOnce(measurement);
+	service.on(Messages.VALUE_UPDATED, mockEmit);
+
+	await service.start();
+	await service.write([new Value("device-1", "meas-1", 20)]);
+	await service.write([new Value("device-1", "meas-1", 101)]);
+
+	expect(service.readLatestValue("device-1", "meas-1")?.value).toBe(101);
+	expect(mockWrite).toHaveBeenLastCalledWith([
+		expect.objectContaining({ value: 101 })
+	]);
+	expect(mockEmit).toHaveBeenCalledTimes(2);
+	expect(mockWrite).toHaveBeenCalledTimes(2);
+});
+
 test("Wrong value types are not written", async () => {
 	const service = new DataService(services, settings);
 
@@ -288,6 +324,16 @@ test("Database write failures do not reject the value update", async () => {
 test("Control emits value", async () => {
 	const value = new Value("device-1", "meas-1", 1);
 	const service = new DataService(services, settings);
+	mockGetMeasurement.mockReturnValueOnce(
+		new Measurement(
+			"device-1",
+			"meas-1",
+			"",
+			MeasurementType.Number,
+			"",
+			""
+		)
+	);
 
 	await service.control(value);
 
@@ -296,4 +342,67 @@ test("Control emits value", async () => {
 		value.measurementId,
 		value
 	);
+});
+
+test("Controls allow configured steps and reject values outside them", async () => {
+	const service = new DataService(services, settings);
+	const measurement = new Measurement(
+		"device-1",
+		"meas-1",
+		"",
+		MeasurementType.Number,
+		"",
+		"",
+		true,
+		undefined,
+		undefined,
+		[],
+		[],
+		[],
+		[10, 20]
+	);
+	mockGetMeasurement
+		.mockReturnValueOnce(measurement)
+		.mockReturnValueOnce(measurement);
+	const allowedValue = new Value("device-1", "meas-1", 20);
+	const rejectedValue = new Value("device-1", "meas-1", 5);
+
+	await service.control(allowedValue);
+	expect(mockControl).toHaveBeenCalledWith(
+		allowedValue.deviceId,
+		allowedValue.measurementId,
+		allowedValue
+	);
+
+	await expect(service.control(rejectedValue)).rejects.toThrow(
+		"Value 5 is not allowed"
+	);
+	expect(mockControl).toHaveBeenCalledTimes(1);
+});
+
+test("Controls reject values outside configured min and max bounds", async () => {
+	const service = new DataService(services, settings);
+	const measurement = new Measurement(
+		"device-1",
+		"meas-1",
+		"",
+		MeasurementType.Number,
+		"",
+		"",
+		true,
+		10,
+		20
+	);
+	mockGetMeasurement
+		.mockReturnValueOnce(measurement)
+		.mockReturnValueOnce(measurement);
+	const allowedValue = new Value("device-1", "meas-1", 20);
+	const rejectedValue = new Value("device-1", "meas-1", 21);
+
+	await service.control(allowedValue);
+	await expect(service.control(rejectedValue)).rejects.toThrow(
+		"Value 21 is not allowed"
+	);
+
+	expect(mockControl).toHaveBeenCalledTimes(1);
 });

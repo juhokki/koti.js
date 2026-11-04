@@ -208,6 +208,46 @@ test("Disables a controllable value when its device is offline", () => {
 	expect(screen.getByRole("switch").getAttribute("disabled")).not.toBeNull();
 });
 
+test("Controllable number sliders use configured steps as marks and bounds", () => {
+	const measurement = {
+		...numberMeasurement,
+		controllable: true,
+		min: 0,
+		max: 100,
+		steps: [10, 20, 30]
+	};
+	const { container } = renderValue(
+		measurement,
+		createValue("temperature", 20)
+	);
+	const slider = screen.getByRole<HTMLInputElement>("slider", {
+		name: "Value slider"
+	});
+
+	expect(slider.min).toBe("10");
+	expect(slider.max).toBe("30");
+	expect(container.querySelectorAll(".MuiSlider-mark")).toHaveLength(3);
+	expect(container.querySelectorAll(".MuiSlider-markLabel")).toHaveLength(3);
+});
+
+test("Controllable number sliders retain min and max without steps", () => {
+	const measurement = {
+		...numberMeasurement,
+		controllable: true
+	};
+	const { container } = renderValue(
+		measurement,
+		createValue("temperature", 20)
+	);
+	const slider = screen.getByRole<HTMLInputElement>("slider", {
+		name: "Value slider"
+	});
+
+	expect(slider.min).toBe("0");
+	expect(slider.max).toBe("40");
+	expect(container.querySelectorAll(".MuiSlider-mark")).toHaveLength(0);
+});
+
 test("DeviceHistory groups values into charts and changes the week", async () => {
 	mockGetDeviceValues.mockResolvedValue([
 		createValue("temperature", 18, 10),

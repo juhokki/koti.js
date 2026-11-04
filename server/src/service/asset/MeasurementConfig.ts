@@ -12,6 +12,7 @@ export default interface MeasurementConfig {
 	controllable: boolean;
 	min: number | undefined;
 	max: number | undefined;
+	steps?: number[];
 	actions: ActionConfig[];
 	alarms: AlarmConfig[];
 	schedules: ScheduleConfig[];

@@ -193,9 +193,42 @@ export default class DataService extends ServiceBase {
 		}
 	}
 
-	control(value: Value): Promise<void> {
-		return this.services
+	async control(value: Value): Promise<void> {
+		const measurement = this.services
+			.getAssetService()
+			.getMeasurement(value.deviceId, value.measurementId);
+		this.verifyMeasurementRange(measurement, value);
+
+		await this.services
 			.getIntegrationService()
 			.onValueControlled(value.deviceId, value.measurementId, value);
+	}
+
+	private verifyMeasurementRange(measurement: Measurement, value: Value) {
+		if (
+			measurement.type !== MeasurementType.Number &&
+			measurement.type !== MeasurementType.Counter
+		) {
+			return;
+		}
+		if (typeof value.value !== "number") {
+			throw new Error(
+				`Value for measurement ${measurement.id} must be numeric.`
+			);
+		}
+
+		const isAllowed =
+			measurement.steps !== undefined
+				? measurement.steps.includes(value.value)
+				: (measurement.min === undefined ||
+						value.value >= measurement.min) &&
+					(measurement.max === undefined ||
+						value.value <= measurement.max);
+
+		if (!isAllowed) {
+			throw new Error(
+				`Value ${String(value.value)} is not allowed for measurement ${measurement.id}.`
+			);
+		}
 	}
 }

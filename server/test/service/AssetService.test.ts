@@ -55,7 +55,8 @@ test("Builds assets", async () => {
 					name: "Test",
 					type: "number",
 					unit: "unit",
-					icon: "test-icon"
+					icon: "test-icon",
+					steps: [10, 20, 30]
 				}
 			]
 		}
@@ -93,7 +94,8 @@ test("Builds assets", async () => {
 							name: "Test",
 							type: "number",
 							unit: "unit",
-							icon: "test-icon"
+							icon: "test-icon",
+							steps: [10, 20, 30]
 						})
 					]
 				})

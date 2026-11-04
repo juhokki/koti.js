@@ -13,6 +13,7 @@ export default class Measurement {
 	controllable: boolean;
 	min: number | undefined;
 	max: number | undefined;
+	steps: number[] | undefined;
 	actions: ActionConfig[];
 	alarms: AlarmConfig[];
 	schedules: ScheduleConfig[];
@@ -30,7 +31,8 @@ export default class Measurement {
 		max?: number,
 		actions: ActionConfig[] = [],
 		alarms: AlarmConfig[] = [],
-		schedules: ScheduleConfig[] = []
+		schedules: ScheduleConfig[] = [],
+		steps?: number[]
 	) {
 		this.deviceId = deviceId;
 		this.id = id;
@@ -41,6 +43,7 @@ export default class Measurement {
 		this.controllable = controllable;
 		this.min = min;
 		this.max = max;
+		this.steps = steps;
 		this.actions = actions;
 		this.alarms = alarms;
 		this.schedules = schedules;

@@ -111,7 +111,8 @@ export default class AssetService extends ServiceBase {
 						measurementConfig.max,
 						measurementConfig.actions,
 						measurementConfig.alarms,
-						measurementConfig.schedules
+						measurementConfig.schedules,
+						measurementConfig.steps
 					);
 				})
 			);
