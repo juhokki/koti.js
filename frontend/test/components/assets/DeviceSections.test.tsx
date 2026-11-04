@@ -18,7 +18,8 @@ import {
 	ActionTrigger,
 	DeviceOnlineStatus,
 	DeviceType,
-	MeasurementType
+	MeasurementType,
+	ScheduleType
 } from "../../../src/interface/Asset";
 import type { Asset, Device, Measurement } from "../../../src/interface/Asset";
 import { AlarmType, type Alarm } from "../../../src/interface/Alarm";
@@ -43,7 +44,20 @@ const measurement: Measurement = {
 	alarms: [
 		{ name: "High temperature", type: AlarmType.ValueUpperLimit, limit: 30 }
 	],
-	schedules: [{ name: "Morning", cron: "0 8 * * *", value: 20 }],
+	schedules: [
+		{
+			name: "Morning",
+			type: ScheduleType.Cron,
+			options: { expression: "0 8 * * *" },
+			value: 20
+		},
+		{
+			name: "Evening",
+			type: ScheduleType.Suncalc,
+			options: { lat: 60.17, lng: 24.94, property: "sunset" },
+			value: 10
+		}
+	],
 	disabled: false
 };
 
@@ -175,6 +189,8 @@ test("Device schedules show configured times and empty state", () => {
 
 	expect(screen.getByText("Morning")).toBeTruthy();
 	expect(screen.getByText("0 8 * * *")).toBeTruthy();
+	expect(screen.getByText("Evening")).toBeTruthy();
+	expect(screen.getByText("sunset")).toBeTruthy();
 });
 
 test("Device summary renders values and navigates to history", async () => {

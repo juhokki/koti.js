@@ -77,8 +77,24 @@ export interface AlarmConfig {
 	limit: number;
 }
 
+export enum ScheduleType {
+	Cron = "cron",
+	Suncalc = "suncalc"
+}
+
+export interface CronScheduleOptions {
+	expression: string;
+}
+
+export interface SuncalcScheduleOptions {
+	lat: number;
+	lng: number;
+	property: string;
+}
+
 export interface ScheduleConfig {
 	name: string;
-	cron: string;
+	type: ScheduleType;
+	options: CronScheduleOptions | SuncalcScheduleOptions;
 	value: ValueType;
 }

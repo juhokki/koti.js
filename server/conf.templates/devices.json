@@ -16,7 +16,24 @@
 				"max": null,
 				"actions": [],
 				"alarms": [],
-				"schedules": []
+				"schedules": [
+					{
+						"name": "cron schedule",
+						"type": "cron",
+						"options": { "expression": "0 8 * * *" },
+						"value": true
+					},
+					{
+						"name": "suncalc schedule",
+						"type": "suncalc",
+						"options": {
+							"lat": 60.17,
+							"lng": 24.94,
+							"property": "sunset"
+						},
+						"value": false
+					}
+				]
 			}
 		]
 	}

@@ -2,6 +2,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Icon from "@mui/material/Icon";
 import useAssetPath from "../../../hooks/useAssetPath";
+import type {
+	CronScheduleOptions,
+	ScheduleConfig,
+	SuncalcScheduleOptions
+} from "../../../interface/Asset";
+import { ScheduleType } from "../../../interface/Asset";
+
+const getScheduleTime = (schedule: ScheduleConfig) =>
+	schedule.type === ScheduleType.Cron
+		? (schedule.options as CronScheduleOptions).expression
+		: (schedule.options as SuncalcScheduleOptions).property;
 
 export default function DeviceSchedules() {
 	const navigate = useNavigate();
@@ -63,10 +74,14 @@ export default function DeviceSchedules() {
 										measurement.schedules.map(
 											(schedule) => (
 												<tr
-													key={`${measurement.id}-${schedule.name}-${schedule.cron}`}
+													key={`${measurement.id}-${schedule.name}-${getScheduleTime(schedule)}`}
 												>
 													<td>{schedule.name}</td>
-													<td>{schedule.cron}</td>
+													<td>
+														{getScheduleTime(
+															schedule
+														)}
+													</td>
 												</tr>
 											)
 										)

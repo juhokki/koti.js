@@ -1,14 +1,21 @@
-import cron, { type ScheduledTask } from "node-cron";
 import ServiceBase from "../ServiceBase.ts";
 import Value from "../../model/Value.ts";
+import ScheduleType from "../../constants/ScheduleType.ts";
+import CronSchedule from "./schedules/CronSchedule.ts";
+import SuncalcSchedule from "./schedules/SuncalcSchedule.ts";
+import type Schedule from "./schedules/Schedule.ts";
 import type ServiceLocator from "../ServiceLocator.ts";
 import type SchedulerServiceSettings from "./SchedulerServiceSettings.ts";
 import type ScheduleConfig from "../asset/ScheduleConfig.ts";
+import type {
+	CronScheduleOptions,
+	SuncalcScheduleOptions
+} from "../asset/ScheduleConfig.ts";
 import logger from "../../util/logger.ts";
 
 export default class SchedulerService extends ServiceBase {
 	options: SchedulerServiceSettings;
-	tasks: ScheduledTask[];
+	tasks: Schedule[];
 
 	constructor(services: ServiceLocator, options: SchedulerServiceSettings) {
 		super(services);
@@ -30,25 +37,35 @@ export default class SchedulerService extends ServiceBase {
 	}
 
 	parseSchedules() {
-		const tasks: ScheduledTask[] = [];
+		const tasks: Schedule[] = [];
 		const assetService = this.services.getAssetService();
 
 		assetService.getMeasurements().forEach((measurement) => {
-			measurement.schedules.forEach((schedule) => {
-				tasks.push(
-					cron.schedule(schedule.cron, () => {
-						this.executeSchedule(
-							measurement.deviceId,
-							measurement.id,
-							schedule
-						).catch((e: unknown) => {
-							logger.error(
-								e,
-								`Failed to execute action ${schedule.name}.`
+			measurement.schedules.forEach((schedule: ScheduleConfig) => {
+				const run = () => {
+					this.executeSchedule(
+						measurement.deviceId,
+						measurement.id,
+						schedule
+					).catch((e: unknown) => {
+						logger.error(
+							e,
+							`Failed to execute action ${schedule.name}.`
+						);
+					});
+				};
+
+				const task: Schedule =
+					schedule.type === ScheduleType.Cron
+						? new CronSchedule(
+								schedule.options as CronScheduleOptions
+							)
+						: new SuncalcSchedule(
+								schedule.options as SuncalcScheduleOptions
 							);
-						});
-					})
-				);
+
+				task.start(run);
+				tasks.push(task);
 			});
 		});
 
