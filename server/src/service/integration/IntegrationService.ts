@@ -6,6 +6,8 @@ import type IntegrationBase from "./IntegrationBase.ts";
 import type IntegrationConfig from "./IntegrationConfig.ts";
 import type IntegrationParameter from "./IntegrationParameter.ts";
 import type IntegrationServiceSettings from "./IntegrationServiceSettings.ts";
+import ElectricityPriceIntegration from "./electricityprice/ElectricityPriceIntegration.ts";
+import type ElectricityPriceIntegrationConfig from "./electricityprice/ElectricityPriceIntegrationConfig.ts";
 import MatterIntegration from "./matter/MatterIntegration.ts";
 import type MatterIntegrationConfig from "./matter/MatterIntegrationConfig.ts";
 import OpenWeatherIntegration from "./openweather/OpenWeatherIntegration.ts";
@@ -86,6 +88,15 @@ export default class IntegrationService extends ServiceBase {
 						new MatterIntegration(
 							this.services,
 							config as MatterIntegrationConfig
+						)
+					);
+					break;
+				case ElectricityPriceIntegration.name:
+					integrations.set(
+						ElectricityPriceIntegration.name,
+						new ElectricityPriceIntegration(
+							this.services,
+							config as ElectricityPriceIntegrationConfig
 						)
 					);
 					break;

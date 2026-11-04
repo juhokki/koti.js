@@ -15,6 +15,7 @@ It combines a Node.js backend, a React frontend, and multiple hardware bridges s
 - [Toshiba heat pump integration](server/src/service/integration/toshiba/ToshibaAcIntegration.ts)
 - A shared multi-user shopping list with real-time WebSocket updates.
 - A recipe feature with integration to shopping list.
+- Electricity price.
 
 ## Quick Start
 

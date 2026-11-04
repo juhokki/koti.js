@@ -4,7 +4,8 @@ const DeviceType = {
 	WizIntegration: "WizIntegration",
 	ShellyIntegration: "ShellyIntegration",
 	ToshibaAcIntegration: "ToshibaAcIntegration",
-	RestApiIntegration: "RestApiIntegration"
+	RestApiIntegration: "RestApiIntegration",
+	ElectricityPriceIntegration: "ElectricityPriceIntegration"
 } as const;
 
 type DeviceType = (typeof DeviceType)[keyof typeof DeviceType];

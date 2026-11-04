@@ -12,6 +12,12 @@
 		"location": "..."
 	},
 	{
+		"name": "ElectricityPriceIntegration",
+		"enabled": true,
+		"region": "FI",
+		"cron": "0 20 * * *"
+	},
+	{
 		"name": "ShellyIntegration",
 		"enabled": true
 	},
