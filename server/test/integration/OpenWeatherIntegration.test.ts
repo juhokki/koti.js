@@ -4,9 +4,13 @@ import Value from "../../src/model/Value.js";
 import OpenWeatherIntegration from "../../src/service/integration/openweather/OpenWeatherIntegration.js";
 import type OpenWeatherIntegrationSettings from "../../src/service/integration/openweather/OpenWeatherIntegrationConfig.js";
 import type DataService from "../../src/service/data/DataService.js";
+import type AssetService from "../../src/service/asset/AssetService.js";
+import type ServiceBase from "../../src/service/ServiceBase.js";
+import DeviceType from "../../src/constants/DeviceType.js";
 
 const mockFetch = vi.hoisted(() => vi.fn());
 const mockWrite = vi.hoisted(() => vi.fn());
+const mockGetDevicesWithType = vi.hoisted(() => vi.fn());
 
 vi.mock("node-fetch", () => {
 	return {
@@ -15,20 +19,27 @@ vi.mock("node-fetch", () => {
 });
 
 const services = new ServiceLocator(
-	new Map([
+	new Map<string, ServiceBase>([
 		[
 			"DataService",
 			{
 				write: mockWrite
 			} as unknown as DataService
+		],
+		[
+			"AssetService",
+			{
+				getDevicesWithType: mockGetDevicesWithType
+			} as unknown as AssetService
 		]
 	])
 );
 
+const deviceId = "openweather";
+
 const settings = {
 	enabled: true,
 	name: "OpenWeatherIntegration",
-	deviceId: "openweather",
 	updateInterval: 900000,
 	apiKey: "test",
 	location: "Vaasa,FI"
@@ -39,6 +50,7 @@ vi.useFakeTimers();
 
 beforeEach(() => {
 	vi.setSystemTime(now);
+	mockGetDevicesWithType.mockReturnValue([{ id: deviceId }]);
 });
 
 test("OpenWeatherIntegration is created", () => {
@@ -71,12 +83,15 @@ test("OpenWeatherIntegration updates on start", async () => {
 		{ method: "GET" }
 	);
 
+	expect(mockGetDevicesWithType).toHaveBeenCalledWith(
+		DeviceType.OpenWeatherIntegration
+	);
 	expect(mockWrite).toHaveBeenCalled();
 	expect(mockWrite).toHaveBeenLastCalledWith([
-		new Value(settings.deviceId, "temperature", 10),
-		new Value(settings.deviceId, "temperature_feels_like", 8),
-		new Value(settings.deviceId, "humidity", 50),
-		new Value(settings.deviceId, "pressure", 100)
+		new Value(deviceId, "temperature", 10),
+		new Value(deviceId, "temperature_feels_like", 8),
+		new Value(deviceId, "humidity", 50),
+		new Value(deviceId, "pressure", 100)
 	]);
 	expect(integration.getParameters()).toEqual([
 		{ name: "Location", value: settings.location },
@@ -85,6 +100,32 @@ test("OpenWeatherIntegration updates on start", async () => {
 	]);
 
 	await integration.stop();
+});
+
+test("OpenWeatherIntegration writes values to every device of the type", async () => {
+	const integration = new OpenWeatherIntegration(services, settings);
+
+	mockGetDevicesWithType.mockReturnValue([{ id: "a" }, { id: "b" }]);
+	mockFetch.mockReturnValueOnce(
+		Promise.resolve({
+			json: () => ({
+				main: { temp: 1, feels_like: 2, humidity: 3, pressure: 1000 }
+			})
+		})
+	);
+
+	await integration.update();
+
+	expect(mockWrite).toHaveBeenLastCalledWith([
+		new Value("a", "temperature", 1),
+		new Value("a", "temperature_feels_like", 2),
+		new Value("a", "humidity", 3),
+		new Value("a", "pressure", 100),
+		new Value("b", "temperature", 1),
+		new Value("b", "temperature_feels_like", 2),
+		new Value("b", "humidity", 3),
+		new Value("b", "pressure", 100)
+	]);
 });
 
 test("OpenWeatherIntegration updates on interval", async () => {

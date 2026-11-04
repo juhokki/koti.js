@@ -6,7 +6,6 @@
 	{
 		"name": "OpenWeatherIntegration",
 		"enabled": true,
-		"deviceId": "openweather",
 		"updateInterval": 900000,
 		"apiKey": "...",
 		"location": "..."

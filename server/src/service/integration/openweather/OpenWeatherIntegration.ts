@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import IntegrationBase from "../IntegrationBase.ts";
 import Value from "../../../model/Value.ts";
+import DeviceType from "../../../constants/DeviceType.ts";
 import type OpenWeatherIntegrationSettings from "./OpenWeatherIntegrationConfig.ts";
 import type ServiceLocator from "../../ServiceLocator.ts";
 import logger from "../../../util/logger.ts";
@@ -68,20 +69,23 @@ export default class OpenWeatherIntegration extends IntegrationBase {
 
 		const response = await fetch(url, options);
 		const data = (await response.json()) as OpenWeatherResponse;
-		const values = [
-			new Value(this.options.deviceId, "temperature", data.main.temp),
-			new Value(
-				this.options.deviceId,
-				"temperature_feels_like",
-				data.main.feels_like
-			),
-			new Value(this.options.deviceId, "humidity", data.main.humidity),
-			new Value(
-				this.options.deviceId,
-				"pressure",
-				Number((data.main.pressure * 0.1).toFixed(2))
-			)
-		];
+		const values = this.services
+			.getAssetService()
+			.getDevicesWithType(DeviceType.OpenWeatherIntegration)
+			.flatMap(({ id: deviceId }) => [
+				new Value(deviceId, "temperature", data.main.temp),
+				new Value(
+					deviceId,
+					"temperature_feels_like",
+					data.main.feels_like
+				),
+				new Value(deviceId, "humidity", data.main.humidity),
+				new Value(
+					deviceId,
+					"pressure",
+					Number((data.main.pressure * 0.1).toFixed(2))
+				)
+			]);
 
 		await this.services.getDataService().write(values);
 		this.lastUpdated = new Date().toISOString();
