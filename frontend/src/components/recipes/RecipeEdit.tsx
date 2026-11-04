@@ -204,7 +204,14 @@ export default function RecipeEdit() {
 									Ainesosat
 								</h3>
 								{ingredients.map((ingredient, i) => (
-									<div key={i} style={{ "display": "flex", "alignItems": "center", "padding": "var(--spacing)" }}>
+									<div
+										key={i}
+										style={{
+											display: "flex",
+											alignItems: "center",
+											padding: "var(--spacing)"
+										}}
+									>
 										<input
 											type="text"
 											placeholder="Määrä"
@@ -216,7 +223,10 @@ export default function RecipeEdit() {
 													e.target.value
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "width": "100px" }}
+											style={{
+												marginRight: "var(--spacing)",
+												width: "100px"
+											}}
 										/>
 										<Select
 											size="small"
@@ -241,7 +251,10 @@ export default function RecipeEdit() {
 													e.target.value
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "width": "100px" }}
+											style={{
+												marginRight: "var(--spacing)",
+												width: "100px"
+											}}
 										>
 											<MenuItem value={DEFAULT_UNIT}>
 												-
@@ -266,11 +279,15 @@ export default function RecipeEdit() {
 													e.target.value
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "flexGrow": 1, "minWidth": 0 }}
+											style={{
+												marginRight: "var(--spacing)",
+												flexGrow: 1,
+												minWidth: 0
+											}}
 										/>
 										<RemoveCircleIcon
 											className="danger clickable"
-											style={{ "verticalAlign": "middle" }}
+											style={{ verticalAlign: "middle" }}
 											onClick={() => {
 												setIngredients(
 													ingredients.filter(
@@ -302,8 +319,14 @@ export default function RecipeEdit() {
 									<div
 										key={i}
 										data-step-index={i}
-										className={dragIndex === i ? "dragging" : ""}
-										style={{ "display": "flex", "alignItems": "center", "padding": "var(--spacing)" }}
+										className={
+											dragIndex === i ? "dragging" : ""
+										}
+										style={{
+											display: "flex",
+											alignItems: "center",
+											padding: "var(--spacing)"
+										}}
 									>
 										<DragIndicatorIcon
 											className="clickable"
@@ -320,7 +343,9 @@ export default function RecipeEdit() {
 											onPointerCancel={() => {
 												setDragIndex(null);
 											}}
-											style={{ "marginRight": "var(--spacing)" }}
+											style={{
+												marginRight: "var(--spacing)"
+											}}
 										/>
 										<input
 											type="text"
@@ -335,7 +360,11 @@ export default function RecipeEdit() {
 													)
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "flexGrow": 1, "minWidth": 0 }}
+											style={{
+												marginRight: "var(--spacing)",
+												flexGrow: 1,
+												minWidth: 0
+											}}
 										/>
 										<RemoveCircleIcon
 											className="danger clickable"

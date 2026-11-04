@@ -66,7 +66,10 @@ export default function Login() {
 				)}
 				<form className="grid" onSubmit={handleSubmit}>
 					<div className="grid-item">
-						<div className="margin-bottom" style={{ display: "flex", alignItems: "center" }}>
+						<div
+							className="margin-bottom"
+							style={{ display: "flex", alignItems: "center" }}
+						>
 							<label className="margin-right">
 								<PersonIcon />
 							</label>
@@ -77,10 +80,13 @@ export default function Login() {
 								type="text"
 								placeholder="Käyttäjätunnus"
 								autoComplete="username"
-								style={{ flexGrow: 1, "minWidth": 0 }}
+								style={{ flexGrow: 1, minWidth: 0 }}
 							/>
 						</div>
-						<div className="margin-bottom" style={{ display: "flex", alignItems: "center" }}>
+						<div
+							className="margin-bottom"
+							style={{ display: "flex", alignItems: "center" }}
+						>
 							<label className="margin-right">
 								<LockIcon />
 							</label>
@@ -91,7 +97,7 @@ export default function Login() {
 								type="password"
 								placeholder="Salasana"
 								autoComplete="current-password"
-								style={{ flexGrow: 1, "minWidth": 0 }}
+								style={{ flexGrow: 1, minWidth: 0 }}
 							/>
 						</div>
 						<div className="buttons">

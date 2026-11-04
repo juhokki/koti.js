@@ -47,7 +47,7 @@ function renderPage() {
 it("Selects all ingredients by default", async () => {
 	renderPage();
 
-	await screen.findByText("2 dl flour");
+	await screen.findByDisplayValue("flour");
 
 	const boxes = screen.getAllByRole<HTMLInputElement>("checkbox");
 
@@ -59,8 +59,12 @@ it("Sends only selected ingredients", async () => {
 	mockAppendItems.mockResolvedValue(undefined);
 	renderPage();
 
-	await screen.findByText("2 dl flour");
-	fireEvent.click(screen.getByRole("checkbox", { name: "1 kpl egg" }));
+	await screen.findByDisplayValue("flour");
+	const eggBox = screen.getAllByRole("checkbox")[1];
+	expect(eggBox).toBeDefined();
+	if (eggBox) {
+		fireEvent.click(eggBox);
+	}
 	fireEvent.click(screen.getByText("Lisää"));
 
 	expect(mockAppendItems).toHaveBeenCalledWith(["2 dl flour"]);
@@ -71,7 +75,7 @@ it("Shows an error message when adding fails", async () => {
 	mockAppendItems.mockRejectedValue(new Error("fail"));
 	renderPage();
 
-	await screen.findByText("2 dl flour");
+	await screen.findByDisplayValue("flour");
 	fireEvent.click(screen.getByText("Lisää"));
 
 	expect(await screen.findByText("Lisääminen epäonnistui.")).toBeTruthy();

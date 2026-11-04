@@ -59,7 +59,8 @@ it("Shows recipe edit and delete buttons to the owner", async () => {
 		</UserContext.Provider>
 	);
 
-	expect(await screen.findByText("2 dl flour")).toBeTruthy();
+	expect(await screen.findByText("2 dl")).toBeTruthy();
+	expect(screen.getByText("flour")).toBeTruthy();
 	expect(screen.getByText("Fry")).toBeTruthy();
 	expect(screen.getByText("Muokkaa")).toBeTruthy();
 	expect(screen.getByText("Poista")).toBeTruthy();
@@ -109,7 +110,7 @@ it("Hides recipe edit and delete buttons from other users", async () => {
 		</UserContext.Provider>
 	);
 
-	expect(await screen.findByText("2 dl flour")).toBeTruthy();
+	expect(await screen.findByText("2 dl")).toBeTruthy();
 	expect(screen.queryByText("Muokkaa")).toBeNull();
 	expect(screen.queryByText("Poista")).toBeNull();
 });

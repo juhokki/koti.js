@@ -89,7 +89,10 @@ export default function DeviceActionScript() {
 						)}
 						{action && (
 							<>
-								<div className="underline margin-bottom" style={{ padding: "var(--spacing)" }}>
+								<div
+									className="underline margin-bottom"
+									style={{ padding: "var(--spacing)" }}
+								>
 									{action.name}
 								</div>
 								<div style={{ padding: "var(--spacing)" }}>

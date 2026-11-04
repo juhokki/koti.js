@@ -152,9 +152,17 @@ export default function Logs() {
 				<div className="grid">
 					{entries.map((entry, i) => (
 						<div className="grid-item full-width" key={i}>
-							<div className="underline" style={{ display: "flex", padding: "var(--spacing)" }}>
+							<div
+								className="underline"
+								style={{
+									display: "flex",
+									padding: "var(--spacing)"
+								}}
+							>
 								<span>{formatTime(entry.time)}</span>
-								<span style={{ marginLeft: "auto" }}>{levelName(entry.level)}</span>
+								<span style={{ marginLeft: "auto" }}>
+									{levelName(entry.level)}
+								</span>
 							</div>
 							<div style={{ padding: "var(--spacing)" }}>
 								<span>{entry.msg}</span>

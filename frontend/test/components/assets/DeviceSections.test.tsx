@@ -16,13 +16,12 @@ import {
 } from "../../../src/context/ValuesContext";
 import {
 	ActionTrigger,
-	AlarmType,
 	DeviceOnlineStatus,
 	DeviceType,
 	MeasurementType
 } from "../../../src/interface/Asset";
 import type { Asset, Device, Measurement } from "../../../src/interface/Asset";
-import type { Alarm } from "../../../src/interface/Alarm";
+import { AlarmType, type Alarm } from "../../../src/interface/Alarm";
 
 const mockExecuteAction = vi.hoisted(() => vi.fn());
 

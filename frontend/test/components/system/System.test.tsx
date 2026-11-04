@@ -144,10 +144,10 @@ test("Logs displays fetched entries and refetches when a level changes", async (
 	const { container } = renderRoutes("/system/logs");
 
 	expect(await screen.findByText("sensor unavailable")).toBeTruthy();
-	expect(container.querySelector(".log-stack")?.textContent).toBe(
+	expect(container.querySelector(".grid-sub-item")?.textContent).toBe(
 		entry.err.stack
 	);
-	expect(container.querySelectorAll(".log-stack")).toHaveLength(1);
+	expect(container.querySelectorAll(".grid-sub-item")).toHaveLength(1);
 	expect(screen.getByText("reading received")).toBeTruthy();
 	expect(mockGetLogs).toHaveBeenCalledTimes(1);
 	fireEvent.click(screen.getByRole("button", { name: "info logs" }));

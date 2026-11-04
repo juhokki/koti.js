@@ -124,15 +124,16 @@ export default function ShoppingListView() {
 							key={item.id}
 							data-item-id={item.id}
 							className="grid-item full-width clickable"
-							onClick={() => { crossItem(item.id) }}
+							onClick={() => {
+								crossItem(item.id);
+							}}
 						>
-							<span
-								className={item.crossed ? "crossed" : ""}
-							>
+							<span className={item.crossed ? "crossed" : ""}>
 								{item.text}
 							</span>
 							<RemoveCircleIcon
-								onClick={() => {
+								onClick={(e) => {
+									e.stopPropagation();
 									removeItem(item.id);
 								}}
 								className="danger"
@@ -140,7 +141,10 @@ export default function ShoppingListView() {
 							/>
 						</div>
 					))}
-					<form className="full-width margin-top margin-left margin-right" onSubmit={addItem}>
+					<form
+						className="full-width margin-top margin-left margin-right"
+						onSubmit={addItem}
+					>
 						<input
 							value={newItem}
 							onChange={(e) => {

@@ -1,3 +1,4 @@
+import { AlarmType } from "./Alarm";
 import { ValueType } from "./Value";
 
 export interface Asset {
@@ -22,12 +23,12 @@ export interface Device {
 }
 
 export enum DeviceType {
-	VaasanSahkoIntegration = "VaasanSahkoIntegration",
 	MatterIntegration = "MatterIntegration",
-	WizIntegration = "WizIntegration",
 	ShellyIntegration = "ShellyIntegration",
 	ToshibaAcIntegration = "ToshibaAcIntegration",
-	RestApiIntegration = "RestApiIntegration"
+	RestApiIntegration = "RestApiIntegration",
+	ElectricityPriceIntegration = "ElectricityPriceIntegration",
+	OpenWeatherIntegration = "OpenWeatherIntegration"
 }
 
 export interface Measurement {
@@ -66,19 +67,14 @@ export interface ActionConfig {
 }
 
 export enum ActionTrigger {
-	OnChange = "onChange"
+	OnChange = "onChange",
+	OnInitialValue = "onInitialValue"
 }
 
 export interface AlarmConfig {
 	name: string;
 	type: AlarmType;
 	limit: number;
-}
-
-export enum AlarmType {
-	Stale = "stale",
-	ValueUpperLimit = "value.upper-limit",
-	ValueLowerLimit = "value.lower-limit"
 }
 
 export interface ScheduleConfig {

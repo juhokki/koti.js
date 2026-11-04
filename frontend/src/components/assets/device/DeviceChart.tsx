@@ -25,7 +25,7 @@ interface DeviceChartProps {
 	data: DeviceChartDataObject;
 }
 
-export const MAX_POINTS = 500;
+const MAX_POINTS = 500;
 
 export function downsample(
 	points: DeviceChartDataPoint[],

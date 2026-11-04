@@ -5,7 +5,8 @@ import useAssetPath from "../../../hooks/useAssetPath";
 import { ActionTrigger } from "../../../interface/Asset";
 
 const triggerLabels: Record<ActionTrigger, string> = {
-	[ActionTrigger.OnChange]: "Arvon muuttuessa"
+	[ActionTrigger.OnChange]: "Arvon muuttuessa",
+	[ActionTrigger.OnInitialValue]: "Alkuarvon saapuessa"
 };
 
 export default function DeviceActions() {

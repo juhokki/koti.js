@@ -68,8 +68,16 @@ export default function RecipeDetails() {
 								<ul>
 									{recipe.ingredients.map((ingredient, i) => (
 										<li key={i}>
-											<span style={{ "marginRight": "var(--spacing)", "display": "inline-block", "width": "80px" }}>
-												{ingredient.amount} {ingredient.unit}
+											<span
+												style={{
+													marginRight:
+														"var(--spacing)",
+													display: "inline-block",
+													width: "80px"
+												}}
+											>
+												{ingredient.amount}{" "}
+												{ingredient.unit}
 											</span>
 											{ingredient.name}
 										</li>
@@ -83,7 +91,14 @@ export default function RecipeDetails() {
 								<ol>
 									{recipe.steps.map((step, i) => (
 										<li key={i}>
-											<span style={{ "marginRight": "var(--spacing)", "display": "inline-block", "width": "40px" }}>
+											<span
+												style={{
+													marginRight:
+														"var(--spacing)",
+													display: "inline-block",
+													width: "40px"
+												}}
+											>
 												{`${(i + 1).toString()}.`}
 											</span>
 											{step}

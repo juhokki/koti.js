@@ -106,11 +106,13 @@ export default function RecipeShoppingList() {
 				</h2>
 			</section>
 			<section className="content">
-				<form className="grid"
-							onSubmit={(e) => {
-								e.preventDefault();
-								add();
-							}}>
+				<form
+					className="grid"
+					onSubmit={(e) => {
+						e.preventDefault();
+						add();
+					}}
+				>
 					{error && <p>Reseptiä ei löytynyt.</p>}
 					{!recipe && !error && (
 						<div className="loader-container">
@@ -126,13 +128,22 @@ export default function RecipeShoppingList() {
 							)}
 							<div className="grid-item full-width">
 								{ingredients.map((ingredient, i) => (
-									<div key={i} style={{ "display": "flex", "alignItems": "center", "padding": "var(--spacing)" }}>
+									<div
+										key={i}
+										style={{
+											display: "flex",
+											alignItems: "center",
+											padding: "var(--spacing)"
+										}}
+									>
 										<Checkbox
 											checked={selected.has(i)}
 											onChange={() => {
 												toggle(i);
 											}}
-											style={{ "marginRight": "var(--spacing)" }}
+											style={{
+												marginRight: "var(--spacing)"
+											}}
 										/>
 										<input
 											type="text"
@@ -145,7 +156,10 @@ export default function RecipeShoppingList() {
 													e.target.value
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "width": "80px" }}
+											style={{
+												marginRight: "var(--spacing)",
+												width: "80px"
+											}}
 										/>
 										<Select
 											size="small"
@@ -173,19 +187,18 @@ export default function RecipeShoppingList() {
 													e.target.value
 												);
 											}}
-											style={{ "marginRight": "var(--spacing)", "width": "100px" }}
+											style={{
+												marginRight: "var(--spacing)",
+												width: "100px"
+											}}
 										>
 											<MenuItem value="">-</MenuItem>
 											{ingredient.unit &&
 												!(
 													UNITS as readonly string[]
-												).includes(
-													ingredient.unit
-												) && (
+												).includes(ingredient.unit) && (
 													<MenuItem
-														value={
-															ingredient.unit
-														}
+														value={ingredient.unit}
 													>
 														{ingredient.unit}
 													</MenuItem>
@@ -210,7 +223,7 @@ export default function RecipeShoppingList() {
 													e.target.value
 												);
 											}}
-											style={{ "flexGrow": 1, "minWidth": 0 }}
+											style={{ flexGrow: 1, minWidth: 0 }}
 										/>
 									</div>
 								))}
