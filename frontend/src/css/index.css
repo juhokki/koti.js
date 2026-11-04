@@ -21,8 +21,10 @@
 	--success-color: #1fa95b;
 	--font-family: "Poppins", sans-serif;
 	--font-size: 20px;
+	--font-sub-size: 12px;
 	--icon-size: 30px;
 	--font-weight: 400;
+	--font-sub-weight: 100;
 	--spacing: 10px;
 	--border-radius: calc(var(--spacing) / 2);
 }

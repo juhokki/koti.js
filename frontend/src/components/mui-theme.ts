@@ -104,6 +104,20 @@ export default createTheme({
 					}
 				}
 			}
+		},
+		MuiSlider: {
+      		styleOverrides: {
+				mark: ({ theme }) => ({
+					backgroundColor: "var(--font-color)",
+					height: 12,
+					width: 4
+				}),
+				markLabel: ({ theme }) => ({
+					color: "var(--font-color)",
+					fontSize: "var(--font-sub-size)",
+					fontWeight: "var(--font-sub-weight)"
+				})
+			}
 		}
 	}
 });

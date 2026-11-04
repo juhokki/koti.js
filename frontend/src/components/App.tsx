@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
-import theme from "./theme";
+import theme from "./mui-theme";
 import socket from "../socket";
 import { AppContextProvider } from "../context/AppContext";
 import { UserContextProvider } from "../context/UserContext";
