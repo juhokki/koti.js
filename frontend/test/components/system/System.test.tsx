@@ -67,16 +67,28 @@ afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-test("System displays server, disk, and integration data", async () => {
+test("System displays server, disk percentage, log, and integration data", async () => {
 	mockGetSystemStats.mockResolvedValueOnce(systemStats);
-	renderRoutes("/system");
+	const { container } = renderRoutes("/system");
 
 	expect(await screen.findByText("Järjestelmä")).toBeTruthy();
 	expect(screen.getByText("1 pv 01:01:01")).toBeTruthy();
-	expect(screen.getByText("Koko")).toBeTruthy();
-	expect(screen.getByText("Vapaana")).toBeTruthy();
+	expect(screen.getByText("Levytila vapaana")).toBeTruthy();
+	expect(screen.getByText("50 %")).toBeTruthy();
+	expect(screen.getByRole("button", { name: "Avaa lokit" })).toBeTruthy();
 	expect(screen.getByText("Shelly Integration")).toBeTruthy();
 	expect(screen.getByText("Data Service")).toBeTruthy();
+	expect(container.querySelectorAll(".grid-item")).toHaveLength(3);
+});
+
+test("System handles a disk without a valid size", async () => {
+	mockGetSystemStats.mockResolvedValueOnce({
+		...systemStats,
+		disk: { size: 0, free: 0 }
+	});
+	renderRoutes("/system");
+
+	expect(await screen.findByText("Ei saatavilla")).toBeTruthy();
 });
 
 test("System displays an error when stats cannot be loaded", async () => {

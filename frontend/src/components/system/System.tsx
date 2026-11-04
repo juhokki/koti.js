@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import FeedIcon from "@mui/icons-material/Feed";
 import ExtensionIcon from "@mui/icons-material/Extension";
 import BuildIcon from "@mui/icons-material/Build";
 import SettingsIcon from "@mui/icons-material/Settings";
-import StorageIcon from "@mui/icons-material/Storage";
 import TimerIcon from "@mui/icons-material/Timer";
-import prettyBytes from "pretty-bytes";
 import SystemApi from "../../api/SystemApi";
 import { SystemState } from "../../interface/SystemState";
 
@@ -22,6 +19,14 @@ function formatUptime(uptime: number): string {
 		.join(":");
 
 	return days > 0 ? `${String(days)} pv ${time}` : time;
+}
+
+function formatFreeDiskPercentage(free: number, size: number): string {
+	if (size <= 0) {
+		return "Ei saatavilla";
+	}
+
+	return `${String(Math.round((free / size) * 100))} %`;
 }
 
 export default function System() {
@@ -136,52 +141,26 @@ export default function System() {
 										</span>
 									</td>
 								</tr>
-							</tbody>
-						</table>
-					</div>
-					<div className="grid-item">
-						<h3 className="centered underline">
-							<StorageIcon />
-							<span>Levy</span>
-						</h3>
-						<table className="margin-top">
-							<tbody>
 								<tr>
 									<th className="centered">
-										<span>Koko</span>
+										<span>Levytila vapaana</span>
 									</th>
 									<td className="centered">
 										<span>
-											{prettyBytes(stats.disk.size)}
+											{formatFreeDiskPercentage(
+												stats.disk.free,
+												stats.disk.size
+											)}
 										</span>
 									</td>
 								</tr>
-								<tr>
-									<th className="centered">
-										<span>Vapaana</span>
-									</th>
-									<td className="centered">
-										<span>
-											{prettyBytes(stats.disk.free)}
-										</span>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<div className="grid-item">
-						<h3 className="centered underline">
-							<FeedIcon />
-							<span>Loki</span>
-						</h3>
-						<table className="margin-top">
-							<tbody>
 								<tr>
 									<th className="centered">
 										<span>Loki</span>
 									</th>
 									<td className="centered">
 										<button
+											aria-label="Avaa lokit"
 											style={{ margin: 0 }}
 											onClick={() => {
 												Promise.resolve(
@@ -193,42 +172,6 @@ export default function System() {
 										</button>
 									</td>
 								</tr>
-							</tbody>
-						</table>
-					</div>
-					<div className="grid-item">
-						<h3 className="centered underline">
-							<ExtensionIcon />
-							<span>Integraatiot</span>
-						</h3>
-						<table className="margin-top">
-							<tbody>
-								{stats.integrations.map((name) => (
-									<tr key={name}>
-										<th className="centered">
-											<span>
-												{name.replace(
-													/([a-z])([A-Z])/g,
-													"$1 $2"
-												)}
-											</span>
-										</th>
-										<td className="centered">
-											<button
-												style={{ margin: 0 }}
-												onClick={() => {
-													Promise.resolve(
-														navigate(
-															`/system/integrations/${encodeURIComponent(name)}`
-														)
-													).catch(console.log);
-												}}
-											>
-												Avaa
-											</button>
-										</td>
-									</tr>
-								))}
 							</tbody>
 						</table>
 					</div>
@@ -256,6 +199,42 @@ export default function System() {
 													Promise.resolve(
 														navigate(
 															`/system/services/${encodeURIComponent(name)}`
+														)
+													).catch(console.log);
+												}}
+											>
+												Avaa
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div className="grid-item">
+						<h3 className="centered underline">
+							<ExtensionIcon />
+							<span>Integraatiot</span>
+						</h3>
+						<table className="margin-top">
+							<tbody>
+								{stats.integrations.map((name) => (
+									<tr key={name}>
+										<th className="centered">
+											<span>
+												{name.replace(
+													/([a-z])([A-Z])/g,
+													"$1 $2"
+												)}
+											</span>
+										</th>
+										<td className="centered">
+											<button
+												style={{ margin: 0 }}
+												onClick={() => {
+													Promise.resolve(
+														navigate(
+															`/system/integrations/${encodeURIComponent(name)}`
 														)
 													).catch(console.log);
 												}}

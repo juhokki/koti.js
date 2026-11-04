@@ -40,6 +40,20 @@ test("ShoppingListService is created", () => {
 	expect(service).not.toBe(null);
 });
 
+test("Reports the last update time", () => {
+	const shoppingList = {
+		update: String(now),
+		items: []
+	} satisfies ShoppingList;
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify(shoppingList));
+	const service = new ShoppingListService(services, settings);
+
+	expect(service.getParameters()).toEqual([
+		{ name: "Items count", value: 0 },
+		{ name: "Last updated", value: new Date(now).toISOString() }
+	]);
+});
+
 test("Shopping list is updated", async (done) => {
 	const shoppingList = {
 		update: "1",

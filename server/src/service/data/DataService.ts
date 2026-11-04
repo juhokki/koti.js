@@ -15,6 +15,10 @@ export default class DataService extends ServiceBase {
 	options: DataServiceSettings;
 	database: Database;
 	latestValueCache = new ValueCache();
+	private readonly incomingValueCounts = new Array<number>(60).fill(0);
+	private readonly incomingValueBucketSeconds = new Array<number>(60).fill(
+		-1
+	);
 
 	constructor(services: ServiceLocator, options: DataServiceSettings) {
 		super(services);
@@ -29,8 +33,45 @@ export default class DataService extends ServiceBase {
 			{
 				name: "Cached values count",
 				value: this.latestValueCache.values().length
+			},
+			{
+				name: "Incoming values per minute",
+				value: this.getIncomingValuesPerMinute()
 			}
 		];
+	}
+
+	private getIncomingValuesPerMinute() {
+		const currentSecond = Math.floor(Date.now() / 1000);
+		const oldestSecond = currentSecond - 59;
+
+		return this.incomingValueCounts.reduce((total, count, index) => {
+			const bucketSecond = this.incomingValueBucketSeconds[index];
+			if (
+				bucketSecond !== undefined &&
+				bucketSecond >= oldestSecond &&
+				bucketSecond <= currentSecond
+			) {
+				return total + count;
+			}
+			return total;
+		}, 0);
+	}
+
+	private recordIncomingValues(count: number) {
+		if (count === 0) {
+			return;
+		}
+
+		const currentSecond = Math.floor(Date.now() / 1000);
+		const bucketIndex = currentSecond % 60;
+		if (this.incomingValueBucketSeconds[bucketIndex] !== currentSecond) {
+			this.incomingValueBucketSeconds[bucketIndex] = currentSecond;
+			this.incomingValueCounts[bucketIndex] = 0;
+		}
+
+		this.incomingValueCounts[bucketIndex] =
+			(this.incomingValueCounts[bucketIndex] ?? 0) + count;
 	}
 
 	override async start() {
@@ -121,6 +162,7 @@ export default class DataService extends ServiceBase {
 	}
 
 	async write(values: Value[]): Promise<void> {
+		this.recordIncomingValues(values.length);
 		const newValues: Value[] = [];
 
 		values.forEach((value) => {

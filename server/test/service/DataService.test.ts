@@ -179,6 +179,41 @@ test("Reported numeric values are written regardless of configured steps and bou
 	expect(mockWrite).toHaveBeenCalledTimes(2);
 });
 
+test("Reports values received over the rolling last minute", async () => {
+	vi.setSystemTime(now);
+	const service = new DataService(services, settings);
+	const measurement = new Measurement(
+		"device-1",
+		"meas-1",
+		"",
+		MeasurementType.Number,
+		"",
+		""
+	);
+	mockGetMeasurement
+		.mockReturnValueOnce(measurement)
+		.mockReturnValueOnce(measurement)
+		.mockReturnValueOnce(measurement);
+
+	await service.write([
+		new Value("device-1", "meas-1", 1),
+		new Value("device-1", "meas-1", 2)
+	]);
+	vi.advanceTimersByTime(30_000);
+	await service.write([new Value("device-1", "meas-1", 3)]);
+
+	const getIncomingCount = () =>
+		service
+			.getParameters()
+			.find(
+				(parameter) => parameter.name === "Incoming values per minute"
+			)?.value;
+	expect(getIncomingCount()).toBe(3);
+
+	vi.advanceTimersByTime(30_000);
+	expect(getIncomingCount()).toBe(1);
+});
+
 test("Wrong value types are not written", async () => {
 	const service = new DataService(services, settings);
 

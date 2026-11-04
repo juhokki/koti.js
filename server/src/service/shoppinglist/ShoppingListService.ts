@@ -28,7 +28,17 @@ export default class ShoppingListService extends ServiceBase {
 	}
 
 	override getParameters(): ServiceParameter[] {
-		return [{ name: "Items count", value: this.shoppingList.items.length }];
+		const updateTime = Number(this.shoppingList.update);
+		const lastUpdated =
+			Number.isSafeInteger(updateTime) &&
+			updateTime >= Date.UTC(2000, 0, 1)
+				? new Date(updateTime).toISOString()
+				: "Unknown";
+
+		return [
+			{ name: "Items count", value: this.shoppingList.items.length },
+			{ name: "Last updated", value: lastUpdated }
+		];
 	}
 
 	override stop() {

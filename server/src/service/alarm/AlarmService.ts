@@ -27,7 +27,11 @@ export default class AlarmService extends ServiceBase {
 
 	override getParameters(): ServiceParameter[] {
 		return [
-			{ name: "Active alarms count", value: this.getAlarms().length }
+			{ name: "Active alarms count", value: this.getAlarms().length },
+			{
+				name: "Configured alarms count",
+				value: this.alarmCheckers.length
+			}
 		];
 	}
 

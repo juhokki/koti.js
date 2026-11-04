@@ -62,6 +62,18 @@ describe("AlarmService", () => {
 		expect(service).not.toBe(null);
 	});
 
+	test("Reports the configured alarm checker count", () => {
+		const service = new AlarmService(services, settings);
+		mockGetMeasurements.mockReturnValueOnce([]);
+
+		service.buildAlarmCheckers();
+
+		expect(service.getParameters()).toContainEqual({
+			name: "Configured alarms count",
+			value: 3
+		});
+	});
+
 	describe("Alarm checkers", () => {
 		test("Triggers two alarms for one measurement", async () => {
 			const measurement = new Measurement(
