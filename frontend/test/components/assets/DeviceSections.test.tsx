@@ -176,6 +176,8 @@ test("Device alarms distinguish active alarms from clear alarms", () => {
 	);
 
 	expect(screen.getByText("High temperature")).toBeTruthy();
+	expect(screen.getByText("Raja-arvo")).toBeTruthy();
+	expect(screen.getByText("30")).toBeTruthy();
 	expect(screen.getByText("Alkanut 1 minuutti sitten")).toBeTruthy();
 });
 
