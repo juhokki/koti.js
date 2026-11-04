@@ -33,7 +33,6 @@ export default class MatterIntegration extends IntegrationBase {
 	private stopped = true;
 	private reconnectAttempts = 0;
 	private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-	private nodeAvailability = new Map<string, boolean>();
 	private matterDevices: MatterDeviceAddress[] = [];
 	private readonly clusters: MatterCluster[] = [
 		new OnOffCluster(),
@@ -107,7 +106,6 @@ export default class MatterIntegration extends IntegrationBase {
 		this.unsubscribeServerShutdown?.();
 		this.unsubscribeServerShutdown = null;
 		this.client.disconnect();
-		this.nodeAvailability.clear();
 		return Promise.resolve();
 	}
 
@@ -123,7 +121,7 @@ export default class MatterIntegration extends IntegrationBase {
 			}
 			this.reconnectAttempts = 0;
 			for (const node of Object.values(this.client.nodes)) {
-				await this.syncNode(node, true);
+				await this.syncNode(node);
 			}
 		} catch (error) {
 			logger.error(error, "Failed to connect to the Matter server.");
@@ -132,7 +130,6 @@ export default class MatterIntegration extends IntegrationBase {
 	}
 
 	private handleConnectionLost() {
-		this.nodeAvailability.clear();
 		this.markConfiguredDevicesOffline();
 		this.scheduleReconnect();
 	}
@@ -160,7 +157,6 @@ export default class MatterIntegration extends IntegrationBase {
 	private async handleNodesChanged(detail: NodesChangedDetail) {
 		const nodeKey = String(detail.nodeId);
 		if (detail.reason === "node_removed") {
-			this.nodeAvailability.set(nodeKey, false);
 			this.setNodeDevicesOnlineStatus(
 				nodeKey,
 				DeviceOnlineStatus.OFFLINE
@@ -178,14 +174,11 @@ export default class MatterIntegration extends IntegrationBase {
 			return;
 		}
 
-		const wasAvailable = this.nodeAvailability.get(nodeKey);
-		await this.syncNode(node, wasAvailable === undefined || !wasAvailable);
+		await this.syncNode(node);
 	}
 
-	private async syncNode(node: MatterNode, restorePreviousState: boolean) {
+	private async syncNode(node: MatterNode) {
 		const nodeKey = String(node.node_id);
-		const wasAvailable = this.nodeAvailability.get(nodeKey);
-		this.nodeAvailability.set(nodeKey, node.available);
 		this.setNodeDevicesOnlineStatus(
 			nodeKey,
 			node.available
@@ -198,68 +191,8 @@ export default class MatterIntegration extends IntegrationBase {
 		}
 
 		for (const mapping of this.getNodeMappings(nodeKey)) {
-			let attributes = node.attributes;
-			if (restorePreviousState || wasAvailable === false) {
-				try {
-					attributes = await this.restorePreviousState(
-						mapping.deviceId,
-						mapping.nodeId,
-						attributes
-					);
-				} catch (error) {
-					logger.error(
-						error,
-						`Failed to restore previous state for device ${mapping.deviceId}.`
-					);
-				}
-			}
-			await this.writeCurrentValues(mapping.deviceId, attributes);
+			await this.writeCurrentValues(mapping.deviceId, node.attributes);
 		}
-	}
-
-	private async restorePreviousState(
-		deviceId: string,
-		nodeId: string,
-		attributes: MatterNode["attributes"]
-	) {
-		const nodeIdValue = this.toMatterNodeId(nodeId);
-		const refreshedPaths: string[] = [];
-		for (const measurement of this.getMeasurementAddresses(deviceId)) {
-			const cluster = this.getCluster(measurement.clusterId);
-			if (!cluster) {
-				continue;
-			}
-			const path = this.toAttributePath(measurement);
-			const storedValue = this.services
-				.getDataService()
-				.readLatestValue(deviceId, measurement.measurementId);
-			const currentValue = attributes[path];
-			if (!storedValue || currentValue === storedValue.value) {
-				continue;
-			}
-
-			if (
-				await cluster.restorePreviousState(
-					this.client,
-					nodeIdValue,
-					measurement,
-					storedValue.value,
-					currentValue
-				)
-			) {
-				refreshedPaths.push(path);
-			}
-		}
-
-		if (refreshedPaths.length === 0) {
-			return attributes;
-		}
-
-		const refreshedAttributes = await this.client.readAttribute(
-			nodeIdValue,
-			refreshedPaths
-		);
-		return { ...attributes, ...refreshedAttributes };
 	}
 
 	private async writeCurrentValues(

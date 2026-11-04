@@ -60,32 +60,4 @@ export default abstract class MatterCluster {
 			parsedValue
 		);
 	}
-
-	async restorePreviousState(
-		client: MatterClient,
-		nodeId: number | bigint,
-		measurement: MatterMeasurementAddress,
-		storedValue: unknown,
-		currentValue: unknown
-	) {
-		const handler = this.attributeHandlers[measurement.attributeId];
-		if (!handler) {
-			return false;
-		}
-		const parsedStoredValue = handler.parseValue(storedValue);
-		const parsedCurrentValue = handler.parseValue(currentValue);
-		if (
-			parsedStoredValue === undefined ||
-			parsedCurrentValue === undefined
-		) {
-			return false;
-		}
-		await handler.control(
-			client,
-			nodeId,
-			measurement.endpointId,
-			parsedStoredValue
-		);
-		return true;
-	}
 }

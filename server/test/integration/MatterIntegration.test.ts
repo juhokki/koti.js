@@ -492,21 +492,14 @@ test("writes attribute changes", async () => {
 	await integration.stop();
 });
 
-test("marks unavailable devices offline and restores their stored state on recovery", async () => {
+test("marks unavailable devices offline and syncs their reported state on recovery", async () => {
 	const device = createDevice("123");
-	const { services, readLatestValue, write, setDeviceOnlineStatus } =
+	const { services, write, setDeviceOnlineStatus } =
 		createServices([device]);
 	const integration = new MatterIntegration(services, settings());
 	const client = getClient();
 	const node = makeNode(123, false, { "1/6/0": false, "1/8/0": 5 });
 	client.nodes["123"] = node;
-	readLatestValue.mockImplementation(
-		(_deviceId: string, measurementId: string) =>
-			measurementId === MEASUREMENT_POWER
-				? new Value(device.id, measurementId, true)
-				: new Value(device.id, measurementId, 20)
-	);
-	client.readAttribute.mockResolvedValue({ "1/6/0": true, "1/8/0": 20 });
 
 	await integration.start();
 	expect(setDeviceOnlineStatus.mock.calls.at(-1)).toEqual([
@@ -520,17 +513,9 @@ test("marks unavailable devices offline and restores their stored state on recov
 		nodeId: 123
 	} satisfies NodesChangedDetail);
 	await vi.waitFor(() => {
-		expect(client.deviceCommand.mock.calls).toHaveLength(2);
+		expect(write).toHaveBeenCalled();
 	});
 
-	expect(client.deviceCommand.mock.calls[0]).toEqual([123, 1, 6, "on"]);
-	expect(client.deviceCommand.mock.calls[1]).toEqual([
-		123,
-		1,
-		8,
-		"moveToLevel",
-		expect.objectContaining({ level: 20 })
-	]);
 	expect(setDeviceOnlineStatus.mock.calls.at(-1)).toEqual([
 		device.id,
 		DeviceOnlineStatus.ONLINE
@@ -538,13 +523,15 @@ test("marks unavailable devices offline and restores their stored state on recov
 	expect(write.mock.calls.at(-1)?.[0]).toEqual([
 		expect.objectContaining({
 			measurementId: MEASUREMENT_POWER,
-			value: true
+				value: false
 		}),
 		expect.objectContaining({
 			measurementId: MEASUREMENT_BRIGHTNESS,
-			value: 20
+				value: 5
 		})
 	]);
+	expect(client.deviceCommand).not.toHaveBeenCalled();
+	expect(client.readAttribute).not.toHaveBeenCalled();
 
 	await integration.stop();
 });
