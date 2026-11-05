@@ -329,21 +329,13 @@ test("Summary renders selected readings beside regular device cards", () => {
 	expect(screen.getByText("Kitchenette")).toBeTruthy();
 	expect(screen.getByText("22 C")).toBeTruthy();
 	expect(screen.getByText("45 %")).toBeTruthy();
-	expect(screen.getAllByTitle("Päivitetty")).toHaveLength(1);
+	const summaryGridItem = document.querySelector(".grid-item");
+	expect(summaryGridItem?.classList.contains("full-width")).toBe(false);
+	expect(summaryGridItem?.querySelectorAll("thead th")).toHaveLength(2);
 	expect(
-		document
-			.querySelector(".grid-item.full-width table tbody tr:first-child")
-			?.querySelectorAll("th, td")
-	).toHaveLength(3);
+		summaryGridItem?.querySelector("tbody tr")?.querySelectorAll("th, td")
+	).toHaveLength(2);
 	expect(document.querySelectorAll(".grid-item")).toHaveLength(2);
-	const updatedHeader = document.querySelector(
-		".grid-item.full-width thead th.hide-on-small-screen"
-	);
-	expect(updatedHeader).not.toBeNull();
-	expect(updatedHeader?.className).toContain("hide-on-small-screen");
-	expect(
-		screen.getAllByTitle("Päivitetty")[0]?.parentElement?.className
-	).toContain("hide-on-small-screen");
 });
 test("Asset details renders linked assets as navigation boxes", async () => {
 	const parent: Asset = { ...asset, links: ["child-1"], devices: [] };

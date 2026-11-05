@@ -13,13 +13,12 @@ interface SummaryViewProps {
 
 export default function SummaryView(props: SummaryViewProps) {
 	return (
-		<div className="grid-item full-width">
-			<table className="margin-top">
+		<div className="grid-item">
+			<table>
 				<thead>
 					<tr className="underline">
 						<th>Kohde</th>
 						<th>Arvo</th>
-						<th className="hide-on-small-screen">Päivitetty</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -30,7 +29,6 @@ export default function SummaryView(props: SummaryViewProps) {
 									device={device}
 									measurement={measurement}
 									deviceName={displayName}
-									showLastUpdated={true}
 									hideIcon={true}
 									key={`${device.id}-${measurement.id}`}
 								/>
