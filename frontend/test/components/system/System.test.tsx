@@ -214,6 +214,30 @@ test("Logs displays fetched entries and refetches when a level changes", async (
 	expect(mockGetLogs.mock.calls[1]?.[2]).toEqual(["warn", "error"]);
 });
 
+test("Logs displays additional fields passed to the logger", async () => {
+	mockGetLogs.mockResolvedValue({
+		entries: [
+			{
+				level: 20,
+				time: new Date(2024, 0, 1, 12).getTime(),
+				pid: 1,
+				hostname: "host",
+				msg: "Value type does not match.",
+				measurement: { id: "temperature" },
+				value: 5
+			}
+		]
+	});
+	const { container } = renderRoutes("/system/logs");
+
+	expect(await screen.findByText("Value type does not match.")).toBeTruthy();
+	const details = container.querySelector(".grid-sub-item")?.textContent;
+	expect(JSON.parse(details ?? "{}")).toEqual({
+		measurement: { id: "temperature" },
+		value: 5
+	});
+});
+
 test("Logs handles failed requests and empty level selection", async () => {
 	mockGetLogs.mockRejectedValueOnce(new Error("offline"));
 	renderRoutes("/system/logs");

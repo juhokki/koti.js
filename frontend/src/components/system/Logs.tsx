@@ -21,9 +21,20 @@ const LEVEL_NAMES: Record<number, string> = {
 	60: "fatal"
 };
 const LEVELS: LogLevelName[] = ["debug", "info", "warn", "error"];
+const STANDARD_FIELDS = ["level", "time", "msg", "err", "pid", "hostname"];
 
 function levelName(level: number): string {
 	return LEVEL_NAMES[level] ?? String(level);
+}
+
+function getExtraFields(entry: LogEntry): string | undefined {
+	const extra = Object.fromEntries(
+		Object.entries(entry).filter(([key]) => !STANDARD_FIELDS.includes(key))
+	);
+
+	return Object.keys(extra).length > 0
+		? JSON.stringify(extra, null, 2)
+		: undefined;
 }
 
 export default function Logs() {
@@ -174,6 +185,11 @@ export default function Logs() {
 							</div>
 							<div style={{ padding: "var(--spacing)" }}>
 								<span>{entry.msg}</span>
+								{getExtraFields(entry) && (
+									<div className="grid-sub-item">
+										{getExtraFields(entry)}
+									</div>
+								)}
 								{entry.err?.stack && (
 									<div className="grid-sub-item">
 										{entry.err.stack}
