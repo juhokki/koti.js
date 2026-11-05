@@ -40,7 +40,7 @@ function MeasurementLastUpdated(props: {
 	}, [context.values, key]);
 
 	return (
-		<td>
+		<td className="hide-on-small-screen">
 			<span title="Päivitetty">{timeElapsed(updatedAt)}</span>
 		</td>
 	);

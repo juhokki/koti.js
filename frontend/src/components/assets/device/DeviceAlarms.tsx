@@ -59,7 +59,9 @@ export default function DeviceAlarms() {
 								<thead>
 									<tr className="underline">
 										<th>Hälytys</th>
-										<th>Raja-arvo</th>
+										<th className="hide-on-small-screen">
+											Raja-arvo
+										</th>
 										<th>Tila</th>
 									</tr>
 								</thead>
@@ -80,7 +82,9 @@ export default function DeviceAlarms() {
 													key={`${measurement.id}-${alarm.type}-${alarm.name}`}
 												>
 													<td>{alarm.name}</td>
-													<td>{alarm.limit}</td>
+													<td className="hide-on-small-screen">
+														{alarm.limit}
+													</td>
 													<td>
 														{active
 															? `Alkanut ${timeElapsed(active.time)}`

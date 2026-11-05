@@ -79,6 +79,11 @@ test("System displays server, disk percentage, log, and integration data", async
 	expect(screen.getByText("Shelly Integration")).toBeTruthy();
 	expect(screen.getByText("Data Service")).toBeTruthy();
 	expect(container.querySelectorAll(".grid-item")).toHaveLength(3);
+	expect(
+		Array.from(container.querySelectorAll(".grid-item h3")).map((heading) =>
+			heading.textContent.trim()
+		)
+	).toEqual(["Palvelin", "Integraatiot", "Palvelut"]);
 });
 
 test("System handles a disk without a valid size", async () => {
@@ -219,11 +224,10 @@ test("Logs handles failed requests and empty level selection", async () => {
 	cleanup();
 	mockGetLogs.mockResolvedValue({ entries: [] });
 	renderRoutes("/system/logs");
-	expect(
-		await screen.findByText(
-			"Lokimerkintöjä ei löytynyt valitulta päivältä."
-		)
-	).toBeTruthy();
+	const noMessages = await screen.findByText(
+		"Lokimerkintöjä ei löytynyt valituilla ehdoilla."
+	);
+	expect(noMessages.closest(".grid-item")).not.toBeNull();
 	fireEvent.click(screen.getByRole("button", { name: "info logs" }));
 	fireEvent.click(screen.getByRole("button", { name: "warn logs" }));
 	fireEvent.click(screen.getByRole("button", { name: "error logs" }));

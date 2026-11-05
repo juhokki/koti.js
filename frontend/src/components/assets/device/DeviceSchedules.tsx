@@ -67,6 +67,9 @@ export default function DeviceSchedules() {
 									<tr className="underline">
 										<th>Ajastus</th>
 										<th>Ajankohta</th>
+										<th className="hide-on-small-screen">
+											Arvo
+										</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -81,6 +84,9 @@ export default function DeviceSchedules() {
 														{getScheduleTime(
 															schedule
 														)}
+													</td>
+													<td className="hide-on-small-screen">
+														{String(schedule.value)}
 													</td>
 												</tr>
 											)

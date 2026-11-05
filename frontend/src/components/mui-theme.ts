@@ -106,7 +106,7 @@ export default createTheme({
 			}
 		},
 		MuiSlider: {
-      		styleOverrides: {
+			styleOverrides: {
 				mark: ({ theme }) => ({
 					backgroundColor: "var(--font-color)",
 					height: 12,

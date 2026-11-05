@@ -23,6 +23,10 @@
 	.grid-item {
 		max-width: 100% !important;
 	}
+
+	.hide-on-small-screen {
+		display: none;
+	}
 }
 
 .grid th,

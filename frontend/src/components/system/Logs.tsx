@@ -150,6 +150,14 @@ export default function Logs() {
 					</div>
 				)}
 				<div className="grid">
+					{!loading &&
+						!error &&
+						entries.length === 0 &&
+						levels.length > 0 && (
+							<div className="grid-item full-width centered">
+								Lokimerkintöjä ei löytynyt valituilla ehdoilla.
+							</div>
+						)}
 					{entries.map((entry, i) => (
 						<div className="grid-item full-width" key={i}>
 							<div
@@ -180,14 +188,6 @@ export default function Logs() {
 						<div className="loader"></div>
 					</div>
 				)}
-				{!loading &&
-					!error &&
-					entries.length === 0 &&
-					levels.length > 0 && (
-						<div className="centered">
-							Lokimerkintöjä ei löytynyt valitulta päivältä.
-						</div>
-					)}
 				{!loading && !error && levels.length === 0 && (
 					<div className="centered">
 						Valitse vähintään yksi lokitaso.

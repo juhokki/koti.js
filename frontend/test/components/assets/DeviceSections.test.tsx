@@ -191,8 +191,13 @@ test("Device schedules show configured times and empty state", () => {
 
 	expect(screen.getByText("Morning")).toBeTruthy();
 	expect(screen.getByText("0 8 * * *")).toBeTruthy();
+	expect(screen.getByText("Arvo").className).toContain(
+		"hide-on-small-screen"
+	);
+	expect(screen.getByText("20").className).toContain("hide-on-small-screen");
 	expect(screen.getByText("Evening")).toBeTruthy();
 	expect(screen.getByText("sunset")).toBeTruthy();
+	expect(screen.getByText("10").className).toContain("hide-on-small-screen");
 });
 
 test("Device summary renders values and navigates to history", async () => {

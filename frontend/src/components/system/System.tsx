@@ -177,42 +177,6 @@ export default function System() {
 					</div>
 					<div className="grid-item">
 						<h3 className="centered underline">
-							<BuildIcon />
-							<span>Palvelut</span>
-						</h3>
-						<table className="margin-top">
-							<tbody>
-								{stats.services.map((name) => (
-									<tr key={name}>
-										<th className="centered">
-											<span>
-												{name.replace(
-													/([a-z])([A-Z])/g,
-													"$1 $2"
-												)}
-											</span>
-										</th>
-										<td className="centered">
-											<button
-												style={{ margin: 0 }}
-												onClick={() => {
-													Promise.resolve(
-														navigate(
-															`/system/services/${encodeURIComponent(name)}`
-														)
-													).catch(console.log);
-												}}
-											>
-												Avaa
-											</button>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-					<div className="grid-item">
-						<h3 className="centered underline">
 							<ExtensionIcon />
 							<span>Integraatiot</span>
 						</h3>
@@ -235,6 +199,42 @@ export default function System() {
 													Promise.resolve(
 														navigate(
 															`/system/integrations/${encodeURIComponent(name)}`
+														)
+													).catch(console.log);
+												}}
+											>
+												Avaa
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div className="grid-item">
+						<h3 className="centered underline">
+							<BuildIcon />
+							<span>Palvelut</span>
+						</h3>
+						<table className="margin-top">
+							<tbody>
+								{stats.services.map((name) => (
+									<tr key={name}>
+										<th className="centered">
+											<span>
+												{name.replace(
+													/([a-z])([A-Z])/g,
+													"$1 $2"
+												)}
+											</span>
+										</th>
+										<td className="centered">
+											<button
+												style={{ margin: 0 }}
+												onClick={() => {
+													Promise.resolve(
+														navigate(
+															`/system/services/${encodeURIComponent(name)}`
 														)
 													).catch(console.log);
 												}}

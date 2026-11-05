@@ -323,27 +323,18 @@ test("Summary asset renders filtered readings in one box", () => {
 	expect(screen.getByText("45 %")).toBeTruthy();
 	expect(screen.getAllByTitle("Päivitetty")).toHaveLength(2);
 	expect(
-		document.querySelectorAll(".grid-item table tbody tr:first-child td")
-	).toHaveLength(2);
+		document.querySelectorAll(
+			".grid-item table tbody tr:first-child th, .grid-item table tbody tr:first-child td"
+		)
+	).toHaveLength(3);
 	expect(document.querySelectorAll(".grid-item")).toHaveLength(1);
-
-	const initialWidth = window.innerWidth;
-	Object.defineProperty(window, "innerWidth", {
-		configurable: true,
-		value: 800
+	const updatedHeader = screen.getByRole("columnheader", {
+		name: "Päivitetty"
 	});
-	fireEvent(window, new Event("resize"));
-
+	expect(updatedHeader.className).toContain("hide-on-small-screen");
 	expect(
-		screen.queryByRole("columnheader", { name: "Päivitetty" })
-	).toBeNull();
-	expect(screen.queryByTitle("Päivitetty")).toBeNull();
-
-	Object.defineProperty(window, "innerWidth", {
-		configurable: true,
-		value: initialWidth
-	});
-	fireEvent(window, new Event("resize"));
+		screen.getAllByTitle("Päivitetty")[0]?.parentElement?.className
+	).toContain("hide-on-small-screen");
 });
 test("Asset details renders child assets as navigation boxes", async () => {
 	const parent: Asset = { ...asset, children: ["child-1"], devices: [] };
