@@ -90,6 +90,10 @@ export default class PushApiService extends ServiceBase {
 	}
 
 	removeStaleSubscription(userSubscription: UserSubscription) {
+		logger.warn(
+			{ username: userSubscription.username },
+			"Removing expired push subscription."
+		);
 		this.services
 			.getUserService()
 			.deleteUserSubscription(

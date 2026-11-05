@@ -3,6 +3,7 @@ import IntegrationBase from "../IntegrationBase.ts";
 import Value from "../../../model/Value.ts";
 import type ToshibaAcIntegrationSettings from "./ToshibaAcIntegrationConfig.ts";
 import type ServiceLocator from "../../ServiceLocator.ts";
+import logger from "../../../util/logger.ts";
 
 export interface DeviceState {
 	ac_status: number;
@@ -85,6 +86,10 @@ export default class ToshibaAcIntegration extends IntegrationBase {
 
 		await this.login();
 		this.devices = await this.getDevices();
+		logger.debug(
+			{ deviceCount: this.devices.length },
+			"Toshiba AC devices found."
+		);
 
 		await this.updateDeviceStates();
 		//await this.updateDeviceEnergyConsumptions();
@@ -113,6 +118,7 @@ export default class ToshibaAcIntegration extends IntegrationBase {
 
 		if (data.IsSuccess) {
 			this.token = data.ResObj;
+			logger.debug("Logged in to Toshiba AC service.");
 		} else {
 			throw new Error("Authentication rejected.");
 		}

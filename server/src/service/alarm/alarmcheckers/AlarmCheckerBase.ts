@@ -98,7 +98,7 @@ export default class AlarmCheckerBase {
 				this.getType()
 			);
 
-			logger.info(alarm, "Triggering alarm.");
+			logger.debug(alarm, "Triggering alarm.");
 
 			this.alarms.set(key, alarm);
 			this.onChange(alarm, this.getAlarms());

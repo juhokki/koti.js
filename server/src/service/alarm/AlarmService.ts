@@ -11,6 +11,7 @@ import type AlarmCheckerBase from "./alarmcheckers/AlarmCheckerBase.ts";
 import type Measurement from "../../model/Measurement.ts";
 import type AlarmCheckerOptions from "./alarmcheckers/AlarmCheckerOptions.ts";
 import type ServiceParameter from "../ServiceParameter.ts";
+import logger from "../../util/logger.ts";
 
 export default class AlarmService extends ServiceBase {
 	options: AlarmServiceSettings;
@@ -76,6 +77,16 @@ export default class AlarmService extends ServiceBase {
 				AlarmType.ValueLowerLimit,
 				measurements
 			)
+		);
+
+		logger.debug(
+			{
+				checkerCount: this.alarmCheckers.length,
+				measurementsWithAlarms: measurements.filter(
+					(measurement) => measurement.alarms.length > 0
+				).length
+			},
+			"Built alarm checkers."
 		);
 	}
 

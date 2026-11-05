@@ -122,6 +122,10 @@ export default class ElectricityPriceIntegration extends IntegrationBase {
 		}
 
 		this.priceSlots = slots;
+		logger.debug(
+			{ slotCount: slots.length },
+			"Fetched electricity prices."
+		);
 		const now = new Date();
 		const tomorrow = new Date(now);
 		tomorrow.setDate(tomorrow.getDate() + 1);

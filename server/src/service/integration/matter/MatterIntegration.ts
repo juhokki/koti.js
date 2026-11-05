@@ -130,6 +130,7 @@ export default class MatterIntegration extends IntegrationBase {
 	}
 
 	private handleConnectionLost() {
+		logger.debug("Matter server connection lost.");
 		this.markConfiguredDevicesOffline();
 		this.scheduleReconnect();
 	}
@@ -148,6 +149,10 @@ export default class MatterIntegration extends IntegrationBase {
 			RECONNECT_MAX_DELAY_MS
 		);
 		this.reconnectAttempts += 1;
+		logger.debug(
+			{ attempt: this.reconnectAttempts, delayMs: delay },
+			"Scheduling Matter reconnect."
+		);
 		this.reconnectTimer = setTimeout(() => {
 			this.reconnectTimer = null;
 			void this.connectAndListen();
@@ -157,6 +162,7 @@ export default class MatterIntegration extends IntegrationBase {
 	private async handleNodesChanged(detail: NodesChangedDetail) {
 		const nodeKey = String(detail.nodeId);
 		if (detail.reason === "node_removed") {
+			logger.debug({ nodeId: nodeKey }, "Matter node removed.");
 			this.setNodeDevicesOnlineStatus(
 				nodeKey,
 				DeviceOnlineStatus.OFFLINE
@@ -179,6 +185,10 @@ export default class MatterIntegration extends IntegrationBase {
 
 	private async syncNode(node: MatterNode) {
 		const nodeKey = String(node.node_id);
+		logger.debug(
+			{ nodeId: nodeKey, available: node.available },
+			"Syncing Matter node."
+		);
 		this.setNodeDevicesOnlineStatus(
 			nodeKey,
 			node.available

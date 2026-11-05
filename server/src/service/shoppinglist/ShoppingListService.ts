@@ -76,6 +76,10 @@ export default class ShoppingListService extends ServiceBase {
 			this.hasUpdates = true;
 			this.queueUpdate();
 		} else {
+			logger.warn(
+				{ expected: updateKey, received: shoppingList.update },
+				"Rejected update, stale update key."
+			);
 			throw new Error("Invalid update key");
 		}
 
@@ -119,7 +123,7 @@ export default class ShoppingListService extends ServiceBase {
 			writeConfigFile(this.options.file, data);
 			this.hasUpdates = false;
 
-			logger.info("Wrote shopping list to file.");
+			logger.debug("Wrote shopping list to file.");
 		} catch (e) {
 			logger.error(e, "Failed to synchronize shoppinglist");
 		}

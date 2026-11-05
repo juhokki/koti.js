@@ -241,6 +241,15 @@ export default class DataService extends ServiceBase {
 	}
 
 	async control(value: Value): Promise<void> {
+		logger.debug(
+			{
+				deviceId: value.deviceId,
+				measurementId: value.measurementId,
+				value: value.value
+			},
+			"Control requested."
+		);
+
 		const measurement = this.services
 			.getAssetService()
 			.getMeasurement(value.deviceId, value.measurementId);

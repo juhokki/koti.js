@@ -35,6 +35,7 @@ const mockDataService = {
 		return this;
 	},
 	readLatestValue: mockReadLatestValue,
+	readLatestValues: () => [],
 	control: mockControl
 };
 

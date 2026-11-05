@@ -71,6 +71,15 @@ export default class SchedulerService extends ServiceBase {
 
 				task.start(run);
 				tasks.push(task);
+				logger.debug(
+					{
+						deviceId: measurement.deviceId,
+						measurementId: measurement.id,
+						schedule: schedule.name,
+						type: schedule.type
+					},
+					"Registered schedule."
+				);
 			});
 		});
 

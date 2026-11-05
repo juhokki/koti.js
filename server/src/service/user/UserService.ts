@@ -62,9 +62,16 @@ export default class UserService extends ServiceBase {
 					locale: user.locale
 				} satisfies UserPayload;
 
-				return jwt.sign(payload, this.getSecret(), {
+				const token = jwt.sign(payload, this.getSecret(), {
 					expiresIn: this.options.tokenExpiration
 				} satisfies jwt.SignOptions);
+
+				logger.debug(
+					{ username: user.username },
+					"User authenticated."
+				);
+
+				return token;
 			}
 		}
 
@@ -177,6 +184,10 @@ export default class UserService extends ServiceBase {
 			.addSubscription(user.username, subscription);
 		user.subscriptions.push(subscription);
 		this.saveUserChanges();
+		logger.debug(
+			{ username: user.username, subscriptions: user.subscriptions.length },
+			"Added push subscription."
+		);
 	}
 
 	deleteUserSubscription(
@@ -199,6 +210,13 @@ export default class UserService extends ServiceBase {
 				.removeSubscription(user.username, userSub);
 			user.subscriptions.splice(user.subscriptions.indexOf(userSub), 1);
 			this.saveUserChanges();
+			logger.debug(
+				{
+					username: user.username,
+					subscriptions: user.subscriptions.length
+				},
+				"Removed push subscription."
+			);
 		} else {
 			logger.warn("Unable to find user subscription.");
 		}
@@ -209,7 +227,7 @@ export default class UserService extends ServiceBase {
 			const userData = JSON.stringify(this.getUsers(), null, "\t");
 			writeConfigFile(this.options.file, userData);
 
-			logger.info("Wrote to users file.");
+			logger.debug("Wrote to users file.");
 		} catch (e) {
 			logger.error(e, "Failed to save users file.");
 		}

@@ -73,6 +73,17 @@ export default class ShellyPlugSHandler implements ShellyDeviceHandler {
 			body: params
 		};
 
-		await fetch(url, options);
+		logger.debug(
+			{ deviceId: this.device.id, turn: params.get("turn") },
+			"Toggling Shelly relay."
+		);
+		const response = await fetch(url, options);
+
+		if (!response.ok) {
+			logger.warn(
+				{ deviceId: this.device.id, status: response.status },
+				"Shelly relay toggle failed."
+			);
+		}
 	}
 }

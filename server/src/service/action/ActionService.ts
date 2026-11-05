@@ -37,7 +37,11 @@ export default class ActionService extends ServiceBase {
 			.getDataService()
 			.readLatestValues()
 			.forEach(({ deviceId, measurementId, value }) => {
-				this.executeMatchingActions(deviceId, measurementId, ActionTrigger.OnInitialValue);
+				this.executeMatchingActions(
+					deviceId,
+					measurementId,
+					ActionTrigger.OnInitialValue
+				);
 			});
 
 		this.services
@@ -86,6 +90,15 @@ export default class ActionService extends ServiceBase {
 					}
 
 					this.actionHandlers.push(handler);
+					logger.debug(
+						{
+							deviceId: device.id,
+							measurementId: measurement.id,
+							action: action.name,
+							trigger: action.trigger
+						},
+						"Registered action."
+					);
 				});
 			});
 		});
@@ -133,6 +146,10 @@ export default class ActionService extends ServiceBase {
 			return false;
 		}
 
+		logger.info(
+			{ deviceId, measurementId, action: name },
+			"Manually executing action."
+		);
 		action.execute(this.context);
 
 		return true;

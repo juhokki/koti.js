@@ -63,6 +63,7 @@ vi.mock("socket.io", () => ({
 			on: function () {
 				return this as Server;
 			},
+			sockets: { sockets: new Map() },
 			close: mockSocketsClose
 		};
 	})

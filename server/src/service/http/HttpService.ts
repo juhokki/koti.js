@@ -140,6 +140,10 @@ export default class HttpService extends ServiceBase {
 			.getUser(decodedToken.username);
 
 		if (!user) {
+			logger.warn(
+				{ username: decodedToken.username },
+				"Socket authentication rejected, user does not exist."
+			);
 			throw new UnauthorizedError("invalid_token", {
 				message: `Decoded user ${decodedToken.username} does not exist.`
 			});

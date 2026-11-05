@@ -62,6 +62,7 @@ export default class RecipeService extends ServiceBase {
 
 		this.recipes.push(recipe);
 		this.writeRecipesToFile();
+		logger.debug({ id: recipe.id, owner }, "Recipe created.");
 
 		return recipe;
 	}
@@ -88,6 +89,7 @@ export default class RecipeService extends ServiceBase {
 
 		this.recipes[index] = recipe;
 		this.writeRecipesToFile();
+		logger.debug({ id }, "Recipe updated.");
 
 		return recipe;
 	}
@@ -101,6 +103,7 @@ export default class RecipeService extends ServiceBase {
 
 		this.recipes.splice(index, 1);
 		this.writeRecipesToFile();
+		logger.debug({ id }, "Recipe deleted.");
 
 		return true;
 	}
@@ -109,6 +112,6 @@ export default class RecipeService extends ServiceBase {
 		const config: RecipeConfig = { recipes: this.recipes };
 
 		writeConfigFile(this.options.file, JSON.stringify(config, null, "\t"));
-		logger.info("Wrote recipes to file.");
+		logger.debug("Wrote recipes to file.");
 	}
 }
