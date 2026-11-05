@@ -137,7 +137,9 @@ export default class AssetService extends ServiceBase {
 				assetConfig.name,
 				assetConfig.icon,
 				assetConfig.links ?? [],
-				assetConfig.devices?.map((deviceId) => this.getDevice(deviceId)) ?? [],
+				assetConfig.devices?.map((deviceId) =>
+					this.getDevice(deviceId)
+				) ?? [],
 				(assetConfig.summary && {
 					devices: assetConfig.summary.devices.map(
 						({ id, name, measurements }) => ({
@@ -148,8 +150,9 @@ export default class AssetService extends ServiceBase {
 							)
 						})
 					)
-				}) ?? null
-			);	
+				}) ??
+					null
+			);
 		});
 	}
 

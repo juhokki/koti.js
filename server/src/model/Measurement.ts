@@ -10,10 +10,10 @@ export default class Measurement {
 	type: MeasurementType;
 	unit: string;
 	icon: string;
-	controllable: boolean;
-	min: number | undefined;
-	max: number | undefined;
-	steps: number[] | undefined;
+	controllable?: boolean;
+	min?: number;
+	max?: number;
+	steps?: number[];
 	actions: Action[];
 	alarms: Alarm[];
 	schedules: Schedule[];

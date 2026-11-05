@@ -410,6 +410,6 @@ test("Defaults missing links and summary", () => {
 	const [asset] = new AssetService(services, settings).getAssets();
 
 	expect(asset).toEqual(
-		expect.objectContaining({ links: [], summary: undefined })
+		expect.objectContaining({ links: [], summary: null })
 	);
 });

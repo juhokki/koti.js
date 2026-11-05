@@ -185,7 +185,10 @@ export default class UserService extends ServiceBase {
 		user.subscriptions.push(subscription);
 		this.saveUserChanges();
 		logger.debug(
-			{ username: user.username, subscriptions: user.subscriptions.length },
+			{
+				username: user.username,
+				subscriptions: user.subscriptions.length
+			},
 			"Added push subscription."
 		);
 	}

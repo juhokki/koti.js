@@ -9,12 +9,11 @@ export default interface MeasurementConfig {
 	type: MeasurementType;
 	unit: string;
 	icon: string;
-	controllable: boolean;
-	min: number | undefined;
-	max: number | undefined;
+	controllable?: boolean;
+	min?: number;
+	max?: number;
 	steps?: number[];
-	actions: Action[];
-	alarms: Alarm[];
-	schedules: Schedule[];
-	disabled: boolean;
+	actions?: Action[];
+	alarms?: Alarm[];
+	schedules?: Schedule[];
 }
