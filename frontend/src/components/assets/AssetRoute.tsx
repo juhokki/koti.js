@@ -1,4 +1,4 @@
-import AssetDetails from "./AssetDetails";
+import AssetView from "./AssetView";
 import DeviceHistory from "./device/DeviceHistory";
 import DeviceAlarms from "./device/DeviceAlarms";
 import DeviceSchedules from "./device/DeviceSchedules";
@@ -14,7 +14,7 @@ export default function AssetRoute() {
 	}
 
 	if (!deviceId) {
-		return <AssetDetails />;
+		return <AssetView />;
 	}
 
 	switch (section) {

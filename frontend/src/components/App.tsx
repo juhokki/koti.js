@@ -20,7 +20,6 @@ import Home from "./home/Home";
 import User from "./user/User";
 import UserDetails from "./user/UserDetails";
 import Login from "./login/Login";
-import Assets from "./assets/Assets";
 import AssetRoute from "./assets/AssetRoute";
 import ShoppingList from "./shoppinglist/ShoppingListView";
 import RecipeList from "./recipes/RecipeList";
@@ -34,6 +33,7 @@ import Logs from "./system/Logs";
 import Integration from "./system/Integration";
 import Service from "./system/Service";
 import PullToRefresh from "./PullToRefresh";
+import AssetView from "./assets/AssetView";
 
 export default function App() {
 	const jwt = localStorage.getItem("jwt");
@@ -98,7 +98,7 @@ export default function App() {
 										/>
 										<Route
 											path="assets"
-											element={<Assets />}
+											element={<AssetView />}
 										/>
 										<Route
 											path="assets/*"

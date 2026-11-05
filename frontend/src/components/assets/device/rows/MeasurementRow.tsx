@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
 import Icon from "@mui/material/Icon";
 import Value from "../ValueView";
-import { Device, Measurement } from "../../../../interface/Asset";
+import { useContext, useEffect, useState } from "react";
 import { ValuesContext } from "../../../../context/ValuesContext";
+import { Device, Measurement } from "../../../../interface/Asset";
 import ValueUtil from "../../../../util/ValueUtil";
 import { timeElapsed } from "../../../../util/TimeUtil";
 import { Value as MeasurementValue } from "../../../../interface/Value";
@@ -11,8 +11,8 @@ interface MeasurementRowProps {
 	device: Device;
 	measurement: Measurement;
 	deviceName?: string;
-	showLastUpdated?: boolean;
 	hideIcon?: boolean;
+	showLastUpdated?: boolean;
 }
 
 function MeasurementLastUpdated(props: {

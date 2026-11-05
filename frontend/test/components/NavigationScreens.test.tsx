@@ -3,8 +3,7 @@ import { afterEach, expect, test } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Alarms from "../../src/components/alarms/Alarms";
 import AssetRoute from "../../src/components/assets/AssetRoute";
-import AssetDetails from "../../src/components/assets/AssetDetails";
-import Assets from "../../src/components/assets/Assets";
+import AssetView from "../../src/components/assets/AssetView";
 import Home from "../../src/components/home/Home";
 import { AlarmsContext } from "../../src/context/AlarmsContext";
 import { AssetsContext } from "../../src/context/AssetsContext";
@@ -167,7 +166,7 @@ test("Assets renders the hardcoded root and navigates through its links", async 
 		>
 			<MemoryRouter initialEntries={["/assets"]}>
 				<Routes>
-					<Route path="/assets" element={<Assets />} />
+					<Route path="/assets" element={<AssetView />} />
 					<Route path="/assets/*" element={<AssetRoute />} />
 				</Routes>
 			</MemoryRouter>
@@ -197,7 +196,7 @@ test("Asset details omits devices without measurements", () => {
 			<AssetsContext.Provider value={{ assets: [assetWithEmptyDevice] }}>
 				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
-						<Route path="/assets/*" element={<AssetDetails />} />
+						<Route path="/assets/*" element={<AssetView />} />
 					</Routes>
 				</MemoryRouter>
 			</AssetsContext.Provider>
@@ -256,7 +255,7 @@ test("Asset details renders regular device cards and all measurements", () => {
 			<AssetsContext.Provider value={{ assets: [regularAsset] }}>
 				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
-						<Route path="/assets/*" element={<AssetDetails />} />
+						<Route path="/assets/*" element={<AssetView />} />
 					</Routes>
 				</MemoryRouter>
 			</AssetsContext.Provider>
@@ -317,7 +316,7 @@ test("Summary renders selected readings beside regular device cards", () => {
 			<AssetsContext.Provider value={{ assets: [summaryAsset] }}>
 				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
-						<Route path="/assets/*" element={<AssetDetails />} />
+						<Route path="/assets/*" element={<AssetView />} />
 					</Routes>
 				</MemoryRouter>
 			</AssetsContext.Provider>

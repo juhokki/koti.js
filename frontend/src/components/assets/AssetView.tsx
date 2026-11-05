@@ -5,9 +5,9 @@ import Icon from "@mui/material/Icon";
 import { AssetsContext } from "../../context/AssetsContext";
 import Device from "./device/DeviceView";
 import useAssetPath from "../../hooks/useAssetPath";
-import AssetSummaryView from "./AssetSummaryView";
+import SummaryView from "./SummaryView";
 
-export default function AssetDetails() {
+export default function AssetView() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
@@ -74,7 +74,7 @@ export default function AssetDetails() {
 						</div>
 					))}
 					{summaryDevices.length > 0 && (
-						<AssetSummaryView devices={summaryDevices} />
+						<SummaryView devices={summaryDevices} />
 					)}
 					{devices.map(({ device, displayName, measurements }) => (
 						<Device

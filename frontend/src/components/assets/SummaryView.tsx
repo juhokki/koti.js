@@ -7,11 +7,11 @@ interface SummaryDevice {
 	measurements: Measurement[];
 }
 
-interface AssetSummaryViewProps {
+interface SummaryViewProps {
 	devices: SummaryDevice[];
 }
 
-export default function AssetSummaryView(props: AssetSummaryViewProps) {
+export default function SummaryView(props: SummaryViewProps) {
 	return (
 		<div className="grid-item full-width">
 			<table className="margin-top">
