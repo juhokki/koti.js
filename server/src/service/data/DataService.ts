@@ -130,12 +130,6 @@ export default class DataService extends ServiceBase {
 		const cacheStartedAt = Date.now();
 		values.forEach((value) => {
 			cache.set(value.deviceId, value.measurementId, value);
-			this.emit(
-				Messages.INITIAL_VALUE,
-				value.deviceId,
-				value.measurementId,
-				value
-			);
 		});
 
 		logger.debug(

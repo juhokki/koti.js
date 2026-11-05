@@ -35,16 +35,13 @@ export default class ActionService extends ServiceBase {
 
 		this.services
 			.getDataService()
-			.on(
-				Messages.INITIAL_VALUE,
-				(deviceId: string, measurementId: string, value: Value) => {
-					this.executeMatchingActions(
-						deviceId,
-						measurementId,
-						ActionTrigger.OnInitialValue
-					);
-				}
-			)
+			.readLatestValues()
+			.forEach(({ deviceId, measurementId, value }) => {
+				this.executeMatchingActions(deviceId, measurementId, ActionTrigger.OnInitialValue);
+			});
+
+		this.services
+			.getDataService()
 			.on(
 				Messages.VALUE_UPDATED,
 				(deviceId: string, measurementId: string, value: Value) => {
