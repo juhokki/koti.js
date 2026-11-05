@@ -1,6 +1,6 @@
 import cron, { type ScheduledTask } from "node-cron";
-import type Schedule from "./Schedule.ts";
-import type { CronScheduleOptions } from "../../asset/ScheduleConfig.ts";
+import type Schedule from "./ScheduledTask.ts";
+import type { CronScheduleOptions } from "../../../model/Schedule.ts";
 
 export default class CronSchedule implements Schedule {
 	options: CronScheduleOptions;

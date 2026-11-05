@@ -3,20 +3,20 @@ import Value from "../../model/Value.ts";
 import ScheduleType from "../../constants/ScheduleType.ts";
 import CronSchedule from "./schedules/CronSchedule.ts";
 import SuncalcSchedule from "./schedules/SuncalcSchedule.ts";
-import type Schedule from "./schedules/Schedule.ts";
+import type ScheduledTask from "./schedules/ScheduledTask.ts";
 import type ServiceLocator from "../ServiceLocator.ts";
 import type SchedulerServiceSettings from "./SchedulerServiceSettings.ts";
-import type ScheduleConfig from "../asset/ScheduleConfig.ts";
+import type Schedule from "../../model/Schedule.ts";
 import type {
 	CronScheduleOptions,
 	SuncalcScheduleOptions
-} from "../asset/ScheduleConfig.ts";
+} from "../../model/Schedule.ts";
 import logger from "../../util/logger.ts";
 import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class SchedulerService extends ServiceBase {
 	options: SchedulerServiceSettings;
-	tasks: Schedule[];
+	tasks: ScheduledTask[];
 
 	constructor(services: ServiceLocator, options: SchedulerServiceSettings) {
 		super(services);
@@ -42,11 +42,11 @@ export default class SchedulerService extends ServiceBase {
 	}
 
 	parseSchedules() {
-		const tasks: Schedule[] = [];
+		const tasks: ScheduledTask[] = [];
 		const assetService = this.services.getAssetService();
 
 		assetService.getMeasurements().forEach((measurement) => {
-			measurement.schedules.forEach((schedule: ScheduleConfig) => {
+			measurement.schedules.forEach((schedule: Schedule) => {
 				const run = () => {
 					this.executeSchedule(
 						measurement.deviceId,
@@ -60,7 +60,7 @@ export default class SchedulerService extends ServiceBase {
 					});
 				};
 
-				const task: Schedule =
+				const task: ScheduledTask =
 					schedule.type === ScheduleType.Cron
 						? new CronSchedule(
 								schedule.options as CronScheduleOptions
@@ -89,7 +89,7 @@ export default class SchedulerService extends ServiceBase {
 	async executeSchedule(
 		deviceId: string,
 		measurementId: string,
-		schedule: ScheduleConfig
+		schedule: Schedule
 	) {
 		logger.info(`Executing schedule "${schedule.name}".`);
 

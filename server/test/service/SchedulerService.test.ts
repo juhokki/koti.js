@@ -1,7 +1,7 @@
 import { vi, expect, test, beforeEach } from "vitest";
 import ServiceLocator from "../../src/service/ServiceLocator.js";
 import Measurement from "../../src/model/Measurement.js";
-import ScheduleConfig from "../../src/service/asset/ScheduleConfig.js";
+import Schedule from "../../src/model/Schedule.js";
 import SchedulerService from "../../src/service/scheduler/SchedulerService.js";
 import type ServiceBase from "../../src/service/ServiceBase.js";
 import type DataService from "../../src/service/data/DataService.js";
@@ -20,7 +20,7 @@ beforeEach(() => {
 	mockControl.mockClear();
 });
 
-function createServices(schedules: ScheduleConfig[]) {
+function createServices(schedules: Schedule[]) {
 	return new ServiceLocator(
 		new Map([
 			[
@@ -55,7 +55,7 @@ function createServices(schedules: ScheduleConfig[]) {
 }
 
 const services = createServices([
-	new ScheduleConfig(
+	new Schedule(
 		"Schedule 1",
 		ScheduleType.Cron,
 		{ expression: "0 1 * * *" },
@@ -76,7 +76,7 @@ test("Suncalc schedule is called at sunset and rescheduled", async () => {
 	vi.setSystemTime(new Date("2026-06-21T12:00:00Z"));
 	const service = new SchedulerService(
 		createServices([
-			new ScheduleConfig(
+			new Schedule(
 				"Sunset",
 				ScheduleType.Suncalc,
 				{ ...helsinki, property: "sunset" },
@@ -113,7 +113,7 @@ test("Suncalc schedule without an event is retried the next day", async () => {
 	vi.setSystemTime(new Date("2026-06-21T12:00:00Z"));
 	const service = new SchedulerService(
 		createServices([
-			new ScheduleConfig(
+			new Schedule(
 				"Polar sunset",
 				ScheduleType.Suncalc,
 				{ lat: 80, lng: 0, property: "sunset" },

@@ -1,5 +1,5 @@
-import type ValueType from "../../types/ValueType.ts";
-import type ScheduleType from "../../constants/ScheduleType.ts";
+import type ValueType from "../types/ValueType.ts";
+import type ScheduleType from "../constants/ScheduleType.ts";
 import type { SunTimeName } from "suncalc";
 
 export type SuncalcProperty = SunTimeName | "solarNoon" | "nadir";
@@ -14,7 +14,7 @@ export interface SuncalcScheduleOptions {
 	property: SuncalcProperty;
 }
 
-export default class ScheduleConfig {
+export default class Schedule {
 	name: string;
 	type: ScheduleType;
 	options: CronScheduleOptions | SuncalcScheduleOptions;

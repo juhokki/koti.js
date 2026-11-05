@@ -1,4 +1,4 @@
-import type ActionConfig from "../../asset/ActionConfig.ts";
+import type Action from "../../../model/Action.ts";
 import type ServiceLocator from "../../ServiceLocator.ts";
 import type ScriptContext from "../ScriptContext.ts";
 import type ActionHandler from "./ActionHandler.ts";
@@ -17,7 +17,7 @@ export default class OnInitialValueActionHandler implements ActionHandler {
 		services: ServiceLocator,
 		deviceId: string,
 		measurementId: string,
-		action: ActionConfig
+		action: Action
 	) {
 		this.services = services;
 		this.deviceId = deviceId;

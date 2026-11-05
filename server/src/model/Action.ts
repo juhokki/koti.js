@@ -1,6 +1,6 @@
-import type ActionTrigger from "../../constants/ActionTrigger.ts";
+import type ActionTrigger from "../constants/ActionTrigger.ts";
 
-export default class ActionConfig {
+export default class Action {
 	name: string;
 	trigger: ActionTrigger;
 	script: string;

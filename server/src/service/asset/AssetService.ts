@@ -38,7 +38,7 @@ export default class AssetService extends ServiceBase {
 	validate() {
 		this.deviceIdMustBeUnique();
 		this.assetIdMustBeUnique();
-		this.childAssetsMustExist();
+		this.linkedAssetsMustExist();
 		this.assetsMustNotContainCycles();
 	}
 
@@ -50,12 +50,12 @@ export default class AssetService extends ServiceBase {
 		}
 	}
 
-	childAssetsMustExist() {
+	linkedAssetsMustExist() {
 		for (const asset of this.assets) {
-			for (const childId of asset.children) {
-				if (!this.assets.some((a: Asset) => a.id === childId)) {
+			for (const linkedAssetId of asset.links) {
+				if (!this.assets.some((a: Asset) => a.id === linkedAssetId)) {
 					throw new Error(
-						`Child asset "${childId}" of asset "${asset.id}" not found.`
+						`Linked asset "${linkedAssetId}" of asset "${asset.id}" not found.`
 					);
 				}
 			}
@@ -76,8 +76,8 @@ export default class AssetService extends ServiceBase {
 				return;
 			}
 
-			for (const childId of asset.children) {
-				visit(this.getAsset(childId), [...path, asset.id]);
+			for (const linkedAssetId of asset.links) {
+				visit(this.getAsset(linkedAssetId), [...path, asset.id]);
 			}
 
 			done.add(asset.id);
@@ -136,13 +136,20 @@ export default class AssetService extends ServiceBase {
 				assetConfig.id,
 				assetConfig.name,
 				assetConfig.icon,
-				assetConfig.isRootAsset ?? false,
-				assetConfig.children ?? [],
-				assetConfig.devices.map((deviceId) => this.getDevice(deviceId)),
-				assetConfig.deviceNameOverrides ?? [],
-				assetConfig.isSummaryAsset ?? false,
-				assetConfig.measurementFilter ?? null
-			);
+				assetConfig.links ?? [],
+				assetConfig.devices?.map((deviceId) => this.getDevice(deviceId)) ?? [],
+				(assetConfig.summary && {
+					devices: assetConfig.summary.devices.map(
+						({ id, name, measurements }) => ({
+							device: this.getDevice(id),
+							displayName: name,
+							measurements: measurements.map((measurementId) =>
+								this.getMeasurement(id, measurementId)
+							)
+						})
+					)
+				}) ?? null
+			);	
 		});
 	}
 

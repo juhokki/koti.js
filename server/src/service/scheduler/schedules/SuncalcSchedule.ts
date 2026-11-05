@@ -1,6 +1,6 @@
 import { getTimes } from "suncalc";
-import type Schedule from "./Schedule.ts";
-import type { SuncalcScheduleOptions } from "../../asset/ScheduleConfig.ts";
+import type Schedule from "./ScheduledTask.ts";
+import type { SuncalcScheduleOptions } from "../../../model/Schedule.ts";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

@@ -1,4 +1,4 @@
-export default interface Schedule {
+export default interface ScheduledTask {
 	start(run: () => void): void;
 	stop(): Promise<void> | void;
 }

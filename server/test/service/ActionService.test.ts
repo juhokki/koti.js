@@ -1,7 +1,7 @@
 import { expect, test, vi } from "vitest";
 import ActionTrigger from "../../src/constants/ActionTrigger.ts";
 import * as Messages from "../../src/constants/Messages.ts";
-import ActionConfig from "../../src/service/asset/ActionConfig.js";
+import Action from "../../src/model/Action.js";
 import Device from "../../src/model/Device.js";
 import Measurement from "../../src/model/Measurement.js";
 import Value from "../../src/model/Value.js";
@@ -86,7 +86,7 @@ test("Parses actions on start", async () => {
 				false,
 				undefined,
 				undefined,
-				[new ActionConfig("test", ActionTrigger.OnChange, "")]
+				[new Action("test", ActionTrigger.OnChange, "")]
 			)
 		])
 	]);
@@ -119,7 +119,7 @@ test("Executes script that gets and controls a value", async () => {
 				undefined,
 				undefined,
 				[
-					new ActionConfig(
+					new Action(
 						"test",
 						ActionTrigger.OnChange,
 						"const value = this.getValue('device-1', 'id'); this.controlValue('device-1', 'id', value + 1);"
@@ -161,7 +161,7 @@ function deviceWithScript(script: string) {
 				false,
 				undefined,
 				undefined,
-				[new ActionConfig("test", ActionTrigger.OnChange, script)]
+				[new Action("test", ActionTrigger.OnChange, script)]
 			)
 		])
 	];

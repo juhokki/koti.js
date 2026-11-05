@@ -35,10 +35,12 @@ export default function Alarms() {
 	};
 	const goToAsset = (assetId: string) => {
 		const path = findAssetPath(assets, assetId) ?? [assetId];
+		const assetPath =
+			path.length === 0 ? "/assets" : `/assets/${path.join("/")}`;
 
-		Promise.resolve(
-			navigate(`/assets/${path.join("/")}?from=alarms`)
-		).catch(console.log);
+		Promise.resolve(navigate(`${assetPath}?from=alarms`)).catch(
+			console.log
+		);
 	};
 
 	if (alarms === null) {

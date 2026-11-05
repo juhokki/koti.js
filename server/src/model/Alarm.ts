@@ -1,29 +1,13 @@
 import type AlarmType from "../constants/AlarmType.ts";
 
 export default class Alarm {
-	deviceId: string;
-	deviceName: string;
-	measurementId: string;
-	measurementName: string;
 	name: string;
-	time: number;
 	type: AlarmType;
+	limit: number;
 
-	constructor(
-		deviceId: string,
-		deviceName: string,
-		measurementId: string,
-		measurementName: string,
-		name: string,
-		time: number,
-		type: AlarmType
-	) {
-		this.deviceId = deviceId;
-		this.deviceName = deviceName;
-		this.measurementId = measurementId;
-		this.measurementName = measurementName;
+	constructor(name: string, type: AlarmType, limit: number) {
 		this.name = name;
-		this.time = time;
 		this.type = type;
+		this.limit = limit;
 	}
 }

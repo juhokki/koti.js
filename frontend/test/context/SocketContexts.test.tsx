@@ -46,11 +46,10 @@ vi.mock("../../src/socket", () => ({
 const handlers = new Map<string, (...args: unknown[]) => void>();
 const user: User = { username: "alice", locale: "fi" };
 const asset: Asset = {
-	id: "home",
+	id: "root",
 	name: "Home",
 	icon: "home",
-	isRootAsset: true,
-	children: [],
+	links: [],
 	devices: []
 };
 const alarm: Alarm = {

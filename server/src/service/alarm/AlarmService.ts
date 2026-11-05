@@ -6,7 +6,7 @@ import ValueUpperLimitAlarmChecker from "./alarmcheckers/ValueUpperLimitAlarmChe
 import type AlarmServiceSettings from "./AlarmServiceSettings.ts";
 import type ServiceLocator from "../ServiceLocator.ts";
 import AlarmType from "../../constants/AlarmType.ts";
-import type Alarm from "../../model/Alarm.ts";
+import type TriggeredAlarm from "../../model/TriggeredAlarm.ts";
 import type AlarmCheckerBase from "./alarmcheckers/AlarmCheckerBase.ts";
 import type Measurement from "../../model/Measurement.ts";
 import type AlarmCheckerOptions from "./alarmcheckers/AlarmCheckerOptions.ts";
@@ -15,7 +15,7 @@ import logger from "../../util/logger.ts";
 
 export default class AlarmService extends ServiceBase {
 	options: AlarmServiceSettings;
-	alarms: Map<AlarmType, Alarm[]>;
+	alarms: Map<AlarmType, TriggeredAlarm[]>;
 	alarmCheckers: AlarmCheckerBase[];
 
 	constructor(services: ServiceLocator, options: AlarmServiceSettings) {
@@ -101,7 +101,10 @@ export default class AlarmService extends ServiceBase {
 		return new alarmCheckerRef(this.services, {
 			type: alarmType,
 			measurements: measurements,
-			onChange: (alarm: Alarm | null, alarms: Alarm[]) => {
+			onChange: (
+				alarm: TriggeredAlarm | null,
+				alarms: TriggeredAlarm[]
+			) => {
 				this.alarms.set(alarmType, alarms);
 				this.onAlarmsChanged();
 
@@ -125,7 +128,7 @@ export default class AlarmService extends ServiceBase {
 		return checker as T;
 	}
 
-	onAlarmTriggered(alarm: Alarm) {
+	onAlarmTriggered(alarm: TriggeredAlarm) {
 		this.emit(Messages.ALARM_TRIGGERED, alarm);
 	}
 

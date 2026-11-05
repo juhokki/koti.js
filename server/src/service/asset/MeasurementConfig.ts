@@ -1,7 +1,7 @@
 import type MeasurementType from "../../constants/MeasurementType.ts";
-import type ActionConfig from "./ActionConfig.ts";
-import type AlarmConfig from "./AlarmConfig.ts";
-import type ScheduleConfig from "./ScheduleConfig.ts";
+import type Action from "../../model/Action.ts";
+import type Alarm from "../../model/Alarm.ts";
+import type Schedule from "../../model/Schedule.ts";
 
 export default interface MeasurementConfig {
 	id: string;
@@ -13,8 +13,8 @@ export default interface MeasurementConfig {
 	min: number | undefined;
 	max: number | undefined;
 	steps?: number[];
-	actions: ActionConfig[];
-	alarms: AlarmConfig[];
-	schedules: ScheduleConfig[];
+	actions: Action[];
+	alarms: Alarm[];
+	schedules: Schedule[];
 	disabled: boolean;
 }

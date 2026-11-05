@@ -3,7 +3,7 @@ import ServiceBase from "../ServiceBase.ts";
 import * as Messages from "../../constants/Messages.ts";
 import type PushApiServiceSettings from "./PushApiServiceSettings.ts";
 import type ServiceLocator from "../ServiceLocator.ts";
-import type Alarm from "../../model/Alarm.ts";
+import type TriggeredAlarm from "../../model/TriggeredAlarm.ts";
 import logger from "../../util/logger.ts";
 import type { UserSubscription } from "./UserSubscription.ts";
 import type ServiceParameter from "../ServiceParameter.ts";
@@ -50,7 +50,7 @@ export default class PushApiService extends ServiceBase {
 
 		this.services
 			.getAlarmService()
-			.on(Messages.ALARM_TRIGGERED, (alarm: Alarm) => {
+			.on(Messages.ALARM_TRIGGERED, (alarm: TriggeredAlarm) => {
 				this.onAlarmTriggered(alarm).catch((e: unknown) => {
 					logger.error(e, "Failed to handle alarm triggered event.");
 				});
@@ -59,7 +59,7 @@ export default class PushApiService extends ServiceBase {
 		return Promise.resolve();
 	}
 
-	async onAlarmTriggered(alarm: Alarm) {
+	async onAlarmTriggered(alarm: TriggeredAlarm) {
 		const title = `${alarm.deviceName}/${alarm.measurementName}`;
 		const body = alarm.name;
 

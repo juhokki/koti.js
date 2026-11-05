@@ -1,13 +1,18 @@
 [
 	{
-		"id": "asset id",
+		"id": "root",
 		"name": "asset name",
 		"icon": "asset icon",
-		"isRootAsset": true,
-		"children": ["child asset id"],
+		"links": ["linked asset id"],
 		"devices": ["asset device id"],
-		"deviceNameOverrides": [],
-		"isSummaryAsset": false,
-		"measurementFilter": null
+		"summary": {
+			"devices": [
+				{
+					"id": "summary device id",
+					"name": "summary device name",
+					"measurements": ["measurement id"]
+				}
+			]
+		}
 	}
 ]

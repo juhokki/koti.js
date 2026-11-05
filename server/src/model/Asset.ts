@@ -1,35 +1,37 @@
 import type Device from "./Device.ts";
+import type Measurement from "./Measurement.ts";
+
+export interface AssetSummaryDevice {
+	device: Device;
+	displayName: string;
+	measurements: Measurement[];
+}
+
+export interface AssetSummary {
+	devices: AssetSummaryDevice[];
+}
 
 export default class Asset {
 	id: string;
 	name: string;
 	icon: string;
-	isRootAsset: boolean;
-	children: string[];
+	links: string[];
 	devices: Device[];
-	deviceNameOverrides: { id: string; name: string }[];
-	isSummaryAsset: boolean;
-	measurementFilter: string | null;
+	summary: AssetSummary | null;
 
 	constructor(
 		id: string,
 		name: string,
 		icon: string,
-		isRootAsset: boolean,
-		children: string[],
+		links: string[],
 		devices: Device[],
-		deviceNameOverrides: { id: string; name: string }[],
-		isSummaryAsset: boolean,
-		measurementFilter: string | null
+		summary: AssetSummary | null
 	) {
 		this.id = id;
 		this.name = name;
 		this.icon = icon;
-		this.isRootAsset = isRootAsset;
-		this.children = children;
+		this.links = links;
 		this.devices = devices;
-		this.deviceNameOverrides = deviceNameOverrides;
-		this.isSummaryAsset = isSummaryAsset;
-		this.measurementFilter = measurementFilter;
+		this.summary = summary;
 	}
 }

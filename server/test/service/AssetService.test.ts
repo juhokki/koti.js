@@ -35,12 +35,17 @@ test("Builds assets", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
-			isRootAsset: true,
-			children: [],
+			links: [],
 			devices: ["test-device"],
-			deviceNameOverrides: [{ id: "test-device", name: "Custom name" }],
-			isSummaryAsset: true,
-			measurementFilter: "test-meas"
+			summary: {
+				devices: [
+					{
+						id: "test-device",
+						name: "Custom name",
+						measurements: ["test-meas"]
+					}
+				]
+			}
 		}
 	];
 	const devicesConfig = [
@@ -76,11 +81,7 @@ test("Builds assets", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
-			isRootAsset: true,
-			children: [],
-			deviceNameOverrides: [{ id: "test-device", name: "Custom name" }],
-			isSummaryAsset: true,
-			measurementFilter: "test-meas",
+			links: [],
 			devices: [
 				expect.objectContaining({
 					id: "test-device",
@@ -102,6 +103,75 @@ test("Builds assets", async () => {
 			]
 		})
 	]);
+	expect(assets[0]?.summary?.devices[0]?.device.id).toBe("test-device");
+	expect(assets[0]?.summary?.devices[0]?.displayName).toBe("Custom name");
+	expect(
+		assets[0]?.summary?.devices[0]?.measurements.map(({ id }) => id)
+	).toEqual(["test-meas"]);
+});
+
+test("Throws on unknown summary device", () => {
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([
+			{
+				id: "summary-asset",
+				name: "Summary asset",
+				icon: "test-icon",
+				devices: [],
+				summary: {
+					devices: [
+						{
+							id: "missing-device",
+							name: "Missing device",
+							measurements: []
+						}
+					]
+				}
+			}
+		])
+	);
+
+	expect(() => new AssetService(services, settings)).toThrow(
+		'Device "missing-device" not found.'
+	);
+});
+
+test("Throws on unknown summary measurement", () => {
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([
+			{
+				id: "test-device",
+				name: "Test device",
+				type: "test",
+				icon: "test-icon",
+				measurements: []
+			}
+		])
+	);
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([
+			{
+				id: "summary-asset",
+				name: "Summary asset",
+				icon: "test-icon",
+				devices: [],
+				summary: {
+					devices: [
+						{
+							id: "test-device",
+							name: "Test device",
+							measurements: ["missing-measurement"]
+						}
+					]
+				}
+			}
+		])
+	);
+
+	expect(() => new AssetService(services, settings)).toThrow(
+		'Measurement "missing-measurement" not found.'
+	);
 });
 
 test("Finds asset, device and measurement", async () => {
@@ -110,8 +180,6 @@ test("Finds asset, device and measurement", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
-			isRootAsset: true,
-			children: [],
 			devices: ["test-device"]
 		}
 	];
@@ -140,11 +208,7 @@ test("Finds asset, device and measurement", async () => {
 
 	await service.start();
 
-	expect(service.getAsset("test-asset")).toMatchObject({
-		deviceNameOverrides: [],
-		isSummaryAsset: false,
-		measurementFilter: null
-	});
+	expect(service.getAsset("test-asset")).toMatchObject({ links: [] });
 	expect(service.getAsset("test-asset").id).toBe("test-asset");
 	expect(service.getDevices().length).toBe(1);
 	expect(
@@ -169,8 +233,6 @@ test("Enables and disables device measurement", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
-			isRootAsset: true,
-			children: [],
 			devices: ["test-device"]
 		}
 	];
@@ -234,8 +296,6 @@ test("Enables and disables device online status", async () => {
 			id: "test-asset",
 			name: "Test asset",
 			icon: "test-icon",
-			isRootAsset: true,
-			children: [],
 			devices: ["test-device"]
 		}
 	];
@@ -285,12 +345,11 @@ test("Enables and disables device online status", async () => {
 	expect(mockEmit).toHaveBeenCalledTimes(2);
 });
 
-const assetConfig = (id: string, isRootAsset: boolean, children: string[]) => ({
+const assetConfig = (id: string, links: string[] = []) => ({
 	id,
 	name: id,
 	icon: "test-icon",
-	isRootAsset,
-	children,
+	links,
 	devices: []
 });
 
@@ -298,9 +357,9 @@ test("Allows asset with multiple parents", () => {
 	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
 	mockReadFileSync.mockReturnValueOnce(
 		JSON.stringify([
-			assetConfig("a", true, ["c"]),
-			assetConfig("b", true, ["c"]),
-			assetConfig("c", false, [])
+			assetConfig("a", ["c"]),
+			assetConfig("b", ["c"]),
+			assetConfig("c")
 		])
 	);
 
@@ -309,21 +368,21 @@ test("Allows asset with multiple parents", () => {
 	expect(service.getAssets().length).toBe(3);
 });
 
-test("Throws on unknown child asset", () => {
+test("Throws on unknown linked asset", () => {
 	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
 	mockReadFileSync.mockReturnValueOnce(
-		JSON.stringify([assetConfig("a", true, ["missing"])])
+		JSON.stringify([assetConfig("a", ["missing"])])
 	);
 
 	expect(() => new AssetService(services, settings)).toThrow(
-		'Child asset "missing" of asset "a" not found.'
+		'Linked asset "missing" of asset "a" not found.'
 	);
 });
 
 test("Throws on duplicate asset id", () => {
 	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
 	mockReadFileSync.mockReturnValueOnce(
-		JSON.stringify([assetConfig("a", true, []), assetConfig("a", true, [])])
+		JSON.stringify([assetConfig("a"), assetConfig("a")])
 	);
 
 	expect(() => new AssetService(services, settings)).toThrow(
@@ -334,10 +393,7 @@ test("Throws on duplicate asset id", () => {
 test("Throws on asset cycle", () => {
 	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
 	mockReadFileSync.mockReturnValueOnce(
-		JSON.stringify([
-			assetConfig("a", true, ["b"]),
-			assetConfig("b", false, ["a"])
-		])
+		JSON.stringify([assetConfig("a", ["b"]), assetConfig("b", ["a"])])
 	);
 
 	expect(() => new AssetService(services, settings)).toThrow(
@@ -345,7 +401,7 @@ test("Throws on asset cycle", () => {
 	);
 });
 
-test("Defaults missing isRootAsset and children", () => {
+test("Defaults missing links and summary", () => {
 	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
 	mockReadFileSync.mockReturnValueOnce(
 		JSON.stringify([{ id: "a", name: "a", icon: "test-icon", devices: [] }])
@@ -354,6 +410,6 @@ test("Defaults missing isRootAsset and children", () => {
 	const [asset] = new AssetService(services, settings).getAssets();
 
 	expect(asset).toEqual(
-		expect.objectContaining({ isRootAsset: false, children: [] })
+		expect.objectContaining({ links: [], summary: undefined })
 	);
 });

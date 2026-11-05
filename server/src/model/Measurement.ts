@@ -1,7 +1,7 @@
-import ScheduleConfig from "../service/asset/ScheduleConfig.ts";
+import Schedule from "./Schedule.ts";
 import MeasurementType from "../constants/MeasurementType.ts";
-import type ActionConfig from "../service/asset/ActionConfig.ts";
-import type AlarmConfig from "../service/asset/AlarmConfig.ts";
+import type Action from "./Action.ts";
+import type Alarm from "./Alarm.ts";
 
 export default class Measurement {
 	deviceId: string;
@@ -14,9 +14,9 @@ export default class Measurement {
 	min: number | undefined;
 	max: number | undefined;
 	steps: number[] | undefined;
-	actions: ActionConfig[];
-	alarms: AlarmConfig[];
-	schedules: ScheduleConfig[];
+	actions: Action[];
+	alarms: Alarm[];
+	schedules: Schedule[];
 	disabled = false;
 
 	constructor(
@@ -29,9 +29,9 @@ export default class Measurement {
 		controllable = false,
 		min?: number,
 		max?: number,
-		actions: ActionConfig[] = [],
-		alarms: AlarmConfig[] = [],
-		schedules: ScheduleConfig[] = [],
+		actions: Action[] = [],
+		alarms: Alarm[] = [],
+		schedules: Schedule[] = [],
 		steps?: number[]
 	) {
 		this.deviceId = deviceId;

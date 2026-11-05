@@ -5,12 +5,15 @@ export interface Asset {
 	id: string;
 	name: string;
 	icon: string;
-	isRootAsset: boolean;
-	children: string[];
+	links?: string[];
 	devices: Device[];
-	deviceNameOverrides?: { id: string; name: string }[];
-	isSummaryAsset?: boolean;
-	measurementFilter?: string | null;
+	summary?: {
+		devices: {
+			device: Device;
+			displayName: string;
+			measurements: Measurement[];
+		}[];
+	};
 }
 
 export interface Device {

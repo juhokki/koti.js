@@ -71,11 +71,10 @@ const device: Device = {
 };
 
 const asset: Asset = {
-	id: "asset-1",
+	id: "root",
 	name: "Home",
 	icon: "home",
-	isRootAsset: true,
-	children: [],
+	links: [],
 	devices: [device]
 };
 
@@ -125,7 +124,7 @@ afterEach(cleanup);
 
 test("Device actions show configured actions and the empty state", () => {
 	renderDeviceRoute(
-		"/assets/asset-1/device-1/actions",
+		"/assets/device-1/actions",
 		<Routes>
 			<Route path="/assets/*" element={<DeviceActions />} />
 		</Routes>
@@ -140,7 +139,7 @@ test("Action script view shows the script and the execution result", async () =>
 	mockExecuteAction.mockResolvedValueOnce({ ok: true });
 
 	renderDeviceRoute(
-		"/assets/asset-1/device-1/actions",
+		"/assets/device-1/actions",
 		<Routes>
 			<Route path="/assets/*" element={<AssetRoute />} />
 		</Routes>
@@ -168,7 +167,7 @@ test("Action script view shows the script and the execution result", async () =>
 
 test("Device alarms distinguish active alarms from clear alarms", () => {
 	renderDeviceRoute(
-		"/assets/asset-1/device-1/alarms",
+		"/assets/device-1/alarms",
 		<Routes>
 			<Route path="/assets/*" element={<DeviceAlarms />} />
 		</Routes>,
@@ -183,7 +182,7 @@ test("Device alarms distinguish active alarms from clear alarms", () => {
 
 test("Device schedules show configured times and empty state", () => {
 	renderDeviceRoute(
-		"/assets/asset-1/device-1/schedules",
+		"/assets/device-1/schedules",
 		<Routes>
 			<Route path="/assets/*" element={<DeviceSchedules />} />
 		</Routes>
@@ -202,7 +201,7 @@ test("Device schedules show configured times and empty state", () => {
 
 test("Device summary renders values and navigates to history", async () => {
 	renderDeviceRoute(
-		"/assets/asset-1",
+		"/assets",
 		<Routes>
 			<Route path="/assets/*" element={<SummaryOrHistory />} />
 		</Routes>
@@ -224,29 +223,14 @@ test("Device sections show their empty messages when nothing is configured", () 
 			<Route path="/assets/*" element={<AssetRoute />} />
 		</Routes>
 	);
-	renderDeviceRoute(
-		"/assets/asset-1/device-1/actions",
-		routes,
-		[],
-		emptyAsset
-	);
+	renderDeviceRoute("/assets/device-1/actions", routes, [], emptyAsset);
 	expect(screen.getByText("Ei toimintoja.")).toBeTruthy();
 
 	cleanup();
-	renderDeviceRoute(
-		"/assets/asset-1/device-1/alarms",
-		routes,
-		[],
-		emptyAsset
-	);
+	renderDeviceRoute("/assets/device-1/alarms", routes, [], emptyAsset);
 	expect(screen.getByText("Ei hälytyksiä.")).toBeTruthy();
 
 	cleanup();
-	renderDeviceRoute(
-		"/assets/asset-1/device-1/schedules",
-		routes,
-		[],
-		emptyAsset
-	);
+	renderDeviceRoute("/assets/device-1/schedules", routes, [], emptyAsset);
 	expect(screen.getByText("Ei ajastuksia.")).toBeTruthy();
 });

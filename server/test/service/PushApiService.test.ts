@@ -1,7 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { WebPushError, type PushSubscription } from "web-push";
 import AlarmType from "../../src/constants/AlarmType.ts";
-import Alarm from "../../src/model/Alarm.js";
+import TriggeredAlarm from "../../src/model/TriggeredAlarm.js";
 import type AlarmService from "../../src/service/alarm/AlarmService.js";
 import PushApiService from "../../src/service/pushapi/PushApiService.js";
 import type PushApiServiceSettings from "../../src/service/pushapi/PushApiServiceSettings.js";
@@ -93,7 +93,7 @@ test("PushApiService sends alarm notification", async () => {
 			subscriptions: ["test"]
 		}
 	];
-	const alarm = new Alarm(
+	const alarm = new TriggeredAlarm(
 		"device-1",
 		"device-name",
 		"meas-1",
@@ -121,7 +121,7 @@ test("Sends one notification per triggered alarm", async () => {
 		{ username: "test", subscriptions: ["test"] }
 	]);
 	const service = new PushApiService(services, settings);
-	const alarm = new Alarm(
+	const alarm = new TriggeredAlarm(
 		"device-1",
 		"device-name",
 		"meas-1",

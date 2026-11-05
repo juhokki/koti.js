@@ -12,7 +12,7 @@ import AlarmService from "../../src/service/alarm/AlarmService.js";
 import type AlarmServiceSettings from "../../src/service/alarm/AlarmServiceSettings.js";
 import type StaleValueAlarmChecker from "../../src/service/alarm/alarmcheckers/StaleValueAlarmChecker.js";
 import ValueUpperLimitAlarmChecker from "../../src/service/alarm/alarmcheckers/ValueUpperLimitAlarmChecker.js";
-import AlarmConfig from "../../src/service/asset/AlarmConfig.js";
+import Alarm from "../../src/model/Alarm.js";
 import type AssetService from "../../src/service/asset/AssetService.js";
 import type DataService from "../../src/service/data/DataService.js";
 
@@ -88,8 +88,8 @@ describe("AlarmService", () => {
 				undefined,
 				undefined,
 				[
-					new AlarmConfig("test", AlarmType.Stale, 86400000),
-					new AlarmConfig("test", AlarmType.ValueUpperLimit, 10)
+					new Alarm("test", AlarmType.Stale, 86400000),
+					new Alarm("test", AlarmType.ValueUpperLimit, 10)
 				]
 			);
 			const service = new AlarmService(services, settings);
@@ -148,8 +148,8 @@ describe("AlarmService", () => {
 				undefined,
 				[],
 				[
-					new AlarmConfig("test", AlarmType.Stale, 86400000),
-					new AlarmConfig("test", AlarmType.ValueUpperLimit, 10)
+					new Alarm("test", AlarmType.Stale, 86400000),
+					new Alarm("test", AlarmType.ValueUpperLimit, 10)
 				]
 			);
 			const service = new AlarmService(services, settings);
@@ -235,7 +235,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					[],
-					[new AlarmConfig("test", AlarmType.ValueUpperLimit, 30)]
+					[new Alarm("test", AlarmType.ValueUpperLimit, 30)]
 				),
 				new Measurement(
 					"device-2",
@@ -248,7 +248,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					[],
-					[new AlarmConfig("test", AlarmType.ValueUpperLimit, 30)]
+					[new Alarm("test", AlarmType.ValueUpperLimit, 30)]
 				)
 			]);
 
@@ -265,7 +265,7 @@ describe("AlarmService", () => {
 						undefined,
 						undefined,
 						[],
-						[new AlarmConfig("test", AlarmType.ValueUpperLimit, 30)]
+						[new Alarm("test", AlarmType.ValueUpperLimit, 30)]
 					);
 				} else if (measurementId === "2") {
 					return new Measurement(
@@ -279,7 +279,7 @@ describe("AlarmService", () => {
 						undefined,
 						undefined,
 						[],
-						[new AlarmConfig("test", AlarmType.ValueUpperLimit, 30)]
+						[new Alarm("test", AlarmType.ValueUpperLimit, 30)]
 					);
 				}
 			});
@@ -363,7 +363,7 @@ describe("AlarmService", () => {
 						undefined,
 						undefined,
 						[],
-						[new AlarmConfig("test", AlarmType.Stale, 86400000)]
+						[new Alarm("test", AlarmType.Stale, 86400000)]
 					)
 				]);
 
@@ -422,7 +422,7 @@ describe("AlarmService", () => {
 						undefined,
 						undefined,
 						[],
-						[new AlarmConfig("test", AlarmType.Stale, 86400000)]
+						[new Alarm("test", AlarmType.Stale, 86400000)]
 					)
 				]);
 
@@ -475,7 +475,7 @@ describe("AlarmService", () => {
 						undefined,
 						undefined,
 						[],
-						[new AlarmConfig("test", AlarmType.Stale, 86400000)]
+						[new Alarm("test", AlarmType.Stale, 86400000)]
 					)
 				]);
 
@@ -527,7 +527,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					[],
-					[new AlarmConfig("test", AlarmType.Stale, 86400000)]
+					[new Alarm("test", AlarmType.Stale, 86400000)]
 				);
 
 				const service = new AlarmService(services, settings);
@@ -601,7 +601,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					[],
-					[new AlarmConfig("test", AlarmType.Stale, 86400000)]
+					[new Alarm("test", AlarmType.Stale, 86400000)]
 				);
 
 				const service = new AlarmService(services, settings);
@@ -662,7 +662,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					[],
-					[new AlarmConfig("test", AlarmType.Stale, 86400000)]
+					[new Alarm("test", AlarmType.Stale, 86400000)]
 				);
 
 				const service = new AlarmService(services, settings);
@@ -719,7 +719,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					undefined,
-					[new AlarmConfig("test", AlarmType.ValueUpperLimit, 50)]
+					[new Alarm("test", AlarmType.ValueUpperLimit, 50)]
 				);
 
 				const service = new AlarmService(services, settings);
@@ -770,7 +770,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					undefined,
-					[new AlarmConfig("test", AlarmType.ValueUpperLimit, 50)]
+					[new Alarm("test", AlarmType.ValueUpperLimit, 50)]
 				);
 
 				const service = new AlarmService(services, settings);
@@ -821,7 +821,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					undefined,
-					[new AlarmConfig("test", AlarmType.ValueUpperLimit, 50)]
+					[new Alarm("test", AlarmType.ValueUpperLimit, 50)]
 				);
 
 				const service = new AlarmService(services, settings);
@@ -885,7 +885,7 @@ describe("AlarmService", () => {
 					undefined,
 					undefined,
 					undefined,
-					[new AlarmConfig("test", AlarmType.ValueLowerLimit, 0)]
+					[new Alarm("test", AlarmType.ValueLowerLimit, 0)]
 				);
 
 				const service = new AlarmService(services, settings);

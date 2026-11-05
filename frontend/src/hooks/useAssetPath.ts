@@ -13,11 +13,14 @@ export default function useAssetPath() {
 
 	return {
 		asset,
-		assetPath: `/assets/${assetIds.join("/")}`,
-		parentPath: `/assets${assetIds
-			.slice(0, -1)
-			.map((id) => `/${id}`)
-			.join("")}`,
+		assetPath: `/assets${assetIds.map((id) => `/${id}`).join("")}`,
+		parentPath:
+			assetIds.length === 0
+				? "/"
+				: `/assets${assetIds
+						.slice(0, -1)
+						.map((id) => `/${id}`)
+						.join("")}`,
 		deviceId: rest[0],
 		section: rest[1]
 	};

@@ -13,15 +13,12 @@ export function resolveAssetPath(
 	segments: string[]
 ): ResolvedAssetPath {
 	const assetIds: string[] = [];
-	let asset: Asset | undefined;
+	let asset = assets.find((candidate) => candidate.id === "root");
 
-	for (const [index, segment] of segments.entries()) {
-		const next: Asset | undefined =
-			index === 0
-				? assets.find((a) => a.isRootAsset && a.id === segment)
-				: asset?.children.includes(segment)
-					? assets.find((a) => a.id === segment)
-					: undefined;
+	for (const segment of segments) {
+		const next = asset?.links?.includes(segment)
+			? assets.find((candidate) => candidate.id === segment)
+			: undefined;
 
 		if (!next) {
 			break;
@@ -34,21 +31,35 @@ export function resolveAssetPath(
 	return { asset, assetIds, rest: segments.slice(assetIds.length) };
 }
 
-/** Finds the first path from a root asset to the asset, in config order. */
+/** Finds the first path from the hardcoded root asset, in config order. */
 export function findAssetPath(
 	assets: Asset[],
 	assetId: string
 ): string[] | undefined {
-	const search = (asset: Asset, path: string[]): string[] | undefined => {
-		const current = [...path, asset.id];
-
+	const search = (
+		asset: Asset,
+		path: string[],
+		visited: Set<string>
+	): string[] | undefined => {
 		if (asset.id === assetId) {
-			return current;
+			return path;
 		}
 
-		for (const childId of asset.children) {
-			const child = assets.find((a) => a.id === childId);
-			const found = child && search(child, current);
+		for (const linkedAssetId of asset.links ?? []) {
+			if (visited.has(linkedAssetId)) {
+				continue;
+			}
+
+			const linkedAsset = assets.find(
+				(candidate) => candidate.id === linkedAssetId
+			);
+			const found =
+				linkedAsset &&
+				search(
+					linkedAsset,
+					[...path, linkedAssetId],
+					new Set([...visited, linkedAssetId])
+				);
 
 			if (found) {
 				return found;
@@ -58,13 +69,6 @@ export function findAssetPath(
 		return undefined;
 	};
 
-	for (const root of assets.filter((a) => a.isRootAsset)) {
-		const found = search(root, []);
-
-		if (found) {
-			return found;
-		}
-	}
-
-	return undefined;
+	const root = assets.find((asset) => asset.id === "root");
+	return root ? search(root, [], new Set([root.id])) : undefined;
 }

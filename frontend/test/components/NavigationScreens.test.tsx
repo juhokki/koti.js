@@ -13,7 +13,6 @@ import {
 	ValueContextEmitter
 } from "../../src/context/ValuesContext";
 import {
-	ActionTrigger,
 	DeviceOnlineStatus,
 	DeviceType,
 	MeasurementType
@@ -45,19 +44,17 @@ const device: Device = {
 	onlineStatus: DeviceOnlineStatus.ONLINE
 };
 const asset: Asset = {
-	id: "asset-1",
+	id: "root",
 	name: "Home",
 	icon: "home",
-	isRootAsset: true,
-	children: [],
+	links: [],
 	devices: [device]
 };
 const emptyAsset: Asset = {
 	id: "empty-asset",
 	name: "Empty asset",
 	icon: "home",
-	isRootAsset: false,
-	children: [],
+	links: [],
 	devices: []
 };
 const alarm: Alarm = {
@@ -119,7 +116,7 @@ test("Alarm assets link back to details with alarm origin preserved", async () =
 				<MemoryRouter initialEntries={["/alarms"]}>
 					<Routes>
 						<Route path="/alarms" element={<Alarms />} />
-						<Route path="/assets/*" element={<p>Asset route</p>} />
+						<Route path="/assets" element={<p>Asset route</p>} />
 					</Routes>
 				</MemoryRouter>
 			</AlarmsContext.Provider>
@@ -156,16 +153,22 @@ test("Home navigation exposes app sections and active alarm styling", () => {
 	expect(screen.getByText("Assets route")).toBeTruthy();
 });
 
-test("Assets lists only root assets and navigates to one", async () => {
+test("Assets renders the hardcoded root and navigates through its links", async () => {
+	const rootAsset: Asset = { ...asset, links: ["child-1"], devices: [] };
+	const childAsset: Asset = {
+		...emptyAsset,
+		id: "child-1",
+		name: "Child asset"
+	};
+
 	render(
-		<AssetsContext.Provider value={{ assets: [emptyAsset, asset] }}>
+		<AssetsContext.Provider
+			value={{ assets: [emptyAsset, rootAsset, childAsset] }}
+		>
 			<MemoryRouter initialEntries={["/assets"]}>
 				<Routes>
 					<Route path="/assets" element={<Assets />} />
-					<Route
-						path="/assets/*"
-						element={<p>Asset details route</p>}
-					/>
+					<Route path="/assets/*" element={<AssetRoute />} />
 				</Routes>
 			</MemoryRouter>
 		</AssetsContext.Provider>
@@ -173,11 +176,11 @@ test("Assets lists only root assets and navigates to one", async () => {
 
 	expect(screen.getByText("Home")).toBeTruthy();
 	expect(screen.queryByText("Empty asset")).toBeNull();
-	fireEvent.click(screen.getByText("Home"));
-	expect(await screen.findByText("Asset details route")).toBeTruthy();
+	fireEvent.click(screen.getByText("Child asset"));
+	expect(await screen.findByText("Child asset")).toBeTruthy();
 });
 
-test("Asset details filters devices without measurements", () => {
+test("Asset details omits devices without measurements", () => {
 	const assetWithEmptyDevice = {
 		...asset,
 		devices: [{ ...device, measurements: [] }, device]
@@ -192,7 +195,7 @@ test("Asset details filters devices without measurements", () => {
 	render(
 		<ValuesContext.Provider value={{ values }}>
 			<AssetsContext.Provider value={{ assets: [assetWithEmptyDevice] }}>
-				<MemoryRouter initialEntries={["/assets/asset-1"]}>
+				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
 						<Route path="/assets/*" element={<AssetDetails />} />
 					</Routes>
@@ -207,18 +210,12 @@ test("Asset details filters devices without measurements", () => {
 	expect(screen.getAllByText("Living room")).toHaveLength(1);
 });
 
-test("Asset details applies device name overrides and measurement filters", () => {
-	const otherMeasurement = {
+test("Asset details renders regular device cards and all measurements", () => {
+	const otherMeasurement: Measurement = {
 		...measurement,
 		id: "humidity",
 		name: "Humidity",
-		actions: [
-			{
-				name: "Hidden action",
-				trigger: ActionTrigger.OnChange,
-				script: ""
-			}
-		]
+		unit: "%"
 	};
 	const filteredDevice = {
 		...device,
@@ -230,10 +227,8 @@ test("Asset details applies device name overrides and measurement filters", () =
 		name: "Kitchen",
 		measurements: [otherMeasurement]
 	};
-	const filteredAsset: Asset = {
+	const regularAsset: Asset = {
 		...asset,
-		deviceNameOverrides: [{ id: filteredDevice.id, name: "Main room" }],
-		measurementFilter: measurement.id,
 		devices: [filteredDevice, otherDevice]
 	};
 	const values = new ValueContextEmitter();
@@ -243,11 +238,23 @@ test("Asset details applies device name overrides and measurement filters", () =
 		value: 22,
 		time: Date.now()
 	});
+	values.set("device-1-humidity", {
+		deviceId: device.id,
+		measurementId: otherMeasurement.id,
+		value: 45,
+		time: Date.now()
+	});
+	values.set("device-2-humidity", {
+		deviceId: otherDevice.id,
+		measurementId: otherMeasurement.id,
+		value: 45,
+		time: Date.now()
+	});
 
 	render(
 		<ValuesContext.Provider value={{ values }}>
-			<AssetsContext.Provider value={{ assets: [filteredAsset] }}>
-				<MemoryRouter initialEntries={["/assets/asset-1"]}>
+			<AssetsContext.Provider value={{ assets: [regularAsset] }}>
+				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
 						<Route path="/assets/*" element={<AssetDetails />} />
 					</Routes>
@@ -256,20 +263,15 @@ test("Asset details applies device name overrides and measurement filters", () =
 		</ValuesContext.Provider>
 	);
 
-	expect(screen.getByText("Main room")).toBeTruthy();
-	expect(screen.queryByText("Living room")).toBeNull();
-	expect(screen.queryByText("Kitchen")).toBeNull();
+	expect(screen.getByText("Living room")).toBeTruthy();
+	expect(screen.getByText("Kitchen")).toBeTruthy();
 	expect(screen.getByText("Temperature")).toBeTruthy();
-	expect(screen.queryByText("Humidity")).toBeNull();
-	expect(screen.queryByText("Toiminnot")).toBeNull();
-	expect(
-		document
-			.querySelector(".grid-item table tbody tr:first-child")
-			?.querySelectorAll("td")
-	).toHaveLength(1);
+	expect(screen.getAllByText("Humidity")).toHaveLength(2);
+	expect(screen.getAllByText("45 %")).toHaveLength(2);
+	expect(document.querySelectorAll(".grid-item")).toHaveLength(2);
 });
 
-test("Summary asset renders filtered readings in one box", () => {
+test("Summary renders selected readings beside regular device cards", () => {
 	const otherMeasurement = {
 		...measurement,
 		deviceId: "device-2",
@@ -285,9 +287,16 @@ test("Summary asset renders filtered readings in one box", () => {
 	};
 	const summaryAsset: Asset = {
 		...asset,
-		isSummaryAsset: true,
-		deviceNameOverrides: [{ id: otherDevice.id, name: "Kitchenette" }],
-		devices: [device, otherDevice]
+		devices: [device],
+		summary: {
+			devices: [
+				{
+					device: otherDevice,
+					displayName: "Kitchenette",
+					measurements: [otherMeasurement]
+				}
+			]
+		}
 	};
 	const values = new ValueContextEmitter();
 	values.set("device-1-temperature", {
@@ -306,7 +315,7 @@ test("Summary asset renders filtered readings in one box", () => {
 	render(
 		<ValuesContext.Provider value={{ values }}>
 			<AssetsContext.Provider value={{ assets: [summaryAsset] }}>
-				<MemoryRouter initialEntries={["/assets/asset-1"]}>
+				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
 						<Route path="/assets/*" element={<AssetDetails />} />
 					</Routes>
@@ -321,23 +330,24 @@ test("Summary asset renders filtered readings in one box", () => {
 	expect(screen.getByText("Kitchenette")).toBeTruthy();
 	expect(screen.getByText("22 C")).toBeTruthy();
 	expect(screen.getByText("45 %")).toBeTruthy();
-	expect(screen.getAllByTitle("Päivitetty")).toHaveLength(2);
+	expect(screen.getAllByTitle("Päivitetty")).toHaveLength(1);
 	expect(
-		document.querySelectorAll(
-			".grid-item table tbody tr:first-child th, .grid-item table tbody tr:first-child td"
-		)
+		document
+			.querySelector(".grid-item.full-width table tbody tr:first-child")
+			?.querySelectorAll("th, td")
 	).toHaveLength(3);
-	expect(document.querySelectorAll(".grid-item")).toHaveLength(1);
-	const updatedHeader = screen.getByRole("columnheader", {
-		name: "Päivitetty"
-	});
-	expect(updatedHeader.className).toContain("hide-on-small-screen");
+	expect(document.querySelectorAll(".grid-item")).toHaveLength(2);
+	const updatedHeader = document.querySelector(
+		".grid-item.full-width thead th.hide-on-small-screen"
+	);
+	expect(updatedHeader).not.toBeNull();
+	expect(updatedHeader?.className).toContain("hide-on-small-screen");
 	expect(
 		screen.getAllByTitle("Päivitetty")[0]?.parentElement?.className
 	).toContain("hide-on-small-screen");
 });
-test("Asset details renders child assets as navigation boxes", async () => {
-	const parent: Asset = { ...asset, children: ["child-1"], devices: [] };
+test("Asset details renders linked assets as navigation boxes", async () => {
+	const parent: Asset = { ...asset, links: ["child-1"], devices: [] };
 	const child: Asset = {
 		...emptyAsset,
 		id: "child-1",
@@ -347,7 +357,7 @@ test("Asset details renders child assets as navigation boxes", async () => {
 	render(
 		<ValuesContext.Provider value={{ values: new ValueContextEmitter() }}>
 			<AssetsContext.Provider value={{ assets: [parent, child] }}>
-				<MemoryRouter initialEntries={["/assets/asset-1"]}>
+				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
 						<Route path="/assets/*" element={<AssetRoute />} />
 					</Routes>

@@ -18,9 +18,9 @@ export default function AssetDetails() {
 			searchParams.get("from") === "alarms" ? "/alarms" : parentPath;
 		Promise.resolve(navigate(path)).catch(console.log);
 	};
-	const openChild = (childId: string) => {
+	const openLink = (linkedAssetId: string) => {
 		Promise.resolve(
-			navigate(`${assetPath}/${childId}${location.search}`)
+			navigate(`${assetPath}/${linkedAssetId}${location.search}`)
 		).catch(console.log);
 	};
 
@@ -28,28 +28,18 @@ export default function AssetDetails() {
 		return null;
 	}
 
-	const children = asset.children
-		.map((childId) => assets.find((a) => a.id === childId))
-		.filter((child) => child !== undefined);
+	const links = (asset.links ?? [])
+		.map((linkedAssetId) => assets.find((a) => a.id === linkedAssetId))
+		.filter((linkedAsset) => linkedAsset !== undefined);
 
 	const devices = asset.devices
-		.map((device) => {
-			const override = (asset.deviceNameOverrides ?? []).find(
-				(item) => item.id === device.id
-			);
-			const measurements = device.measurements.filter(
-				(measurement) =>
-					asset.measurementFilter == null ||
-					measurement.id === asset.measurementFilter
-			);
-
-			return {
-				device,
-				displayName: override?.name ?? device.name,
-				measurements
-			};
-		})
+		.map((device) => ({
+			device,
+			displayName: device.name,
+			measurements: device.measurements
+		}))
 		.filter((item) => item.measurements.length > 0);
+	const summaryDevices = asset.summary?.devices ?? [];
 
 	return (
 		<section>
@@ -70,33 +60,30 @@ export default function AssetDetails() {
 			</section>
 			<section className="content">
 				<div className="grid">
-					{children.map((child) => (
-						<div className="grid-item" key={child.id}>
+					{links.map((linkedAsset) => (
+						<div className="grid-item" key={linkedAsset.id}>
 							<h3
 								onClick={() => {
-									openChild(child.id);
+									openLink(linkedAsset.id);
 								}}
 								className="centered clickable"
 							>
-								<Icon>{child.icon}</Icon>
-								<span>{child.name}</span>
+								<Icon>{linkedAsset.icon}</Icon>
+								<span>{linkedAsset.name}</span>
 							</h3>
 						</div>
 					))}
-					{asset.isSummaryAsset
-						? devices.length > 0 && (
-								<AssetSummaryView devices={devices} />
-							)
-						: devices.map(
-								({ device, displayName, measurements }) => (
-									<Device
-										device={device}
-										displayName={displayName}
-										measurements={measurements}
-										key={device.id}
-									/>
-								)
-							)}
+					{summaryDevices.length > 0 && (
+						<AssetSummaryView devices={summaryDevices} />
+					)}
+					{devices.map(({ device, displayName, measurements }) => (
+						<Device
+							device={device}
+							displayName={displayName}
+							measurements={measurements}
+							key={device.id}
+						/>
+					))}
 				</div>
 			</section>
 		</section>

@@ -10,7 +10,7 @@ import ScriptContext from "./ScriptContext.ts";
 import ActionTrigger from "../../constants/ActionTrigger.ts";
 import logger from "../../util/logger.ts";
 import OnInitialValueActionHandler from "./actionhandler/OnInitialValueActionHandler.ts";
-import type ActionConfig from "../asset/ActionConfig.ts";
+import type Action from "../../model/Action.ts";
 import type ServiceParameter from "../ServiceParameter.ts";
 
 export default class ActionService extends ServiceBase {
@@ -63,7 +63,7 @@ export default class ActionService extends ServiceBase {
 	parseActions(devices: Device[]) {
 		devices.forEach((device) => {
 			device.measurements.forEach((measurement) => {
-				measurement.actions.forEach((action: ActionConfig) => {
+				measurement.actions.forEach((action: Action) => {
 					let handler: ActionHandler;
 
 					switch (action.trigger) {

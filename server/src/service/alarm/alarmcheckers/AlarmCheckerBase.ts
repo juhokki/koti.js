@@ -1,6 +1,6 @@
 import * as Messages from "../../../constants/Messages.ts";
 import type AlarmType from "../../../constants/AlarmType.ts";
-import Alarm from "../../../model/Alarm.ts";
+import TriggeredAlarm from "../../../model/TriggeredAlarm.ts";
 import type Measurement from "../../../model/Measurement.ts";
 import type Value from "../../../model/Value.ts";
 import type ServiceLocator from "../../ServiceLocator.ts";
@@ -9,10 +9,10 @@ import logger from "../../../util/logger.ts";
 
 export default class AlarmCheckerBase {
 	services: ServiceLocator;
-	onChange: (alarm: Alarm | null, alarms: Alarm[]) => void;
+	onChange: (alarm: TriggeredAlarm | null, alarms: TriggeredAlarm[]) => void;
 	measurements: Measurement[];
 	type: AlarmType;
-	alarms: Map<string, Alarm>;
+	alarms: Map<string, TriggeredAlarm>;
 
 	constructor(services: ServiceLocator, options: AlarmCheckerOptions) {
 		this.services = services;
@@ -88,7 +88,7 @@ export default class AlarmCheckerBase {
 				.getAssetService()
 				.getDevice(measurement.deviceId);
 			const name = this.getConfigAttribute<string>(measurement, "name");
-			const alarm = new Alarm(
+			const alarm = new TriggeredAlarm(
 				device.id,
 				device.name,
 				measurement.id,

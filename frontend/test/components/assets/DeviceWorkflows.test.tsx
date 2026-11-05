@@ -77,11 +77,10 @@ const device: Device = {
 };
 
 const asset: Asset = {
-	id: "asset-1",
+	id: "root",
 	name: "Home",
 	icon: "home",
-	isRootAsset: true,
-	children: [],
+	links: [],
 	devices: [device]
 };
 
@@ -120,7 +119,7 @@ function renderValue(
 function renderHistory() {
 	return render(
 		<AssetsContext.Provider value={{ assets: [asset] }}>
-			<MemoryRouter initialEntries={["/assets/asset-1/device-1/history"]}>
+			<MemoryRouter initialEntries={["/assets/device-1/history"]}>
 				<Routes>
 					<Route path="/assets/*" element={<DeviceHistory />} />
 				</Routes>
@@ -269,7 +268,7 @@ test("DeviceHistory groups values into charts and changes the week", async () =>
 	const historyAsset = { ...asset, devices: [historyDevice] };
 	render(
 		<AssetsContext.Provider value={{ assets: [historyAsset] }}>
-			<MemoryRouter initialEntries={["/assets/asset-1/device-1/history"]}>
+			<MemoryRouter initialEntries={["/assets/device-1/history"]}>
 				<Routes>
 					<Route path="/assets/*" element={<DeviceHistory />} />
 				</Routes>
