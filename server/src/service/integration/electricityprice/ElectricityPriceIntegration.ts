@@ -22,27 +22,13 @@ interface PriceSlot {
 	price: number;
 }
 
-function isSameDay(a: Date, b: Date) {
-	return (
-		a.getFullYear() === b.getFullYear() &&
-		a.getMonth() === b.getMonth() &&
-		a.getDate() === b.getDate()
-	);
-}
-
-function average(slots: PriceSlot[]) {
-	return slots.reduce((sum, slot) => sum + slot.price, 0) / slots.length;
-}
-
-// API prices are in euros, measurements are stored in cents.
-function toCents(euros: number) {
-	return Number((euros * 100).toFixed(2));
-}
-
 export default class ElectricityPriceIntegration extends IntegrationBase {
 	options: ElectricityPriceIntegrationConfig;
 	task: ScheduledTask | undefined;
+	currentPriceTask: ScheduledTask | undefined;
 	lastUpdated: string | undefined;
+	private priceSlots: PriceSlot[] = [];
+	private currentPriceSlotStart: number | undefined;
 
 	constructor(
 		services: ServiceLocator,
@@ -51,6 +37,29 @@ export default class ElectricityPriceIntegration extends IntegrationBase {
 		super(services);
 
 		this.options = options;
+	}
+
+	private isSameDay(a: Date, b: Date) {
+		return (
+			a.getFullYear() === b.getFullYear() &&
+			a.getMonth() === b.getMonth() &&
+			a.getDate() === b.getDate()
+		);
+	}
+
+	private average(slots: PriceSlot[]) {
+		return slots.reduce((sum, slot) => sum + slot.price, 0) / slots.length;
+	}
+
+	private toCents(euros: number) {
+		return Number((euros * 100).toFixed(2));
+	}
+
+	private getCurrentPriceSlot(timestamp: number) {
+		return this.priceSlots.find(
+			(slot) =>
+				slot.start <= timestamp && timestamp < slot.start + SLOT_MS
+		);
 	}
 
 	override getParameters(): IntegrationParameter[] {
@@ -67,6 +76,14 @@ export default class ElectricityPriceIntegration extends IntegrationBase {
 				logger.error(e, "Failed to fetch electricity prices.");
 			});
 		});
+		this.currentPriceTask = cron.schedule("*/15 * * * *", () => {
+			this.updateCurrentPrice().catch((e: unknown) => {
+				logger.error(
+					e,
+					"Failed to update the current electricity price."
+				);
+			});
+		});
 
 		await this.update();
 	}
@@ -74,6 +91,9 @@ export default class ElectricityPriceIntegration extends IntegrationBase {
 	override async stop() {
 		if (this.task) {
 			await this.task.stop();
+		}
+		if (this.currentPriceTask) {
+			await this.currentPriceTask.stop();
 		}
 	}
 
@@ -101,19 +121,21 @@ export default class ElectricityPriceIntegration extends IntegrationBase {
 			});
 		}
 
+		this.priceSlots = slots;
 		const now = new Date();
 		const tomorrow = new Date(now);
 		tomorrow.setDate(tomorrow.getDate() + 1);
 
 		const nowMs = now.getTime();
-		const current = slots.find(
-			(slot) => slot.start <= nowMs && nowMs < slot.start + SLOT_MS
-		);
+		const current = this.getCurrentPriceSlot(nowMs);
+		const currentPriceChanged =
+			current !== undefined &&
+			current.start !== this.currentPriceSlotStart;
 		const today = slots.filter((slot) =>
-			isSameDay(new Date(slot.start), now)
+			this.isSameDay(new Date(slot.start), now)
 		);
 		const tomorrowSlots = slots.filter((slot) =>
-			isSameDay(new Date(slot.start), tomorrow)
+			this.isSameDay(new Date(slot.start), tomorrow)
 		);
 
 		const values: Value[] = [];
@@ -122,9 +144,13 @@ export default class ElectricityPriceIntegration extends IntegrationBase {
 			.getDevicesWithType(DeviceType.ElectricityPriceIntegration);
 
 		for (const { id: deviceId } of devices) {
-			if (current) {
+			if (currentPriceChanged) {
 				values.push(
-					new Value(deviceId, "currentPrice", toCents(current.price))
+					new Value(
+						deviceId,
+						"currentPrice",
+						this.toCents(current.price)
+					)
 				);
 			}
 
@@ -133,7 +159,7 @@ export default class ElectricityPriceIntegration extends IntegrationBase {
 					new Value(
 						deviceId,
 						"averagePriceToday",
-						toCents(average(today))
+						this.toCents(this.average(today))
 					)
 				);
 			}
@@ -143,13 +169,44 @@ export default class ElectricityPriceIntegration extends IntegrationBase {
 					new Value(
 						deviceId,
 						"averagePriceTomorrow",
-						toCents(average(tomorrowSlots))
+						this.toCents(this.average(tomorrowSlots))
 					)
 				);
 			}
 		}
 
 		await this.services.getDataService().write(values);
+		if (currentPriceChanged) {
+			this.currentPriceSlotStart = current.start;
+		}
 		this.lastUpdated = new Date().toISOString();
+	}
+
+	async updateCurrentPrice() {
+		const current = this.getCurrentPriceSlot(Date.now());
+		if (!current || current.start === this.currentPriceSlotStart) {
+			return;
+		}
+
+		const devices = this.services
+			.getAssetService()
+			.getDevicesWithType(DeviceType.ElectricityPriceIntegration);
+		if (devices.length === 0) {
+			return;
+		}
+
+		await this.services
+			.getDataService()
+			.write(
+				devices.map(
+					({ id: deviceId }) =>
+						new Value(
+							deviceId,
+							"currentPrice",
+							this.toCents(current.price)
+						)
+				)
+			);
+		this.currentPriceSlotStart = current.start;
 	}
 }

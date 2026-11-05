@@ -85,6 +85,10 @@ test("ElectricityPriceIntegration writes prices in cents", async () => {
 		settings.cron,
 		expect.any(Function)
 	);
+	expect(mockSchedule).toHaveBeenCalledWith(
+		"*/15 * * * *",
+		expect.any(Function)
+	);
 	expect(mockGetDevicesWithType).toHaveBeenCalledWith(
 		DeviceType.ElectricityPriceIntegration
 	);
@@ -127,6 +131,28 @@ test("ElectricityPriceIntegration omits currentPrice when no slot matches", asyn
 	expect(mockWrite).toHaveBeenLastCalledWith([
 		new Value(deviceId, "averagePriceToday", 10)
 	]);
+});
+
+test("ElectricityPriceIntegration updates current price on cached bucket changes", async () => {
+	const integration = new ElectricityPriceIntegration(services, settings);
+	mockResponse([
+		entry(new Date(2026, 10, 3, 12, 15), 0.1),
+		entry(new Date(2026, 10, 3, 12, 30), 0.2)
+	]);
+
+	await integration.start();
+	mockWrite.mockClear();
+	vi.setSystemTime(new Date(2026, 10, 3, 12, 30, 0));
+
+	await integration.updateCurrentPrice();
+
+	expect(mockFetch).toHaveBeenCalledTimes(1);
+	expect(mockWrite).toHaveBeenCalledWith([
+		new Value(deviceId, "currentPrice", 20)
+	]);
+
+	await integration.updateCurrentPrice();
+	expect(mockWrite).toHaveBeenCalledTimes(1);
 });
 
 test("ElectricityPriceIntegration writes values to every device of the type", async () => {
