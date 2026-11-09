@@ -1,13 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Icon from "@mui/material/Icon";
-import useAssetPath from "../../../hooks/useAssetPath";
+import useDevice from "../../hooks/useDevice";
 import type {
 	CronScheduleOptions,
 	ScheduleConfig,
 	SuncalcScheduleOptions
-} from "../../../interface/Asset";
-import { ScheduleType } from "../../../interface/Asset";
+} from "../../interface/Asset";
+import { ScheduleType } from "../../interface/Asset";
 
 const getScheduleTime = (schedule: ScheduleConfig) =>
 	schedule.type === ScheduleType.Cron
@@ -17,11 +17,10 @@ const getScheduleTime = (schedule: ScheduleConfig) =>
 export default function DeviceSchedules() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { asset, assetPath, deviceId } = useAssetPath();
-	const device = asset?.devices.find((d) => d.id === deviceId);
+	const { device, devicePath } = useDevice();
 
 	const goBack = () => {
-		Promise.resolve(navigate(`${assetPath}${location.search}`)).catch(
+		Promise.resolve(navigate(`${devicePath}${location.search}`)).catch(
 			console.log
 		);
 	};

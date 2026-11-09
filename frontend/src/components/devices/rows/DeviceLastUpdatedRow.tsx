@@ -1,10 +1,10 @@
 import { useContext, useState, useEffect } from "react";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { ValuesContext } from "../../../../context/ValuesContext";
-import ValueUtil from "../../../../util/ValueUtil";
-import { Device } from "../../../../interface/Asset";
-import { Value } from "../../../../interface/Value";
-import { timeElapsed } from "../../../../util/TimeUtil";
+import { ValuesContext } from "../../../context/ValuesContext";
+import ValueUtil from "../../../util/ValueUtil";
+import { Device } from "../../../interface/Asset";
+import { Value } from "../../../interface/Value";
+import { timeElapsed } from "../../../util/TimeUtil";
 
 interface DeviceLastUpdatedRowProps {
 	device: Device;

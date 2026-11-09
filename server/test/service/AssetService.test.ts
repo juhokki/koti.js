@@ -82,32 +82,18 @@ test("Builds assets", async () => {
 			name: "Test asset",
 			icon: "test-icon",
 			links: [],
-			devices: [
-				expect.objectContaining({
-					id: "test-device",
-					type: "test",
-					name: "Test device",
-					icon: "test-icon",
-					measurements: [
-						expect.objectContaining({
-							id: "test-meas",
-							deviceId: "test-device",
-							name: "Test",
-							type: "number",
-							unit: "unit",
-							icon: "test-icon",
-							steps: [10, 20, 30]
-						})
-					]
-				})
-			]
+			deviceIds: ["test-device"]
 		})
 	]);
-	expect(assets[0]?.summary?.devices[0]?.device.id).toBe("test-device");
+	expect(assets[0]).not.toHaveProperty("devices");
+	expect(service.getDevice("test-device").measurements[0]?.steps).toEqual([
+		10, 20, 30
+	]);
+	expect(assets[0]?.summary?.devices[0]?.deviceId).toBe("test-device");
 	expect(assets[0]?.summary?.devices[0]?.displayName).toBe("Custom name");
-	expect(
-		assets[0]?.summary?.devices[0]?.measurements.map(({ id }) => id)
-	).toEqual(["test-meas"]);
+	expect(assets[0]?.summary?.devices[0]?.measurementIds).toEqual([
+		"test-meas"
+	]);
 });
 
 test("Throws on unknown summary device", () => {
@@ -174,6 +160,63 @@ test("Throws on unknown summary measurement", () => {
 	);
 });
 
+test.each([
+	{
+		devices: ["missing-device"],
+		summary: undefined,
+		error: 'Device "missing-device" not found.'
+	},
+	{
+		devices: [],
+		summary: {
+			devices: [
+				{ id: "missing-device", name: "Missing", measurements: [] }
+			]
+		},
+		error: 'Device "missing-device" not found.'
+	},
+	{
+		devices: [],
+		summary: {
+			devices: [
+				{
+					id: "test-device",
+					name: "Test",
+					measurements: ["missing-measurement"]
+				}
+			]
+		},
+		error: 'Measurement "missing-measurement" not found.'
+	}
+])(
+	"Loads references without resolving them and rejects them in validate: $error",
+	({ devices, summary, error }) => {
+		mockReadFileSync.mockReturnValueOnce(
+			JSON.stringify([
+				{
+					id: "test-device",
+					name: "Test",
+					type: "test",
+					icon: "test-icon",
+					measurements: []
+				}
+			])
+		);
+		mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+		const service = new AssetService(services, settings);
+		mockReadFileSync.mockReturnValueOnce(
+			JSON.stringify([
+				{ id: "root", name: "Root", icon: "home", devices, summary }
+			])
+		);
+		service.assets = service.readAssetsFromFile();
+		expect(service.assets[0]?.deviceIds).toEqual(devices);
+		expect(() => {
+			service.validate();
+		}).toThrow(error);
+	}
+);
+
 test("Finds asset, device and measurement", async () => {
 	const assetsConfig = [
 		{
@@ -215,9 +258,7 @@ test("Finds asset, device and measurement", async () => {
 		service.getDevicesWithType(DeviceType.ShellyIntegration).length
 	).toBe(1);
 	expect(service.getDevice("test-device").id).toBe("test-device");
-	expect(
-		service.getAsset("test-asset").devices.map((device) => device.id)
-	).toContain("test-device");
+	expect(service.getAsset("test-asset").deviceIds).toContain("test-device");
 	expect(service.getDeviceMeasurements("test-device")).toStrictEqual([
 		expect.objectContaining({ id: "test-meas" })
 	]);
@@ -410,6 +451,18 @@ test("Defaults missing links and summary", () => {
 	const [asset] = new AssetService(services, settings).getAssets();
 
 	expect(asset).toEqual(
-		expect.objectContaining({ links: [], summary: null })
+		expect.objectContaining({ links: [], deviceIds: [], summary: null })
+	);
+});
+
+test("Rejects unknown assigned device IDs before publishing assets", () => {
+	mockReadFileSync.mockReturnValueOnce(JSON.stringify([]));
+	mockReadFileSync.mockReturnValueOnce(
+		JSON.stringify([
+			{ ...assetConfig("root"), devices: ["missing-device"] }
+		])
+	);
+	expect(() => new AssetService(services, settings)).toThrow(
+		'Device "missing-device" not found.'
 	);
 });

@@ -7,8 +7,8 @@ export function findDeviceAsset(
 	let foundAsset = undefined;
 
 	for (const asset of assets) {
-		for (const device of asset.devices) {
-			if (device.id === deviceId) {
+		for (const assignedDeviceId of asset.deviceIds) {
+			if (assignedDeviceId === deviceId) {
 				foundAsset = asset;
 			}
 		}

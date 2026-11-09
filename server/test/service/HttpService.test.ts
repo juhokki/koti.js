@@ -16,6 +16,8 @@ const mockCreateServer = vi.hoisted(() => vi.fn());
 const mockServerListen = vi.hoisted(() => vi.fn());
 const mockServerClose = vi.hoisted(() => vi.fn());
 const mockSocketsClose = vi.hoisted(() => vi.fn());
+const mockBroadcast = vi.hoisted(() => vi.fn());
+const assetListeners = new Map<string, () => void>();
 const mockGetUser = vi.hoisted(() =>
 	vi.fn((username: string): { username: string } | null => ({ username }))
 );
@@ -63,7 +65,7 @@ vi.mock("socket.io", () => ({
 			on: function () {
 				return this as Server;
 			},
-			sockets: { sockets: new Map() },
+			sockets: { sockets: new Map(), emit: mockBroadcast },
 			close: mockSocketsClose
 		};
 	})
@@ -110,9 +112,10 @@ const services = new ServiceLocator(
 		[
 			"AssetService",
 			{
-				on: () => {
-					/* Do nothing */
+				on: (event: string, listener: () => void) => {
+					assetListeners.set(event, listener);
 				},
+				getDevices: () => [{ id: "unassigned-device" }],
 				getAssets: () => [{ id: "test-asset" }]
 			} as unknown as AssetService
 		],
@@ -199,20 +202,23 @@ test("Emits initial state on socket connection", () => {
 
 	service.onSocketConnected(mockSocket);
 
-	expect(mockEmit).toHaveBeenCalledTimes(5);
+	expect(mockEmit).toHaveBeenCalledTimes(6);
 	expect(mockEmit).toHaveBeenNthCalledWith(1, Messages.USER, {
 		username: "test"
 	});
-	expect(mockEmit).toHaveBeenNthCalledWith(2, Messages.ASSETS, [
+	expect(mockEmit).toHaveBeenNthCalledWith(2, Messages.DEVICES, [
+		{ id: "unassigned-device" }
+	]);
+	expect(mockEmit).toHaveBeenNthCalledWith(3, Messages.ASSETS, [
 		{ id: "test-asset" }
 	]);
-	expect(mockEmit).toHaveBeenNthCalledWith(3, Messages.VALUES, [
+	expect(mockEmit).toHaveBeenNthCalledWith(4, Messages.VALUES, [
 		{ value: 10 }
 	]);
-	expect(mockEmit).toHaveBeenNthCalledWith(4, Messages.ALARMS, [
+	expect(mockEmit).toHaveBeenNthCalledWith(5, Messages.ALARMS, [
 		{ id: "test-alarm" }
 	]);
-	expect(mockEmit).toHaveBeenNthCalledWith(5, Messages.SHOPPINGLIST, {
+	expect(mockEmit).toHaveBeenNthCalledWith(6, Messages.SHOPPINGLIST, {
 		items: [{ id: "item-1" }]
 	});
 
@@ -221,6 +227,18 @@ test("Emits initial state on socket connection", () => {
 		expect.any(Function)
 	);
 });
+
+test.each([Messages.DEVICE_UPDATED, Messages.MEASUREMENT_UPDATED])(
+	"Broadcasts the device catalog on %s",
+	(event) => {
+		new HttpService(services, settings);
+		mockBroadcast.mockClear();
+		assetListeners.get(event)?.();
+		expect(mockBroadcast).toHaveBeenCalledWith(Messages.DEVICES, [
+			{ id: "unassigned-device" }
+		]);
+	}
+);
 
 test.each([
 	{ shouldFail: false, expectedStatus: 200 },

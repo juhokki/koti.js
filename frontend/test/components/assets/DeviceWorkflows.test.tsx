@@ -7,8 +7,8 @@ import {
 } from "@testing-library/react";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import DeviceHistory from "../../../src/components/assets/device/DeviceHistory";
-import ValueView from "../../../src/components/assets/device/ValueView";
+import DeviceHistory from "../../../src/components/devices/DeviceHistory";
+import ValueView from "../../../src/components/devices/ValueView";
 import { AssetsContext } from "../../../src/context/AssetsContext";
 import {
 	ValuesContext,
@@ -19,7 +19,7 @@ import {
 	DeviceType,
 	MeasurementType
 } from "../../../src/interface/Asset";
-import type { Asset, Device, Measurement } from "../../../src/interface/Asset";
+import type { Device, Measurement } from "../../../src/interface/Asset";
 import type { Value } from "../../../src/interface/Value";
 
 const mockGetDeviceValues = vi.hoisted(() => vi.fn());
@@ -32,7 +32,7 @@ vi.mock("../../../src/api/ValuesApi", () => ({
 	}
 }));
 
-vi.mock("../../../src/components/assets/device/DeviceChart", async () => {
+vi.mock("../../../src/components/devices/DeviceChart", async () => {
 	const { createElement } =
 		await vi.importActual<typeof import("react")>("react");
 	return {
@@ -76,14 +76,6 @@ const device: Device = {
 	onlineStatus: DeviceOnlineStatus.ONLINE
 };
 
-const asset: Asset = {
-	id: "root",
-	name: "Home",
-	icon: "home",
-	links: [],
-	devices: [device]
-};
-
 beforeEach(() => {
 	mockGetDeviceValues.mockReset();
 	mockControl.mockReset();
@@ -118,10 +110,13 @@ function renderValue(
 
 function renderHistory() {
 	return render(
-		<AssetsContext.Provider value={{ assets: [asset] }}>
-			<MemoryRouter initialEntries={["/assets/device-1/history"]}>
+		<AssetsContext.Provider value={{ assets: [], devices: [device] }}>
+			<MemoryRouter initialEntries={["/devices/device-1/history"]}>
 				<Routes>
-					<Route path="/assets/*" element={<DeviceHistory />} />
+					<Route
+						path="/devices/:deviceId/:section?"
+						element={<DeviceHistory />}
+					/>
 				</Routes>
 			</MemoryRouter>
 		</AssetsContext.Provider>
@@ -265,12 +260,16 @@ test("DeviceHistory groups values into charts and changes the week", async () =>
 			}
 		]
 	};
-	const historyAsset = { ...asset, devices: [historyDevice] };
 	render(
-		<AssetsContext.Provider value={{ assets: [historyAsset] }}>
-			<MemoryRouter initialEntries={["/assets/device-1/history"]}>
+		<AssetsContext.Provider
+			value={{ assets: [], devices: [historyDevice] }}
+		>
+			<MemoryRouter initialEntries={["/devices/device-1/history"]}>
 				<Routes>
-					<Route path="/assets/*" element={<DeviceHistory />} />
+					<Route
+						path="/devices/:deviceId/:section?"
+						element={<DeviceHistory />}
+					/>
 				</Routes>
 			</MemoryRouter>
 		</AssetsContext.Provider>

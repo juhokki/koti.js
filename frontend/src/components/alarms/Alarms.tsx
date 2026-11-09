@@ -3,10 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { AlarmsContext } from "../../context/AlarmsContext";
-import { AssetsContext } from "../../context/AssetsContext";
-import { findAssetPath } from "../../util/AssetPathUtil";
 import { timeElapsed } from "../../util/TimeUtil";
-import { findDeviceAsset } from "../../util/AssetUtil";
 
 const STARTED_AT_COLUMN_MIN_WIDTH = 800;
 
@@ -17,7 +14,6 @@ export default function Alarms() {
 	const navigate = useNavigate();
 	const context = useContext(AlarmsContext);
 	const alarms = context.alarms;
-	const assets = useContext(AssetsContext).assets;
 	useEffect(() => {
 		const updateColumnVisibility = () => {
 			setShowStartedAt(window.innerWidth > STARTED_AT_COLUMN_MIN_WIDTH);
@@ -33,14 +29,10 @@ export default function Alarms() {
 	const goBack = () => {
 		Promise.resolve(navigate("/")).catch(console.log);
 	};
-	const goToAsset = (assetId: string) => {
-		const path = findAssetPath(assets, assetId) ?? [assetId];
-		const assetPath =
-			path.length === 0 ? "/assets" : `/assets/${path.join("/")}`;
-
-		Promise.resolve(navigate(`${assetPath}?from=alarms`)).catch(
-			console.log
-		);
+	const goToDevice = (deviceId: string) => {
+		Promise.resolve(
+			navigate(`/devices/${encodeURIComponent(deviceId)}?from=alarms`)
+		).catch(console.log);
 	};
 
 	if (alarms === null) {
@@ -87,29 +79,20 @@ export default function Alarms() {
 								</thead>
 								<tbody>
 									{alarms.map((alarm) => {
-										const asset = findDeviceAsset(
-											alarm.deviceId,
-											assets
-										);
-
-										if (!asset) {
-											throw new Error(
-												`Asset not found for device ${alarm.deviceId}`
-											);
-										}
-
 										return (
 											<tr
-												key={`${asset.name}-${alarm.deviceName}-${alarm.measurementName}-${alarm.type}`}
+												key={`${alarm.deviceId}-${alarm.measurementId}-${alarm.type}`}
 											>
 												<td>
 													<span
 														className="clickable"
 														onClick={() => {
-															goToAsset(asset.id);
+															goToDevice(
+																alarm.deviceId
+															);
 														}}
 													>
-														{asset.name}
+														{alarm.deviceName}
 													</span>
 												</td>
 												<td>{alarm.name}</td>

@@ -1,10 +1,7 @@
-import type Device from "./Device.ts";
-import type Measurement from "./Measurement.ts";
-
 export interface AssetSummaryDevice {
-	device: Device;
+	deviceId: string;
 	displayName: string;
-	measurements: Measurement[];
+	measurementIds: string[];
 }
 
 export interface AssetSummary {
@@ -16,7 +13,7 @@ export default class Asset {
 	name: string;
 	icon: string;
 	links: string[];
-	devices: Device[];
+	deviceIds: string[];
 	summary: AssetSummary | null;
 
 	constructor(
@@ -24,14 +21,14 @@ export default class Asset {
 		name: string,
 		icon: string,
 		links: string[],
-		devices: Device[],
+		deviceIds: string[],
 		summary: AssetSummary | null
 	) {
 		this.id = id;
 		this.name = name;
 		this.icon = icon;
 		this.links = links;
-		this.devices = devices;
+		this.deviceIds = deviceIds;
 		this.summary = summary;
 	}
 }

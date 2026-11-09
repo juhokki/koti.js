@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Icon from "@mui/material/Icon";
 import { AssetsContext } from "../../context/AssetsContext";
-import Device from "./device/DeviceView";
+import Device from "../devices/DeviceView";
 import useAssetPath from "../../hooks/useAssetPath";
 import SummaryView from "./SummaryView";
 
@@ -11,7 +11,7 @@ export default function AssetView() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
-	const assets = useContext(AssetsContext).assets;
+	const { assets, devices: allDevices, loading } = useContext(AssetsContext);
 	const { asset, assetPath, parentPath } = useAssetPath();
 	const goBack = () => {
 		const path =
@@ -24,22 +24,48 @@ export default function AssetView() {
 		).catch(console.log);
 	};
 
+	if (loading) {
+		return (
+			<div className="loader-container">
+				<div className="loader" />
+			</div>
+		);
+	}
 	if (!asset) {
-		return null;
+		return <section className="content">Kohdetta ei löytynyt.</section>;
 	}
 
 	const links = (asset.links ?? [])
 		.map((linkedAssetId) => assets.find((a) => a.id === linkedAssetId))
 		.filter((linkedAsset) => linkedAsset !== undefined);
 
-	const devices = asset.devices
+	const devices = asset.deviceIds
+		.map((id) => allDevices.find((device) => device.id === id))
+		.filter((device) => device !== undefined)
 		.map((device) => ({
 			device,
 			displayName: device.name,
 			measurements: device.measurements
 		}))
 		.filter((item) => item.measurements.length > 0);
-	const summaryDevices = asset.summary?.devices ?? [];
+	const summaryDevices = (asset.summary?.devices ?? []).flatMap((entry) => {
+		const device = allDevices.find(
+			(device) => device.id === entry.deviceId
+		);
+		return device
+			? [
+					{
+						device,
+						displayName: entry.displayName,
+						measurements: entry.measurementIds.flatMap((id) =>
+							device.measurements.filter(
+								(measurement) => measurement.id === id
+							)
+						)
+					}
+				]
+			: [];
+	});
 
 	return (
 		<section>

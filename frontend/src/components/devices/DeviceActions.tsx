@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Icon from "@mui/material/Icon";
-import useAssetPath from "../../../hooks/useAssetPath";
-import { ActionTrigger } from "../../../interface/Asset";
+import useDevice from "../../hooks/useDevice";
+import { ActionTrigger } from "../../interface/Asset";
 
 const triggerLabels: Record<ActionTrigger, string> = {
 	[ActionTrigger.OnChange]: "Arvon muuttuessa",
@@ -12,11 +12,10 @@ const triggerLabels: Record<ActionTrigger, string> = {
 export default function DeviceActions() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { asset, assetPath, deviceId } = useAssetPath();
-	const device = asset?.devices.find((d) => d.id === deviceId);
+	const { device, devicePath } = useDevice();
 
 	const goBack = () => {
-		Promise.resolve(navigate(`${assetPath}${location.search}`)).catch(
+		Promise.resolve(navigate(`${devicePath}${location.search}`)).catch(
 			console.log
 		);
 	};
@@ -34,7 +33,7 @@ export default function DeviceActions() {
 		params.set("action", `${measurementId}:${String(index)}`);
 
 		Promise.resolve(
-			navigate(`${assetPath}/${device.id}/script?${params.toString()}`)
+			navigate(`${devicePath}/script?${params.toString()}`)
 		).catch(console.log);
 	};
 

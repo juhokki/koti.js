@@ -12,7 +12,7 @@ export default function useAssetPath() {
 	);
 
 	return {
-		asset,
+		asset: rest.length === 0 ? asset : undefined,
 		assetPath: `/assets${assetIds.map((id) => `/${id}`).join("")}`,
 		parentPath:
 			assetIds.length === 0
@@ -20,8 +20,6 @@ export default function useAssetPath() {
 				: `/assets${assetIds
 						.slice(0, -1)
 						.map((id) => `/${id}`)
-						.join("")}`,
-		deviceId: rest[0],
-		section: rest[1]
+						.join("")}`
 	};
 }

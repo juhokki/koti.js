@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import useAssetPath from "../../../../hooks/useAssetPath";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Device } from "../../../../interface/Asset";
+import { Device } from "../../../interface/Asset";
 
 interface AlarmsRowProps {
 	device: Device;
@@ -10,10 +9,11 @@ interface AlarmsRowProps {
 export default function AlarmsRow(props: AlarmsRowProps) {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { assetPath } = useAssetPath();
 	const openAlarms = () => {
 		Promise.resolve(
-			navigate(`${assetPath}/${props.device.id}/alarms${location.search}`)
+			navigate(
+				`/devices/${encodeURIComponent(props.device.id)}/alarms${location.search}`
+			)
 		).catch(console.log);
 	};
 

@@ -3,7 +3,7 @@ import {
 	downsample,
 	getBooleanStateChanges,
 	getHighlightIndexes
-} from "../../../src/components/assets/device/DeviceChart";
+} from "../../../src/components/devices/DeviceChart";
 
 const point = (minutes: number, y: number | boolean) => ({
 	x: new Date(2026, 0, 1, 0, minutes),

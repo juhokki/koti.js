@@ -38,8 +38,29 @@ export default class AssetService extends ServiceBase {
 	validate() {
 		this.deviceIdMustBeUnique();
 		this.assetIdMustBeUnique();
+		this.assetDevicesMustExist();
+		this.summaryReferencesMustExist();
 		this.linkedAssetsMustExist();
 		this.assetsMustNotContainCycles();
+	}
+
+	assetDevicesMustExist() {
+		for (const asset of this.assets) {
+			for (const deviceId of asset.deviceIds) {
+				this.getDevice(deviceId);
+			}
+		}
+	}
+
+	summaryReferencesMustExist() {
+		for (const asset of this.assets) {
+			for (const entry of asset.summary?.devices ?? []) {
+				this.getDevice(entry.deviceId);
+				for (const measurementId of entry.measurementIds) {
+					this.getMeasurement(entry.deviceId, measurementId);
+				}
+			}
+		}
 	}
 
 	assetIdMustBeUnique() {
@@ -137,17 +158,13 @@ export default class AssetService extends ServiceBase {
 				assetConfig.name,
 				assetConfig.icon,
 				assetConfig.links ?? [],
-				assetConfig.devices?.map((deviceId) =>
-					this.getDevice(deviceId)
-				) ?? [],
+				assetConfig.devices ?? [],
 				(assetConfig.summary && {
 					devices: assetConfig.summary.devices.map(
 						({ id, name, measurements }) => ({
-							device: this.getDevice(id),
+							deviceId: id,
 							displayName: name,
-							measurements: measurements.map((measurementId) =>
-								this.getMeasurement(id, measurementId)
-							)
+							measurementIds: measurements
 						})
 					)
 				}) ??

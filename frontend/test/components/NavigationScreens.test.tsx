@@ -2,7 +2,6 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, test } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Alarms from "../../src/components/alarms/Alarms";
-import AssetRoute from "../../src/components/assets/AssetRoute";
 import AssetView from "../../src/components/assets/AssetView";
 import Home from "../../src/components/home/Home";
 import { AlarmsContext } from "../../src/context/AlarmsContext";
@@ -47,14 +46,14 @@ const asset: Asset = {
 	name: "Home",
 	icon: "home",
 	links: [],
-	devices: [device]
+	deviceIds: [device.id]
 };
 const emptyAsset: Asset = {
 	id: "empty-asset",
 	name: "Empty asset",
 	icon: "home",
 	links: [],
-	devices: []
+	deviceIds: []
 };
 const alarm: Alarm = {
 	deviceId: device.id,
@@ -71,7 +70,9 @@ afterEach(cleanup);
 test("Alarms distinguishes loading, empty, and active alarm states", () => {
 	const renderAlarms = (alarms: Alarm[] | null) => (
 		<MemoryRouter>
-			<AssetsContext.Provider value={{ assets: [asset] }}>
+			<AssetsContext.Provider
+				value={{ assets: [asset], devices: [device] }}
+			>
 				<AlarmsContext.Provider value={{ alarms }}>
 					<Alarms />
 				</AlarmsContext.Provider>
@@ -86,7 +87,7 @@ test("Alarms distinguishes loading, empty, and active alarm states", () => {
 
 	rerender(renderAlarms([alarm]));
 	expect(screen.getByText("High temperature")).toBeTruthy();
-	expect(screen.getByText("Home")).toBeTruthy();
+	expect(screen.getByText("Living room")).toBeTruthy();
 	expect(screen.getByRole("columnheader", { name: "Alkanut" })).toBeTruthy();
 
 	const initialWidth = window.innerWidth;
@@ -108,22 +109,25 @@ test("Alarms distinguishes loading, empty, and active alarm states", () => {
 	fireEvent(window, new Event("resize"));
 });
 
-test("Alarm assets link back to details with alarm origin preserved", async () => {
+test("Alarms link directly to device details without an owning asset", async () => {
 	render(
-		<AssetsContext.Provider value={{ assets: [asset] }}>
+		<AssetsContext.Provider value={{ assets: [], devices: [device] }}>
 			<AlarmsContext.Provider value={{ alarms: [alarm] }}>
 				<MemoryRouter initialEntries={["/alarms"]}>
 					<Routes>
 						<Route path="/alarms" element={<Alarms />} />
-						<Route path="/assets" element={<p>Asset route</p>} />
+						<Route
+							path="/devices/:deviceId"
+							element={<p>Device route</p>}
+						/>
 					</Routes>
 				</MemoryRouter>
 			</AlarmsContext.Provider>
 		</AssetsContext.Provider>
 	);
 
-	fireEvent.click(screen.getByText("Home"));
-	expect(await screen.findByText("Asset route")).toBeTruthy();
+	fireEvent.click(screen.getByText("Living room"));
+	expect(await screen.findByText("Device route")).toBeTruthy();
 });
 
 test("Home navigation exposes app sections and active alarm styling", () => {
@@ -152,8 +156,8 @@ test("Home navigation exposes app sections and active alarm styling", () => {
 	expect(screen.getByText("Assets route")).toBeTruthy();
 });
 
-test("Assets renders the hardcoded root and navigates through its links", async () => {
-	const rootAsset: Asset = { ...asset, links: ["child-1"], devices: [] };
+test("The asset wildcard route renders root and navigates through its links", async () => {
+	const rootAsset: Asset = { ...asset, links: ["child-1"], deviceIds: [] };
 	const childAsset: Asset = {
 		...emptyAsset,
 		id: "child-1",
@@ -162,12 +166,14 @@ test("Assets renders the hardcoded root and navigates through its links", async 
 
 	render(
 		<AssetsContext.Provider
-			value={{ assets: [emptyAsset, rootAsset, childAsset] }}
+			value={{
+				assets: [emptyAsset, rootAsset, childAsset],
+				devices: [device]
+			}}
 		>
 			<MemoryRouter initialEntries={["/assets"]}>
 				<Routes>
-					<Route path="/assets" element={<AssetView />} />
-					<Route path="/assets/*" element={<AssetRoute />} />
+					<Route path="/assets/*" element={<AssetView />} />
 				</Routes>
 			</MemoryRouter>
 		</AssetsContext.Provider>
@@ -179,10 +185,23 @@ test("Assets renders the hardcoded root and navigates through its links", async 
 	expect(await screen.findByText("Child asset")).toBeTruthy();
 });
 
+test("Asset views do not interpret invalid asset paths as embedded device routes", () => {
+	render(
+		<AssetsContext.Provider value={{ assets: [asset], devices: [device] }}>
+			<MemoryRouter initialEntries={["/assets/device-1/history"]}>
+				<Routes>
+					<Route path="/assets/*" element={<AssetView />} />
+				</Routes>
+			</MemoryRouter>
+		</AssetsContext.Provider>
+	);
+	expect(screen.getByText("Kohdetta ei löytynyt.")).toBeTruthy();
+});
+
 test("Asset details omits devices without measurements", () => {
 	const assetWithEmptyDevice = {
 		...asset,
-		devices: [{ ...device, measurements: [] }, device]
+		deviceIds: ["empty-device", device.id]
 	};
 	const values = new ValueContextEmitter();
 	values.set("device-1-temperature", {
@@ -193,7 +212,15 @@ test("Asset details omits devices without measurements", () => {
 	});
 	render(
 		<ValuesContext.Provider value={{ values }}>
-			<AssetsContext.Provider value={{ assets: [assetWithEmptyDevice] }}>
+			<AssetsContext.Provider
+				value={{
+					assets: [assetWithEmptyDevice],
+					devices: [
+						{ ...device, id: "empty-device", measurements: [] },
+						device
+					]
+				}}
+			>
 				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
 						<Route path="/assets/*" element={<AssetView />} />
@@ -228,7 +255,7 @@ test("Asset details renders regular device cards and all measurements", () => {
 	};
 	const regularAsset: Asset = {
 		...asset,
-		devices: [filteredDevice, otherDevice]
+		deviceIds: [filteredDevice.id, otherDevice.id]
 	};
 	const values = new ValueContextEmitter();
 	values.set("device-1-temperature", {
@@ -252,7 +279,12 @@ test("Asset details renders regular device cards and all measurements", () => {
 
 	render(
 		<ValuesContext.Provider value={{ values }}>
-			<AssetsContext.Provider value={{ assets: [regularAsset] }}>
+			<AssetsContext.Provider
+				value={{
+					assets: [regularAsset],
+					devices: [filteredDevice, otherDevice]
+				}}
+			>
 				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
 						<Route path="/assets/*" element={<AssetView />} />
@@ -286,13 +318,13 @@ test("Summary renders selected readings beside regular device cards", () => {
 	};
 	const summaryAsset: Asset = {
 		...asset,
-		devices: [device],
+		deviceIds: [device.id],
 		summary: {
 			devices: [
 				{
-					device: otherDevice,
+					deviceId: otherDevice.id,
 					displayName: "Kitchenette",
-					measurements: [otherMeasurement]
+					measurementIds: [otherMeasurement.id]
 				}
 			]
 		}
@@ -313,7 +345,12 @@ test("Summary renders selected readings beside regular device cards", () => {
 
 	render(
 		<ValuesContext.Provider value={{ values }}>
-			<AssetsContext.Provider value={{ assets: [summaryAsset] }}>
+			<AssetsContext.Provider
+				value={{
+					assets: [summaryAsset],
+					devices: [device, otherDevice]
+				}}
+			>
 				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
 						<Route path="/assets/*" element={<AssetView />} />
@@ -338,19 +375,21 @@ test("Summary renders selected readings beside regular device cards", () => {
 	expect(document.querySelectorAll(".grid-item")).toHaveLength(2);
 });
 test("Asset details renders linked assets as navigation boxes", async () => {
-	const parent: Asset = { ...asset, links: ["child-1"], devices: [] };
+	const parent: Asset = { ...asset, links: ["child-1"], deviceIds: [] };
 	const child: Asset = {
 		...emptyAsset,
 		id: "child-1",
 		name: "Child asset",
-		devices: [device]
+		deviceIds: [device.id]
 	};
 	render(
 		<ValuesContext.Provider value={{ values: new ValueContextEmitter() }}>
-			<AssetsContext.Provider value={{ assets: [parent, child] }}>
+			<AssetsContext.Provider
+				value={{ assets: [parent, child], devices: [device] }}
+			>
 				<MemoryRouter initialEntries={["/assets"]}>
 					<Routes>
-						<Route path="/assets/*" element={<AssetRoute />} />
+						<Route path="/assets/*" element={<AssetView />} />
 					</Routes>
 				</MemoryRouter>
 			</AssetsContext.Provider>

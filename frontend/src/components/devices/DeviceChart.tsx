@@ -10,13 +10,13 @@ import {
 	ChartOptions
 } from "chart.js";
 import "chartjs-adapter-luxon";
-import { UserContext } from "../../../context/UserContext";
-import CssUtil from "../../../util/CssUtil";
-import { Measurement, MeasurementType } from "../../../interface/Asset";
+import { UserContext } from "../../context/UserContext";
+import CssUtil from "../../util/CssUtil";
+import { Measurement, MeasurementType } from "../../interface/Asset";
 import {
 	DeviceChartDataObject,
 	DeviceChartDataPoint
-} from "../../../interface/DeviceChartData";
+} from "../../interface/DeviceChartData";
 
 Chart.register(TimeScale, LinearScale, PointElement, LineElement, Tooltip);
 

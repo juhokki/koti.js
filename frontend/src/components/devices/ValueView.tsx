@@ -1,16 +1,16 @@
 import { useContext, useState, useEffect } from "react";
 import Slider from "@mui/material/Slider";
 import Switch from "@mui/material/Switch";
-import ValuesApi from "../../../api/ValuesApi";
-import { ValuesContext } from "../../../context/ValuesContext";
-import ValueUtil from "../../../util/ValueUtil";
+import ValuesApi from "../../api/ValuesApi";
+import { ValuesContext } from "../../context/ValuesContext";
+import ValueUtil from "../../util/ValueUtil";
 import {
 	Device,
 	DeviceOnlineStatus,
 	Measurement,
 	MeasurementType
-} from "../../../interface/Asset";
-import { Value, ValueType } from "../../../interface/Value";
+} from "../../interface/Asset";
+import { Value, ValueType } from "../../interface/Value";
 
 interface ValueViewProps {
 	device: Device;

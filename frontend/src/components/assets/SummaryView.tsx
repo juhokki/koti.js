@@ -1,4 +1,4 @@
-import MeasurementRow from "./device/rows/MeasurementRow";
+import MeasurementRow from "../devices/rows/MeasurementRow";
 import { Device, Measurement } from "../../interface/Asset";
 
 interface SummaryDevice {

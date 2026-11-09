@@ -3,22 +3,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Icon from "@mui/material/Icon";
-import useAssetPath from "../../../hooks/useAssetPath";
-import ValuesApi from "../../../api/ValuesApi";
+import useDevice from "../../hooks/useDevice";
+import ValuesApi from "../../api/ValuesApi";
 import DeviceChart from "./DeviceChart";
-import { DeviceChartData } from "../../../interface/DeviceChartData";
-import {
-	getEndOfWeek,
-	getStartOfWeek,
-	shortDate
-} from "../../../util/TimeUtil";
-import { Measurement } from "../../../interface/Asset";
+import { DeviceChartData } from "../../interface/DeviceChartData";
+import { getEndOfWeek, getStartOfWeek, shortDate } from "../../util/TimeUtil";
+import { Measurement } from "../../interface/Asset";
 
 export default function DeviceHistory() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { asset, assetPath, deviceId } = useAssetPath();
-	const device = asset?.devices.find((d) => d.id === deviceId);
+	const { device, devicePath, deviceId } = useDevice();
+
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
 	const [data, setData] = useState<DeviceChartData[]>([]);
@@ -79,7 +75,7 @@ export default function DeviceHistory() {
 	}, [deviceId, startDate, endDate]);
 
 	const goBack = () => {
-		Promise.resolve(navigate(`${assetPath}${location.search}`)).catch(
+		Promise.resolve(navigate(`${devicePath}${location.search}`)).catch(
 			console.log
 		);
 	};

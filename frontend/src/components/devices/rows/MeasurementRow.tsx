@@ -1,6 +1,6 @@
 import Icon from "@mui/material/Icon";
 import Value from "../ValueView";
-import { Device, Measurement } from "../../../../interface/Asset";
+import { Device, Measurement } from "../../../interface/Asset";
 
 interface MeasurementRowProps {
 	device: Device;

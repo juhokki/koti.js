@@ -11,6 +11,21 @@ import Integration from "../../../src/components/system/Integration";
 import Logs from "../../../src/components/system/Logs";
 import Service from "../../../src/components/system/Service";
 import System from "../../../src/components/system/System";
+import AssetManagement from "../../../src/components/system/AssetManagement";
+import DeviceManagement from "../../../src/components/system/DeviceManagement";
+import DeviceLayout from "../../../src/components/devices/DeviceLayout";
+import DeviceDetails from "../../../src/components/devices/DeviceDetails";
+import DeviceAlarms from "../../../src/components/devices/DeviceAlarms";
+import TreeList from "../../../src/components/common/TreeList";
+import { AssetsContext } from "../../../src/context/AssetsContext";
+import { AlarmsContext } from "../../../src/context/AlarmsContext";
+import {
+	DeviceType,
+	DeviceOnlineStatus,
+	MeasurementType,
+	type Asset,
+	type Device
+} from "../../../src/interface/Asset";
 
 const mockGetSystemStats = vi.hoisted(() => vi.fn());
 const mockGetIntegration = vi.hoisted(() => vi.fn());
@@ -37,6 +52,216 @@ const systemStats = {
 	integrations: ["ShellyIntegration"],
 	services: ["DataService"]
 };
+
+const managementDevice: Device = {
+	id: "standalone",
+	name: "Standalone sensor",
+	icon: "sensors",
+	type: DeviceType.RestApiIntegration,
+	onlineStatus: DeviceOnlineStatus.ONLINE,
+	measurements: [
+		{
+			deviceId: "standalone",
+			id: "temperature",
+			name: "Temperature",
+			icon: "thermostat",
+			type: MeasurementType.Number,
+			unit: "C",
+			controllable: false,
+			min: 0,
+			max: 40,
+			steps: [10, 20],
+			disabled: false,
+			alarms: [],
+			actions: [],
+			schedules: []
+		}
+	]
+};
+const managementAsset = (id: string, links: string[] = []): Asset => ({
+	id,
+	name: id,
+	icon: "home",
+	links,
+	deviceIds: []
+});
+const managementAssets = [
+	managementAsset("root", ["house", "cabin"]),
+	managementAsset("house", ["kitchen"]),
+	managementAsset("cabin", ["kitchen"]),
+	managementAsset("kitchen"),
+	managementAsset("unlinked")
+];
+
+function renderManagement(
+	path: string,
+	assets: Asset[] = managementAssets,
+	devices: Device[] = [managementDevice],
+	loading = false
+) {
+	return render(
+		<AssetsContext.Provider value={{ assets, devices, loading }}>
+			<AlarmsContext.Provider value={{ alarms: [] }}>
+				<MemoryRouter initialEntries={[path]}>
+					<Routes>
+						<Route
+							path="/system/assets/:assetId?"
+							element={<AssetManagement />}
+						/>
+						<Route
+							path="/system/devices"
+							element={<DeviceManagement />}
+						/>
+						<Route
+							path="/devices/:deviceId"
+							element={<DeviceLayout />}
+						>
+							<Route index element={<DeviceDetails />} />
+							<Route path="alarms" element={<DeviceAlarms />} />
+						</Route>
+						<Route path="/alarms" element={<p>Alarm list</p>} />
+						<Route
+							path="/system"
+							element={<p>System overview</p>}
+						/>
+					</Routes>
+				</MemoryRouter>
+			</AlarmsContext.Provider>
+		</AssetsContext.Provider>
+	);
+}
+
+test("TreeList renders all descendants and accessible links without expansion controls", () => {
+	render(
+		<MemoryRouter>
+			<TreeList
+				label="Sample tree"
+				nodes={[
+					{
+						id: "group",
+						label: "Group",
+						children: [
+							{
+								id: "parent",
+								label: "Parent",
+								to: "/parent",
+								children: [
+									{ id: "leaf", label: "Leaf", to: "/leaf" }
+								]
+							}
+						]
+					}
+				]}
+			/>
+		</MemoryRouter>
+	);
+	expect(
+		screen.getByRole("navigation", { name: "Sample tree" })
+	).toBeTruthy();
+	expect(screen.getByRole("link", { name: "Parent" })).toBeTruthy();
+	expect(
+		screen.getByRole("link", { name: "Leaf" }).getAttribute("href")
+	).toBe("/leaf");
+	expect(screen.queryByRole("link", { name: "Group" })).toBeNull();
+	expect(screen.queryByRole("button")).toBeNull();
+});
+
+test("Asset management shows all root descendants and navigates to details and back", () => {
+	renderManagement("/system/assets");
+	expect(screen.getAllByRole("link", { name: /kitchen/ })).toHaveLength(2);
+	expect(screen.queryByText("unlinked")).toBeNull();
+	fireEvent.click(screen.getByRole("link", { name: /house/ }));
+	expect(screen.getByText("ID")).toBeTruthy();
+	expect(screen.queryByRole("navigation", { name: "Kohteet" })).toBeNull();
+	fireEvent.click(screen.getByRole("link", { name: "Takaisin" }));
+	expect(screen.getAllByRole("link", { name: /kitchen/ })).toHaveLength(2);
+});
+
+test("Asset management guards cycles and skips missing linked assets", () => {
+	renderManagement("/system/assets", [
+		managementAsset("root", ["child", "missing"]),
+		managementAsset("child", ["root"])
+	]);
+	expect(screen.getAllByRole("link", { name: /root/ })).toHaveLength(1);
+	expect(screen.getByRole("link", { name: /child/ })).toBeTruthy();
+	expect(screen.queryByText("missing")).toBeNull();
+});
+
+test("Asset details resolve assigned device and summary IDs", () => {
+	renderManagement("/system/assets/root", [
+		{
+			...managementAsset("root"),
+			deviceIds: [managementDevice.id],
+			summary: {
+				devices: [
+					{
+						deviceId: managementDevice.id,
+						displayName: "Kitchen reading",
+						measurementIds: ["temperature"]
+					}
+				]
+			}
+		}
+	]);
+	expect(screen.getByText("Kitchen reading")).toBeTruthy();
+	expect(screen.getByText("Temperature")).toBeTruthy();
+	expect(
+		screen
+			.getAllByRole("link", { name: managementDevice.name })
+			.every(
+				(link) => link.getAttribute("href") === "/devices/standalone"
+			)
+	).toBe(true);
+});
+
+test("Device tree groups all devices by integration and selects standalone details", () => {
+	const shellyDevice = {
+		...managementDevice,
+		id: "shelly",
+		name: "Shelly sensor",
+		type: DeviceType.ShellyIntegration
+	};
+	renderManagement("/system/devices", [], [shellyDevice, managementDevice]);
+	expect(screen.getByText("Rest Api Integration")).toBeTruthy();
+	expect(screen.getByText("Shelly Integration")).toBeTruthy();
+	expect(screen.getByRole("link", { name: /Shelly sensor/ })).toBeTruthy();
+	fireEvent.click(screen.getByRole("link", { name: /Standalone sensor/ }));
+	expect(screen.getByText("standalone")).toBeTruthy();
+	expect(screen.getByText("Temperature")).toBeTruthy();
+	expect(screen.queryByText("online")).toBeNull();
+	expect(screen.queryByRole("button")).toBeNull();
+	fireEvent.click(screen.getByRole("link", { name: "Takaisin" }));
+	expect(screen.getByRole("navigation", { name: "Laitteet" })).toBeTruthy();
+});
+
+test("Device details preserve alarm origin through section navigation", () => {
+	renderManagement("/devices/standalone?from=alarms");
+	fireEvent.click(screen.getByRole("link", { name: "Hälytykset" }));
+	expect(screen.getByText("Ei hälytyksiä.")).toBeTruthy();
+	fireEvent.click(screen.getByTestId("ChevronLeftIcon"));
+	fireEvent.click(screen.getByRole("link", { name: "Takaisin" }));
+	expect(screen.getByText("Alarm list")).toBeTruthy();
+});
+
+test.each([
+	["/system/assets", "Juurikohdetta ei löytynyt."],
+	["/system/assets/missing", "Kohdetta ei löytynyt."],
+	["/system/devices", "Ei laitteita."],
+	["/devices/missing", "Laitetta ei löytynyt."]
+])("Management handles empty or missing records at %s", (path, message) => {
+	renderManagement(path, [], []);
+	expect(screen.getByText(message)).toBeTruthy();
+	expect(screen.getByRole("link", { name: "Takaisin" })).toBeTruthy();
+});
+
+test.each(["/system/assets", "/system/devices", "/devices/standalone"])(
+	"Management waits for the separate catalogs at %s",
+	(path) => {
+		renderManagement(path, [], [], true);
+		expect(document.querySelector(".loader")).toBeTruthy();
+		expect(screen.queryByText(/ei löytynyt/)).toBeNull();
+	}
+);
 
 function renderRoutes(initialEntry: string) {
 	return render(
@@ -78,12 +303,18 @@ test("System displays server, disk percentage, log, and integration data", async
 	expect(screen.getByRole("button", { name: "Avaa lokit" })).toBeTruthy();
 	expect(screen.getByText("Shelly Integration")).toBeTruthy();
 	expect(screen.getByText("Data Service")).toBeTruthy();
-	expect(container.querySelectorAll(".grid-item")).toHaveLength(3);
+	expect(container.querySelectorAll(".grid-item")).toHaveLength(4);
 	expect(
 		Array.from(container.querySelectorAll(".grid-item h3")).map((heading) =>
 			heading.textContent.trim()
 		)
-	).toEqual(["Palvelin", "Integraatiot", "Palvelut"]);
+	).toEqual(["Palvelin", "Kohteiden hallinta", "Integraatiot", "Palvelut"]);
+	expect(
+		screen.getByRole("link", { name: "Avaa kohteet" }).getAttribute("href")
+	).toBe("/system/assets");
+	expect(
+		screen.getByRole("link", { name: "Avaa laitteet" }).getAttribute("href")
+	).toBe("/system/devices");
 });
 
 test("System handles a disk without a valid size", async () => {

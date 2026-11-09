@@ -2,12 +2,12 @@ import { fireEvent, render, screen, cleanup } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import type { ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import DeviceActions from "../../../src/components/assets/device/DeviceActions";
-import DeviceAlarms from "../../../src/components/assets/device/DeviceAlarms";
-import DeviceSchedules from "../../../src/components/assets/device/DeviceSchedules";
-import AssetRoute from "../../../src/components/assets/AssetRoute";
-import useAssetPath from "../../../src/hooks/useAssetPath";
-import DeviceView from "../../../src/components/assets/device/DeviceView";
+import DeviceActions from "../../../src/components/devices/DeviceActions";
+import DeviceAlarms from "../../../src/components/devices/DeviceAlarms";
+import DeviceSchedules from "../../../src/components/devices/DeviceSchedules";
+import DeviceLayout from "../../../src/components/devices/DeviceLayout";
+import DeviceActionScript from "../../../src/components/devices/DeviceActionScript";
+import DeviceView from "../../../src/components/devices/DeviceView";
 import { AlarmsContext } from "../../../src/context/AlarmsContext";
 import { AssetsContext } from "../../../src/context/AssetsContext";
 import {
@@ -21,7 +21,7 @@ import {
 	MeasurementType,
 	ScheduleType
 } from "../../../src/interface/Asset";
-import type { Asset, Device, Measurement } from "../../../src/interface/Asset";
+import type { Device, Measurement } from "../../../src/interface/Asset";
 import { AlarmType, type Alarm } from "../../../src/interface/Alarm";
 
 const mockExecuteAction = vi.hoisted(() => vi.fn());
@@ -70,14 +70,6 @@ const device: Device = {
 	onlineStatus: DeviceOnlineStatus.ONLINE
 };
 
-const asset: Asset = {
-	id: "root",
-	name: "Home",
-	icon: "home",
-	links: [],
-	devices: [device]
-};
-
 const activeAlarm: Alarm = {
 	deviceId: device.id,
 	deviceName: device.name,
@@ -92,7 +84,7 @@ function renderDeviceRoute(
 	path: string,
 	component: ReactNode,
 	alarms: Alarm[] = [],
-	currentAsset: Asset = asset
+	currentDevice: Device = device
 ) {
 	const values = new ValueContextEmitter();
 	values.set("device-1-temperature", {
@@ -103,7 +95,9 @@ function renderDeviceRoute(
 	});
 	return render(
 		<ValuesContext.Provider value={{ values }}>
-			<AssetsContext.Provider value={{ assets: [currentAsset] }}>
+			<AssetsContext.Provider
+				value={{ assets: [], devices: [currentDevice] }}
+			>
 				<AlarmsContext.Provider value={{ alarms }}>
 					<MemoryRouter initialEntries={[path]}>
 						{component}
@@ -114,19 +108,16 @@ function renderDeviceRoute(
 	);
 }
 
-function SummaryOrHistory() {
-	const { deviceId } = useAssetPath();
-
-	return deviceId ? <p>History view</p> : <DeviceView device={device} />;
-}
-
 afterEach(cleanup);
 
 test("Device actions show configured actions and the empty state", () => {
 	renderDeviceRoute(
-		"/assets/device-1/actions",
+		"/devices/device-1/actions",
 		<Routes>
-			<Route path="/assets/*" element={<DeviceActions />} />
+			<Route
+				path="/devices/:deviceId/:section?"
+				element={<DeviceActions />}
+			/>
 		</Routes>
 	);
 
@@ -139,9 +130,12 @@ test("Action script view shows the script and the execution result", async () =>
 	mockExecuteAction.mockResolvedValueOnce({ ok: true });
 
 	renderDeviceRoute(
-		"/assets/device-1/actions",
+		"/devices/device-1/actions",
 		<Routes>
-			<Route path="/assets/*" element={<AssetRoute />} />
+			<Route path="/devices/:deviceId" element={<DeviceLayout />}>
+				<Route path="actions" element={<DeviceActions />} />
+				<Route path="script" element={<DeviceActionScript />} />
+			</Route>
 		</Routes>
 	);
 
@@ -167,9 +161,12 @@ test("Action script view shows the script and the execution result", async () =>
 
 test("Device alarms distinguish active alarms from clear alarms", () => {
 	renderDeviceRoute(
-		"/assets/device-1/alarms",
+		"/devices/device-1/alarms",
 		<Routes>
-			<Route path="/assets/*" element={<DeviceAlarms />} />
+			<Route
+				path="/devices/:deviceId/:section?"
+				element={<DeviceAlarms />}
+			/>
 		</Routes>,
 		[activeAlarm]
 	);
@@ -182,9 +179,12 @@ test("Device alarms distinguish active alarms from clear alarms", () => {
 
 test("Device schedules show configured times and empty state", () => {
 	renderDeviceRoute(
-		"/assets/device-1/schedules",
+		"/devices/device-1/schedules",
 		<Routes>
-			<Route path="/assets/*" element={<DeviceSchedules />} />
+			<Route
+				path="/devices/:deviceId/:section?"
+				element={<DeviceSchedules />}
+			/>
 		</Routes>
 	);
 
@@ -203,7 +203,11 @@ test("Device summary renders values and navigates to history", async () => {
 	renderDeviceRoute(
 		"/assets",
 		<Routes>
-			<Route path="/assets/*" element={<SummaryOrHistory />} />
+			<Route path="/assets" element={<DeviceView device={device} />} />
+			<Route
+				path="/devices/:deviceId/history"
+				element={<p>History view</p>}
+			/>
 		</Routes>
 	);
 
@@ -217,20 +221,23 @@ test("Device summary renders values and navigates to history", async () => {
 
 test("Device sections show their empty messages when nothing is configured", () => {
 	const emptyDevice = { ...device, measurements: [] };
-	const emptyAsset = { ...asset, devices: [emptyDevice] };
 	const routes = (
 		<Routes>
-			<Route path="/assets/*" element={<AssetRoute />} />
+			<Route path="/devices/:deviceId" element={<DeviceLayout />}>
+				<Route path="actions" element={<DeviceActions />} />
+				<Route path="alarms" element={<DeviceAlarms />} />
+				<Route path="schedules" element={<DeviceSchedules />} />
+			</Route>
 		</Routes>
 	);
-	renderDeviceRoute("/assets/device-1/actions", routes, [], emptyAsset);
+	renderDeviceRoute("/devices/device-1/actions", routes, [], emptyDevice);
 	expect(screen.getByText("Ei toimintoja.")).toBeTruthy();
 
 	cleanup();
-	renderDeviceRoute("/assets/device-1/alarms", routes, [], emptyAsset);
+	renderDeviceRoute("/devices/device-1/alarms", routes, [], emptyDevice);
 	expect(screen.getByText("Ei hälytyksiä.")).toBeTruthy();
 
 	cleanup();
-	renderDeviceRoute("/assets/device-1/schedules", routes, [], emptyAsset);
+	renderDeviceRoute("/devices/device-1/schedules", routes, [], emptyDevice);
 	expect(screen.getByText("Ei ajastuksia.")).toBeTruthy();
 });

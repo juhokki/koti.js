@@ -27,7 +27,12 @@ import {
 	UserContextProvider
 } from "../../src/context/UserContext";
 import { AlarmType, type Alarm } from "../../src/interface/Alarm";
-import type { Asset } from "../../src/interface/Asset";
+import {
+	DeviceType,
+	DeviceOnlineStatus,
+	type Asset,
+	type Device
+} from "../../src/interface/Asset";
 import type { ShoppingList } from "../../src/interface/ShoppingList";
 import type { User } from "../../src/interface/User";
 
@@ -45,12 +50,20 @@ vi.mock("../../src/socket", () => ({
 
 const handlers = new Map<string, (...args: unknown[]) => void>();
 const user: User = { username: "alice", locale: "fi" };
+const device: Device = {
+	id: "unassigned",
+	name: "Unassigned",
+	icon: "sensors",
+	type: DeviceType.RestApiIntegration,
+	onlineStatus: DeviceOnlineStatus.UNKNOWN,
+	measurements: []
+};
 const asset: Asset = {
 	id: "root",
 	name: "Home",
 	icon: "home",
 	links: [],
-	devices: []
+	deviceIds: []
 };
 const alarm: Alarm = {
 	deviceId: "heater",
@@ -69,13 +82,17 @@ const sampleShoppingList: ShoppingList = {
 function ContextConsumer() {
 	const { connected } = useContext(AppContext);
 	const { user } = useContext(UserContext);
-	const { assets } = useContext(AssetsContext);
+	const { assets, devices, loading } = useContext(AssetsContext);
 	const { alarms } = useContext(AlarmsContext);
 	const { shoppingList, setShoppingList } = useContext(ShoppingListContext);
 	const [saveResult, setSaveResult] = useState("");
 
 	return (
 		<div>
+			<span data-testid="devices">
+				{devices.map((device) => device.name).join(",")}
+			</span>
+			<span data-testid="assets-loading">{String(loading)}</span>
 			<span data-testid="connected">{String(connected)}</span>
 			<span data-testid="user">{user?.username ?? "none"}</span>
 			<span data-testid="assets">
@@ -134,6 +151,7 @@ test("Receives connection, user, asset, alarm, and shopping-list socket events",
 
 	expect(screen.getByTestId("connected").textContent).toBe("false");
 	expect(screen.getByTestId("user").textContent).toBe("none");
+	expect(screen.getByTestId("assets-loading").textContent).toBe("true");
 	act(() => {
 		handlers.get(Messages.CONNECT)?.();
 	});
@@ -143,6 +161,12 @@ test("Receives connection, user, asset, alarm, and shopping-list socket events",
 	act(() => {
 		handlers.get(Messages.ASSETS)?.([asset]);
 	});
+	expect(screen.getByTestId("assets-loading").textContent).toBe("true");
+	act(() => {
+		handlers.get(Messages.DEVICES)?.([device]);
+	});
+	expect(screen.getByTestId("devices").textContent).toBe("Unassigned");
+	expect(screen.getByTestId("assets-loading").textContent).toBe("false");
 	act(() => {
 		handlers.get(Messages.ALARMS)?.([alarm]);
 	});
@@ -166,6 +190,10 @@ test("Receives connection, user, asset, alarm, and shopping-list socket events",
 	expect(mockSocketOff).toHaveBeenCalledWith(Messages.DISCONNECT);
 	expect(mockSocketOff).toHaveBeenCalledWith(Messages.USER);
 	expect(mockSocketOff).toHaveBeenCalledWith(Messages.ASSETS);
+	expect(mockSocketOff).toHaveBeenCalledWith(
+		Messages.DEVICES,
+		expect.any(Function)
+	);
 	expect(mockSocketOff).toHaveBeenCalledWith(Messages.ALARMS);
 	expect(mockSocketOff).toHaveBeenCalledWith(Messages.SHOPPINGLIST);
 });

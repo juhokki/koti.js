@@ -20,7 +20,6 @@ import Home from "./home/Home";
 import User from "./user/User";
 import UserDetails from "./user/UserDetails";
 import Login from "./login/Login";
-import AssetRoute from "./assets/AssetRoute";
 import ShoppingList from "./shoppinglist/ShoppingListView";
 import RecipeList from "./recipes/RecipeList";
 import RecipeDetails from "./recipes/RecipeDetails";
@@ -34,6 +33,15 @@ import Integration from "./system/Integration";
 import Service from "./system/Service";
 import PullToRefresh from "./PullToRefresh";
 import AssetView from "./assets/AssetView";
+import DeviceLayout from "./devices/DeviceLayout";
+import DeviceDetails from "./devices/DeviceDetails";
+import DeviceHistory from "./devices/DeviceHistory";
+import DeviceAlarms from "./devices/DeviceAlarms";
+import DeviceSchedules from "./devices/DeviceSchedules";
+import DeviceActions from "./devices/DeviceActions";
+import DeviceActionScript from "./devices/DeviceActionScript";
+import AssetManagement from "./system/AssetManagement";
+import DeviceManagement from "./system/DeviceManagement";
 
 export default function App() {
 	const jwt = localStorage.getItem("jwt");
@@ -89,6 +97,43 @@ export default function App() {
 									<Routes>
 										<Route path="/" element={<Home />} />
 										<Route
+											path="devices/:deviceId"
+											element={<DeviceLayout />}
+										>
+											<Route
+												index
+												element={<DeviceDetails />}
+											/>
+											<Route
+												path="history"
+												element={<DeviceHistory />}
+											/>
+											<Route
+												path="alarms"
+												element={<DeviceAlarms />}
+											/>
+											<Route
+												path="schedules"
+												element={<DeviceSchedules />}
+											/>
+											<Route
+												path="actions"
+												element={<DeviceActions />}
+											/>
+											<Route
+												path="script"
+												element={<DeviceActionScript />}
+											/>
+										</Route>
+										<Route
+											path="system/assets/:assetId?"
+											element={<AssetManagement />}
+										/>
+										<Route
+											path="system/devices"
+											element={<DeviceManagement />}
+										/>
+										<Route
 											path="/login"
 											element={<Login />}
 										/>
@@ -97,12 +142,8 @@ export default function App() {
 											element={<UserDetails />}
 										/>
 										<Route
-											path="assets"
-											element={<AssetView />}
-										/>
-										<Route
 											path="assets/*"
-											element={<AssetRoute />}
+											element={<AssetView />}
 										/>
 										<Route
 											path="shoppinglist"

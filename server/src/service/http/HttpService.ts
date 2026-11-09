@@ -94,8 +94,8 @@ export default class HttpService extends ServiceBase {
 			.getAssetService()
 			.on(Messages.DEVICE_UPDATED, (deviceId, measurementId) =>
 				this.sockets.sockets.emit(
-					Messages.ASSETS,
-					this.services.getAssetService().getAssets()
+					Messages.DEVICES,
+					this.services.getAssetService().getDevices()
 				)
 			);
 
@@ -103,8 +103,8 @@ export default class HttpService extends ServiceBase {
 			.getAssetService()
 			.on(Messages.MEASUREMENT_UPDATED, (deviceId, measurementId) =>
 				this.sockets.sockets.emit(
-					Messages.ASSETS,
-					this.services.getAssetService().getAssets()
+					Messages.DEVICES,
+					this.services.getAssetService().getDevices()
 				)
 			);
 
@@ -154,6 +154,10 @@ export default class HttpService extends ServiceBase {
 
 	onSocketConnected(socket: Socket) {
 		socket.emit(Messages.USER, socket.decodedToken as UserPayload);
+		socket.emit(
+			Messages.DEVICES,
+			this.services.getAssetService().getDevices()
+		);
 		socket.emit(
 			Messages.ASSETS,
 			this.services.getAssetService().getAssets()

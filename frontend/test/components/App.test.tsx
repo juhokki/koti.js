@@ -1,4 +1,10 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen
+} from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import App from "../../src/components/App";
@@ -32,6 +38,38 @@ test("Redirects unauthenticated users to login", async () => {
 		await screen.findByRole("button", { name: "Kirjaudu" })
 	).toBeTruthy();
 	expect(socketMock.connect).not.toHaveBeenCalled();
+});
+
+test("Navigates from home to the root asset through the wildcard route", () => {
+	localStorage.setItem("jwt", "saved-token");
+	render(
+		<MemoryRouter initialEntries={["/"]}>
+			<App />
+		</MemoryRouter>
+	);
+	act(() => {
+		for (const [event, listener] of socketMock.on.mock.calls as [
+			string,
+			(data: unknown) => void
+		][]) {
+			if (event === "assets") {
+				listener([
+					{
+						id: "root",
+						name: "Root asset",
+						icon: "home",
+						links: [],
+						deviceIds: []
+					}
+				]);
+			}
+			if (event === "devices") {
+				listener([]);
+			}
+		}
+	});
+	fireEvent.click(screen.getByText("Kodinohjaus"));
+	expect(screen.getByText("Root asset")).toBeTruthy();
 });
 
 test("Connects with a saved token and redirects away from login", async () => {

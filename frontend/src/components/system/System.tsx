@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ExtensionIcon from "@mui/icons-material/Extension";
 import BuildIcon from "@mui/icons-material/Build";
@@ -170,6 +171,38 @@ export default function System() {
 										>
 											Avaa
 										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div className="grid-item">
+						<h3 className="centered underline">
+							<AccountTreeIcon />
+							<span>Kohteiden hallinta</span>
+						</h3>
+						<table className="margin-top">
+							<tbody>
+								<tr>
+									<th>Kohteet</th>
+									<td>
+										<Link
+											to="/system/assets"
+											aria-label="Avaa kohteet"
+										>
+											Avaa
+										</Link>
+									</td>
+								</tr>
+								<tr>
+									<th>Laitteet</th>
+									<td>
+										<Link
+											to="/system/devices"
+											aria-label="Avaa laitteet"
+										>
+											Avaa
+										</Link>
 									</td>
 								</tr>
 							</tbody>

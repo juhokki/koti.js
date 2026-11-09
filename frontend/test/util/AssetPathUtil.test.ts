@@ -7,7 +7,7 @@ const create = (id: string, links: string[] = []): Asset => ({
 	name: id,
 	icon: "home",
 	links,
-	devices: []
+	deviceIds: []
 });
 
 const assets = [

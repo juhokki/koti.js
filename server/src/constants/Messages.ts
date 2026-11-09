@@ -1,5 +1,6 @@
 export const USER = "user";
 export const ASSETS = "assets";
+export const DEVICES = "devices";
 export const DEVICE_UPDATED = "device_updated";
 export const MEASUREMENT_UPDATED = "measurement_updated";
 export const VALUES = "values";

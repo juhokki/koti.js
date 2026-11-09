@@ -2,26 +2,25 @@ import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import useAssetPath from "../../../hooks/useAssetPath";
-import ActionsApi from "../../../api/ActionsApi";
+import useDevice from "../../hooks/useDevice";
+import ActionsApi from "../../api/ActionsApi";
 
 export default function DeviceActionScript() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
-	const { asset, assetPath, deviceId } = useAssetPath();
+	const { device, devicePath } = useDevice();
 	const [running, setRunning] = useState(false);
 	const [result, setResult] = useState<{ ok: boolean; error?: string }>();
-	const device = asset?.devices.find((d) => d.id === deviceId);
 
 	const goBack = () => {
 		const params = new URLSearchParams(location.search);
 		params.delete("action");
 		const search = params.size > 0 ? `?${params.toString()}` : "";
 
-		Promise.resolve(
-			navigate(`${assetPath}/${deviceId ?? ""}/actions${search}`)
-		).catch(console.log);
+		Promise.resolve(navigate(`${devicePath}/actions${search}`)).catch(
+			console.log
+		);
 	};
 
 	if (!device) {

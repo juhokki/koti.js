@@ -3,3 +3,102 @@ ol {
 	list-style-position: inside;
 	list-style: none;
 }
+
+/* TODO ?!??!?! */
+
+.tree-list ul,
+.navigation-list,
+.record-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.tree-list {
+	width: 100%;
+	min-width: 0;
+}
+
+.tree-row {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing);
+	min-height: 48px;
+	padding: var(--spacing);
+	padding-inline-start: calc(
+		var(--spacing) + min(var(--tree-depth) * 2 * var(--spacing), 25%)
+	);
+	border-bottom: 1px solid var(--sub-box-background-color);
+}
+
+.tree-row .MuiIcon-root {
+	flex-shrink: 0;
+}
+
+.tree-row span:last-child {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.tree-group {
+	font-weight: 600;
+}
+
+.tree-list a,
+.navigation-list a,
+.details-list a,
+.header a {
+	color: var(--highlight-color);
+}
+
+.tree-list a:hover,
+.navigation-list a:hover {
+	background: var(--sub-box-background-color);
+}
+
+a:focus-visible {
+	outline: 2px solid var(--highlight-color);
+	outline-offset: 2px;
+}
+
+.navigation-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--spacing);
+}
+
+.navigation-list a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: var(--spacing);
+	overflow-wrap: anywhere;
+}
+
+.details-list {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+	gap: var(--spacing);
+}
+
+.details-list dt,
+.details-list dd {
+	min-width: 0;
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.record-list > li {
+	padding-block: var(--spacing);
+	border-bottom: 1px solid var(--sub-box-background-color);
+}
+
+@media only screen and (max-width: 480px) {
+	.details-list {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.details-list dd {
+		padding-bottom: var(--spacing);
+	}
+}

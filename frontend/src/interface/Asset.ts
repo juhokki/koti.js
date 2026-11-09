@@ -6,14 +6,14 @@ export interface Asset {
 	name: string;
 	icon: string;
 	links?: string[];
-	devices: Device[];
+	deviceIds: string[];
 	summary?: {
 		devices: {
-			device: Device;
+			deviceId: string;
 			displayName: string;
-			measurements: Measurement[];
+			measurementIds: string[];
 		}[];
-	};
+	} | null;
 }
 
 export interface Device {
